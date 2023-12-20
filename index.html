@@ -1,1 +1,28 @@
-i
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Team Punktestand</title>
+</head>
+<body>
+    <div id="app">
+        <h1>Team Punktestand</h1>
+        <div class="team-container">
+            <div class="team" id="team1">
+                <h2>Team 1</h2>
+                <p>Punktestand: <span id="score1">0</span></p>
+                <button onclick="updateScore('team1')">Punkt hinzufügen</button>
+            </div>
+            <div class="team" id="team2">
+                <h2>Team 2</h2>
+                <p>Punktestand: <span id="score2">0</span></p>
+                <button onclick="updateScore('team2')">Punkt hinzufügen</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <title>Team Punktestand</title>
 </head>
 <body>
-    <div id="app">
-        <h1>Team Punktestand</h1>
-        <div class="team-container">
-            <div class="team" id="team1">
-                <h2>Team 1</h2>
-                <p>Punktestand: <span id="score1">0</span></p>
-                <button onclick="updateScore('team1')">Punkt hinzufügen</button>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Team Punktestand</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h2>Alex, Alex, Thomas, Jan</h2>
+                        <p class="lead">Punktestand: <span id="score1">0</span></p>
+                        <button class="btn btn-primary" onclick="updateScore('team1')">Punkt hinzufügen</button>
+                    </div>
+                </div>
             </div>
-            <div class="team" id="team2">
-                <h2>Team 2</h2>
-                <p>Punktestand: <span id="score2">0</span></p>
-                <button onclick="updateScore('team2')">Punkt hinzufügen</button>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h2>Daniel, Arthur, Roland, Waldi</h2>
+                        <p class="lead">Punktestand: <span id="score2">0</span></p>
+                        <button class="btn btn-primary" onclick="updateScore('team2')">Punkt hinzufügen</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

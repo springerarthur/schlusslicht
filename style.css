@@ -1,9 +1,49 @@
-.winner {
-    background-color: rgba(0, 128, 0, 0.1);
-    border: 1px solid green;
+body {
+    background-color: #f8f9fa;
+    padding-top: 56px;
+    /* Add this to account for the fixed navbar height */
 }
 
-.looser {
-    background-color: rgba(178, 34, 34, 0.1);
-    border: 1px solid darkred;
+.pokal {
+    min-width: 250px;
+}
+
+.pokal-winner {
+    width: 115px;
+}
+
+.pokal-looser {
+    width: 105px;
+}
+
+.container {
+    max-width: 800px;
+}
+
+.profile-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-icon img {
+    object-fit: cover;
+}
+
+.main-content {
+    text-align: center;
+}
+
+.side-images {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    /* Adjust the margin as needed */
+}
+
+.side-images img {
+    height: auto;
+    margin-bottom: 10px;
+    /* Adjust the margin as needed */
 }

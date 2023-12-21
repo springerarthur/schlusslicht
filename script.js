@@ -1,14 +1,32 @@
-// Initialisiere den Punktestand
-let score1 = 0;
-let score2 = 0;
+// Verbindungs-URL und Datenbankname
+const url = 'mongodb+srv://arthurspringer:y7NMGuTuCbdrHclR@<YOUR-CLUSTER-URL>/<DATABASE-NAME>?retryWrites=true&w=majority';
+const dbName = '<DATABASE-NAME>';
 
-// Funktion zum Aktualisieren des Punktestands
-function updateScore(team) {
-    if (team === 'team1') {
-        score1++;
-        document.getElementById('score1').innerText = score1;
-    } else if (team === 'team2') {
-        score2++;
-        document.getElementById('score2').innerText = score2;
+// Daten, die gespeichert werden sollen
+const dataToInsert = { key1: '1', key2: 'value2' };
+
+// Verbindung zur MongoDB herstellen
+MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function(err, client) {
+    if (err) {
+        console.error('Fehler beim Verbinden mit der Datenbank:', err);
+        return;
     }
-}
+
+    console.log('Verbunden mit der Datenbank');
+    
+    const db = client.db(dbName);
+    const collection = db.collection('<DEINE-COLLECTION-NAME>');
+
+    // Daten speichern
+    collection.insertOne(dataToInsert, function(err, result) {
+        if (err) {
+            console.error('Fehler beim Speichern der Daten:', err);
+        } else {
+            console.log('Daten erfolgreich gespeichert:', result.insertedId);
+        }
+
+        // Verbindung schließen
+        client.close();
+        console.log('Verbindung geschlossen');
+    });
+});

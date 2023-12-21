@@ -3,30 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
     <title>Team Punktestand</title>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Team Punktestand</h1>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h2>Alex, Alex, Thomas, Jan</h2>
-                        <p class="lead">Punktestand: <span id="score1">0</span></p>
-                        <button class="btn btn-primary" onclick="updateScore('team1')">Punkt hinzufügen</button>
+    <div class="row">
+        <div class="col container mt-5">
+            <div class="card winner">
+                <div class="card-body text-center">
+                    <h1 class="card-title">2 Punkte</h1>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="img/Daniel.png" class="img-thumbnail img-fluid" alt="Team 1 Thumbnail">
+                        </div>
+                        <div class="col-md-3">
+                            <img src="img/Roland.png" class="img-thumbnail img-fluid" alt="Team 2 Thumbnail">
+                        </div>
+                        <div class="col-md-3">
+                            <img src="img/Waldi.png" class="img-thumbnail img-fluid" alt="Team 3 Thumbnail">
+                        </div>
+                        <div class="col-md-3">
+                            <img src="img/Arthur.png" class="img-thumbnail img-fluid" alt="Team 4 Thumbnail">
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h2>Daniel, Arthur, Roland, Waldi</h2>
-                        <p class="lead">Punktestand: <span id="score2">0</span></p>
-                        <button class="btn btn-primary" onclick="updateScore('team2')">Punkt hinzufügen</button>
+        </div>
+        
+        <div class="col container mt-5">
+            <div class="card looser">
+                <div class="card-body text-center">
+                    <h1 class="card-title">1 Punkt</h1>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="img/AlexH.png" class="img-thumbnail img-fluid" alt="Team 1 Thumbnail">
+                        </div>
+                        <div class="col-md-3">
+                            <img src="img/AlexS.png" class="img-thumbnail img-fluid" alt="Team 2 Thumbnail">
+                        </div>
+                        <div class="col-md-3">
+                            <img src="img/Thomas.png" class="img-thumbnail img-fluid" alt="Team 3 Thumbnail">
+                        </div>
+                        <div class="col-md-3">
+                            <img src="img/Jan.jpg" class="img-thumbnail img-fluid" alt="Team 4 Thumbnail">
+                        </div>
                     </div>
+                    <p class="lead mt-4">Punktestand und Buttons hier einfügen...</p>
                 </div>
             </div>
         </div>

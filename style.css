@@ -7,17 +7,23 @@ body {
     min-width: 250px;
 }
 
-.pokal-winner {
-    width: 115px;
+.pokal-part {
+    width: 105px;
 }
 
-.pokal-looser {
-    width: 105px;
+.pokal-winner {
+    width: 115px;
 }
 
 .container {
     max-width: 800px;
     min-width: 400px;
+}
+
+.profile-icons {
+    width: 60px;
+    margin: 0;
+    padding: 0;
 }
 
 .profile-icon {

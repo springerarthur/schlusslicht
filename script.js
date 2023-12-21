@@ -59,6 +59,21 @@ function updateProgressBar(selector, leftValue, rightValue) {
 }
 
 function setPoints() {
-    document.querySelector('#points-left').innerText = 2;
-    document.querySelector('#points-right').innerText = 1;
+    var pointsLeft = 2;
+    var pointsRight = 3;
+
+    document.querySelector('#points-left').innerText = pointsLeft;
+    document.querySelector('#points-right').innerText = pointsRight;
+
+    if(pointsLeft > pointsRight) 
+    {
+        document.querySelector('#pokal-left').classList.add('pokal-winner');
+        document.querySelector('#pokal-right').classList.remove('pokal-winner');
+    }
+
+    if(pointsLeft < pointsRight) 
+    {
+        document.querySelector('#pokal-left').classList.remove('pokal-winner');
+        document.querySelector('#pokal-right').classList.add('pokal-winner');
+    }
 }

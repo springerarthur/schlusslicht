@@ -60,7 +60,7 @@ function updateProgressBar(selector, leftValue, rightValue) {
 
 function setPoints() {
     var pointsLeft = 2;
-    var pointsRight = 3;
+    var pointsRight = 1;
 
     document.querySelector('#points-left').innerText = pointsLeft;
     document.querySelector('#points-right').innerText = pointsRight;

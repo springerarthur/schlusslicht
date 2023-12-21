@@ -1,10 +1,10 @@
 body {
     background-color: #f8f9fa;
-    padding-top: 56px;
 }
 
 .pokal {
-    min-width: 250px;
+    width: 230px;
+    padding: 0;
 }
 
 .pokal-part {
@@ -24,6 +24,7 @@ body {
     width: 60px;
     margin: 0;
     padding: 0;
+    padding-top: 54px;
 }
 
 .profile-icon {
@@ -37,8 +38,22 @@ body {
     object-fit: cover;
 }
 
+.profile-left
+{
+    margin-right: -25px;
+}
+
+.profile-right
+{
+    margin-left: -25px;
+}
+
 .main-content {
     text-align: center;
+}
+
+.points {
+    font-size: 4.5em;
 }
 
 .side-images {

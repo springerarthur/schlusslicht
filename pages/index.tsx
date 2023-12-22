@@ -5,35 +5,6 @@ import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 
 var ObjectId = require('mongodb').ObjectId; 
 
-// type ConnectionStatus = {
-//   isConnected: boolean
-// }
-
-// export const getServerSideProps: GetServerSideProps<
-//   ConnectionStatus
-// > = async () => {
-//   try {
-//     await clientPromise
-//     // `await clientPromise` will use the default database passed in the MONGODB_URI
-//     // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-//     //
-//     // `const client = await clientPromise`
-//     // `const db = client.db("myDatabase")`
-//     //
-//     // Then you can execute queries against your database like so:
-//     // db.find({}) or any of the MongoDB Node Driver commands
-
-//     return {
-//       props: { isConnected: true },
-//     }
-//   } catch (e) {
-//     console.error(e)
-//     return {
-//       props: { isConnected: false },
-//     }
-//   }
-// }
-
 export async function getServerSideProps() {
   try {
     const client = await clientPromise;
@@ -42,16 +13,6 @@ export async function getServerSideProps() {
     const overview = await db
       .collection("overview")
       .findOne(ObjectId("65860fca3b7c1db1276426a1"));
-
-    // const overview =
-    // {
-    //   "team1_swim": 4,
-    //   "team1_bike": 410.98,
-    //   "team1_run": 60,
-    //   "team2_swim": 13.7,
-    //   "team2_bike": 399.781,
-    //   "team2_run": 40.50,
-    // };
 
     return {
       props: { overview: JSON.parse(JSON.stringify(overview)) },

@@ -140,9 +140,9 @@ export default function Home({ overview }: InferGetServerSidePropsType<typeof ge
           <div id="progress-container">
             <div className="progress">
               <div id="progress-bar-swim" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentSwim + '%' }}>
-                <div className="progress-text text1">{team1_swim.toFixed(1)}</div>
+                <div className="progress-text text1">{team1_swim.toFixed(3)}</div>
                 <div className="progress-text text2">🏊</div>
-                <div className="progress-text text3">{team2_swim.toFixed(1)}</div>
+                <div className="progress-text text3">{team2_swim.toFixed(3)}</div>
               </div>
             </div>
           </div>
@@ -158,9 +158,9 @@ export default function Home({ overview }: InferGetServerSidePropsType<typeof ge
           <div id="progress-container">
             <div className="progress">
               <div id="progress-bar-run" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentRun + '%' }} >
-                <div className="progress-text text1">{team1_run.toFixed(1)}</div>
+                <div className="progress-text text1">{team1_run.toFixed(2)}</div>
                 <div className="progress-text text2">🏃</div>
-                <div className="progress-text text3">{team2_run.toFixed(1)}</div>
+                <div className="progress-text text3">{team2_run.toFixed(2)}</div>
               </div>
             </div>
           </div>

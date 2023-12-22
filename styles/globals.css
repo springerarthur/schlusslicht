@@ -1,0 +1,138 @@
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+        Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+        sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.pokal {
+    width: 230px;
+    padding: 0;
+}
+
+.pokal-part {
+    width: 105px;
+}
+
+.pokal-winner {
+    width: 115px;
+}
+
+.container {
+    max-width: 800px;
+    min-width: 400px;
+}
+
+.profile-icons {
+    width: 60px;
+    margin: 0;
+    padding: 0;
+    padding-top: 54px;
+}
+
+.profile-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-icon img {
+    object-fit: cover;
+}
+
+.profile-left {
+    margin-right: -25px;
+}
+
+.profile-right {
+    margin-left: -25px;
+}
+
+.main-content {
+    text-align: center;
+}
+
+.points {
+    font-size: 4.5em;
+}
+
+.side-images {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    /* Adjust the margin as needed */
+}
+
+.side-images img {
+    height: auto;
+    margin-bottom: 10px;
+    /* Adjust the margin as needed */
+}
+
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    background: #f8f9fa;
+    /* Hintergrundfarbe */
+}
+
+#progress-container {
+    margin-top: 20px;
+    position: relative;
+}
+
+.progress {
+    background-color: #F9D6B4;
+    height: 50px;
+    border-radius: 25px;
+}
+
+.progress-bar {
+    background-color: #96FAEC;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -ms-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    font-size: 24pt;
+    color: rgb(24, 24, 24);
+}
+
+.text1 {
+    left: 0;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.text2 {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+}
+
+.text3 {
+    right: 0;
+    text-align: right;
+    padding-right: 10px;
+}

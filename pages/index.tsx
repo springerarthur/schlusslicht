@@ -1,257 +1,172 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 
-type ConnectionStatus = {
-  isConnected: boolean
-}
+var ObjectId = require('mongodb').ObjectId; 
 
-export const getServerSideProps: GetServerSideProps<
-  ConnectionStatus
-> = async () => {
+// type ConnectionStatus = {
+//   isConnected: boolean
+// }
+
+// export const getServerSideProps: GetServerSideProps<
+//   ConnectionStatus
+// > = async () => {
+//   try {
+//     await clientPromise
+//     // `await clientPromise` will use the default database passed in the MONGODB_URI
+//     // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
+//     //
+//     // `const client = await clientPromise`
+//     // `const db = client.db("myDatabase")`
+//     //
+//     // Then you can execute queries against your database like so:
+//     // db.find({}) or any of the MongoDB Node Driver commands
+
+//     return {
+//       props: { isConnected: true },
+//     }
+//   } catch (e) {
+//     console.error(e)
+//     return {
+//       props: { isConnected: false },
+//     }
+//   }
+// }
+
+export async function getServerSideProps() {
   try {
-    await clientPromise
-    // `await clientPromise` will use the default database passed in the MONGODB_URI
-    // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-    //
-    // `const client = await clientPromise`
-    // `const db = client.db("myDatabase")`
-    //
-    // Then you can execute queries against your database like so:
-    // db.find({}) or any of the MongoDB Node Driver commands
+    const client = await clientPromise;
+    const db = client.db("schlusslicht");
+
+    const overview = await db
+      .collection("overview")
+      .findOne(ObjectId("65860fca3b7c1db1276426a1"));
+
+    // const overview =
+    // {
+    //   "team1_swim": 4,
+    //   "team1_bike": 410.98,
+    //   "team1_run": 60,
+    //   "team2_swim": 13.7,
+    //   "team2_bike": 399.781,
+    //   "team2_run": 40.50,
+    // };
 
     return {
-      props: { isConnected: true },
-    }
+      props: { overview: JSON.parse(JSON.stringify(overview)) },
+    };
   } catch (e) {
-    console.error(e)
-    return {
-      props: { isConnected: false },
-    }
+    console.error(e);
   }
 }
 
-export default function Home({
-  isConnected,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ overview }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const profileImageWidth = 60;
+
+  var team1Points = 0;
+  var team1_swim = parseFloat(overview.team1_swim);
+  var team1_bike = parseFloat(overview.team1_bike);
+  var team1_run = parseFloat(overview.team1_run);
+
+  var team2_swim = parseFloat(overview.team2_swim);
+  var team2_bike = parseFloat(overview.team2_bike);
+  var team2_run = parseFloat(overview.team2_run);
+
+  if(team1_swim > team2_swim) { team1Points++; }
+  if(team1_bike > team2_bike) { team1Points++; }
+  if(team1_run > team2_run) { team1Points++; }
+
+  var team2Points = 0;
+  if(team2_swim > team1_swim) { team2Points++; }
+  if(team2_bike > team1_bike) { team2Points++; }
+  if(team2_run > team1_run) { team2Points++; }
+
+  var team1PokalWidth = 105;
+  var team1PokalHeight = 258;
+  var team2PokalWidth = 105;
+  var team2PokalHeight = 258;
+
+  var team1wins = team1Points > team2Points
+  if (team1wins) {
+    var team1PokalWidth = 115;
+    var team1PokalHeight = 282;
+  }
+  var team2wins = team2Points > team1Points
+  if (team2wins) {
+    var team2PokalWidth = 115;
+    var team2PokalHeight = 282;
+  }
+
+  var sumSwim = team1_swim + team2_swim;
+  var percentSwim = team1_swim / sumSwim * 100;
+
+  var sumBike = team1_bike + team2_bike;
+  var percentBike = team1_bike / sumBike * 100;
+
+  var sumRun = team1_run + team2_run;
+  var percentRun = team1_run / sumRun * 100;
+
   return (
     <div className="container">
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Punktestand</title>
       </Head>
 
       <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js with MongoDB!</a>
-        </h1>
+        <div className="container mt-4 main-content text-center">
+          <div className="row justify-content-center">
+            <div className="col-2 mt-5 profile-icons text-end">
+              <Image src="/Daniel.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-left" alt="Daniel" />
+              <Image src="/Waldi.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Waldi" />
+              <Image src="/Roland.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Roland" />
+              <Image src="/Arthur.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-left" alt="Arthur" />
+            </div>
 
-        {isConnected ? (
-          <h2 className="subtitle">You are connected to MongoDB</h2>
-        ) : (
-          <h2 className="subtitle">
-            You are NOT connected to MongoDB. Check the <code>README.md</code>{' '}
-            for instructions.
-          </h2>
-        )}
+            <div className="col-2 pokal">
+              <h1 className="points"><span id="points-left">{team1Points}</span> : <span id="points-right">{team2Points}</span></h1>
+              <Image src="/Pokal-links.png" width={team1PokalWidth} height={team1PokalHeight} alt="Pokal Team Blau" id="pokal-left" className={"img-fluid mb-2 pokal-part" + team1wins ? "pokal-winner" : ""} />
+              <Image src="/Pokal-rechts.png" width={team2PokalWidth} height={team2PokalHeight} alt="Pokal Team Rot" id="pokal-right" className={"img-fluid mb-2 pokal-part" + team2wins ? "pokal-winner" : ""} />
+            </div>
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+            <div className="col-2 mt-5 profile-icons text-start">
+              <Image src="/AlexH.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-right" alt="Alex H." />
+              <Image src="/AlexS.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Alex S." />
+              <Image src="/Thomas.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Thomas" />
+              <Image src="/Jan.jpg" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-right" alt="Jan" />
+            </div>
+          </div>
 
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          <div id="progress-container">
+            <div className="progress">
+              <div id="progress-bar-swim" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentSwim + '%' }}>
+                <div className="progress-text text1">{team1_swim.toFixed(1)}</div>
+                <div className="progress-text text2">🏊</div>
+                <div className="progress-text text3">{team2_swim.toFixed(1)}</div>
+              </div>
+            </div>
+          </div>
+          <div id="progress-container">
+            <div className="progress">
+              <div id="progress-bar-bike" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentBike + '%' }}>
+                <div className="progress-text text1">{team1_bike.toFixed(1)}</div>
+                <div className="progress-text text2">🚴</div>
+                <div className="progress-text text3">{team2_bike.toFixed(1)}</div>
+              </div>
+            </div>
+          </div>
+          <div id="progress-container">
+            <div className="progress">
+              <div id="progress-bar-run" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentRun + '%' }} >
+                <div className="progress-text text1">{team1_run.toFixed(1)}</div>
+                <div className="progress-text text2">🏃</div>
+                <div className="progress-text text3">{team2_run.toFixed(1)}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .subtitle {
-          font-size: 2rem;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
     </div>
   )
 }

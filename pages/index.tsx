@@ -2,11 +2,17 @@ import Head from 'next/head'
 import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import axios from 'axios';
+import cheerio from 'cheerio';
 
-var ObjectId = require('mongodb').ObjectId; 
+import { GarminConnect } from 'garmin-connect';
+
+var ObjectId = require('mongodb').ObjectId;
 
 export async function getServerSideProps() {
   try {
+    fetchActivities();
+
     const client = await clientPromise;
     const db = client.db("schlusslicht");
 
@@ -22,7 +28,18 @@ export async function getServerSideProps() {
   }
 }
 
+async function fetchActivities() {
+  // const GCClient = new GarminConnect({
+  //   username: process.env.GARMIN_EMAIL + "",
+  //   password: process.env.GARMIN_PWD + ""
+  // });
+  // await GCClient.login();
+  // const userProfile = await GCClient.getUserProfile();
+  // console.log(userProfile);
+}
+
 export default function Home({ overview }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
   const profileImageWidth = 60;
 
   var team1Points = 0;
@@ -34,14 +51,14 @@ export default function Home({ overview }: InferGetServerSidePropsType<typeof ge
   var team2_bike = parseFloat(overview.team2_bike);
   var team2_run = parseFloat(overview.team2_run);
 
-  if(team1_swim > team2_swim) { team1Points++; }
-  if(team1_bike > team2_bike) { team1Points++; }
-  if(team1_run > team2_run) { team1Points++; }
+  if (team1_swim > team2_swim) { team1Points++; }
+  if (team1_bike > team2_bike) { team1Points++; }
+  if (team1_run > team2_run) { team1Points++; }
 
   var team2Points = 0;
-  if(team2_swim > team1_swim) { team2Points++; }
-  if(team2_bike > team1_bike) { team2Points++; }
-  if(team2_run > team1_run) { team2Points++; }
+  if (team2_swim > team1_swim) { team2Points++; }
+  if (team2_bike > team1_bike) { team2Points++; }
+  if (team2_run > team1_run) { team2Points++; }
 
   var team1PokalWidth = 105;
   var team1PokalHeight = 258;

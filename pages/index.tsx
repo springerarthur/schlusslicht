@@ -2,10 +2,6 @@ import Head from 'next/head'
 import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-import axios from 'axios';
-import cheerio from 'cheerio';
-
-import { GarminConnect } from 'garmin-connect';
 
 var ObjectId = require('mongodb').ObjectId;
 

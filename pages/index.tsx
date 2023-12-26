@@ -1,52 +1,53 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-
-var ObjectId = require('mongodb').ObjectId;
+import { IActivity } from 'garmin-connect/dist/garmin/types';
 
 export async function getServerSideProps() {
   try {
-    fetchActivities();
-
     const client = await clientPromise;
     const db = client.db("schlusslicht");
 
-    const overview = await db
-      .collection("overview")
-      .findOne(ObjectId("65860fca3b7c1db1276426a1"));
+    const activities = await client
+      .db("schlusslicht")
+      .collection("activities")
+      .find()
+      .toArray();
 
     return {
-      props: { overview: JSON.parse(JSON.stringify(overview)) },
+      props: { activities: JSON.parse(JSON.stringify(activities)) },
     };
   } catch (e) {
     console.error(e);
   }
 }
 
-async function fetchActivities() {
-  // const GCClient = new GarminConnect({
-  //   username: process.env.GARMIN_EMAIL + "",
-  //   password: process.env.GARMIN_PWD + ""
-  // });
-  // await GCClient.login();
-  // const userProfile = await GCClient.getUserProfile();
-  // console.log(userProfile);
-}
-
-export default function Home({ overview }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ activities }) {//: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
   const profileImageWidth = 60;
 
+  const arthurGarminId = 'Springer.arthur';
+  const waldiGarminId = 'f8d6b455-0aec-4c46-b3e1-5621cac1719f';
+  const danielGarminId = '6d29db1b-2cc2-4d32-b63c-479a1fa38471';
+  const rolandGarminId = '97e62216-5e5d-42b2-a7d1-f9452a5363b4';
+
+  const alexHGarminId = '1690439f-a46f-4079-9709-33ffa337c80c';
+  const alexSGarminId = 'skipper2193';
+  const janGarminId = '20434747-96b2-4592-be63-6cf0c93d42ce';
+  const thomasGarminId = 'b936a5d7-ed2f-4ca6-a535-25e6d25707bc';
+
+  const team1Activities = activities.filter(activity => activity.ownerDisplayName == arthurGarminId || activity.ownerDisplayName == waldiGarminId || activity.ownerDisplayName == danielGarminId || activity.ownerDisplayName == rolandGarminId);
+  const team2Activities = activities.filter(activity => activity.ownerDisplayName == alexHGarminId || activity.ownerDisplayName == alexSGarminId || activity.ownerDisplayName == janGarminId || activity.ownerDisplayName == thomasGarminId);
+
+  var team1_swim = getTotalSumOfDistanz(team1Activities, 5);
+  var team1_bike = getTotalSumOfDistanz(team1Activities, 2);
+  var team1_run = getTotalSumOfDistanz(team1Activities, 1);
+
+  var team2_swim = getTotalSumOfDistanz(team2Activities, 5);
+  var team2_bike = getTotalSumOfDistanz(team2Activities, 2);
+  var team2_run = getTotalSumOfDistanz(team2Activities, 1);
+
   var team1Points = 0;
-  var team1_swim = parseFloat(overview.team1_swim);
-  var team1_bike = parseFloat(overview.team1_bike);
-  var team1_run = parseFloat(overview.team1_run);
-
-  var team2_swim = parseFloat(overview.team2_swim);
-  var team2_bike = parseFloat(overview.team2_bike);
-  var team2_run = parseFloat(overview.team2_run);
-
   if (team1_swim > team2_swim) { team1Points++; }
   if (team1_bike > team2_bike) { team1Points++; }
   if (team1_run > team2_run) { team1Points++; }
@@ -144,3 +145,13 @@ export default function Home({ overview }: InferGetServerSidePropsType<typeof ge
     </div>
   )
 }
+
+function getTotalSumOfDistanz(team1Activities: IActivity[], sportTypeId: number) {
+  var sumDistance = 0;
+  team1Activities.filter(activity => activity.sportTypeId == sportTypeId).forEach(function(activity) {
+    sumDistance += (activity.distance / 1000);
+  });
+
+  return sumDistance;
+}
+

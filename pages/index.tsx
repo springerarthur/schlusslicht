@@ -2,31 +2,12 @@ import Head from 'next/head'
 import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
 import { IActivity } from 'garmin-connect/dist/garmin/types';
-import { getLastUpdate, setLastUpdate } from '../lib/cache';
+import GarminConnectSync from '../lib/GarminConnectSync';
 
-function istDatumInVergangenheit(date: Date): boolean {
-  const now = new Date();
-  const differenzInMs = now.getTime() - date.getTime();
-
-  const differenzInMinuten = differenzInMs / (1000 * 60);
-
-  return differenzInMinuten > 15;
-}
-
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   try {
-    const lastUpdate = getLastUpdate();
-    if (lastUpdate == undefined || istDatumInVergangenheit(lastUpdate)) {
-      const istHttps = context.req.headers['x-forwarded-proto'] === 'https';
-
-      // Verwende context.req.headers.host, um die aktuelle Host-URL zu erhalten
-      const protocol = istHttps ? 'https' : 'http';
-      const updateUrl = `${protocol}://${context.req.headers.host}${context.req.url}api/update`;
-      console.log(`Do update with URL: ${updateUrl}`);
-      await fetch(updateUrl);
-
-      setLastUpdate();
-    }
+    const garminConnectSync = new GarminConnectSync();
+    garminConnectSync.importDataFromGarminConnect(true);
   } catch (e) {
     console.error(e);
   }
@@ -166,6 +147,7 @@ export default function Home({ activities }) {
               </div>
             </div>
           </div>
+          <hr />
         </div>
       </main>
 

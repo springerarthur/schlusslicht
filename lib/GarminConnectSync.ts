@@ -30,6 +30,8 @@ export default class GarminConnectSync {
     }
 
     private async importData() {
+        console.log("Import data from garmin connect");
+
         const GCClient = new GarminConnect({
             username: process.env.GARMIN_EMAIL + "",
             password: process.env.GARMIN_PWD + ""
@@ -43,7 +45,7 @@ export default class GarminConnectSync {
 
         await this.addActivitiesIfNotExists(GCClient, alexHGarminId);
         await this.addActivitiesIfNotExists(GCClient, alexSGarminId);
-        // await this.addActivitiesIfNotExists(GCClient, janGarminId);
+        await this.addActivitiesIfNotExists(GCClient, janGarminId);
         await this.addActivitiesIfNotExists(GCClient, thomasGarminId);
     }
 
@@ -60,6 +62,8 @@ export default class GarminConnectSync {
         try {
             const activitiesFromGarmin = await GCClient.getActivitiesForUser(garminConnectUserId, 0, 15);
 
+            const activitiesFromDb = await this.getActivitiesFromMongoDb();
+
             for (const activityFromGarmin of activitiesFromGarmin) {
                 // sportTypeId
                 // 1 => Laufen
@@ -68,8 +72,6 @@ export default class GarminConnectSync {
                 if (activityFromGarmin.sportTypeId !== 1 && activityFromGarmin.sportTypeId !== 2 && activityFromGarmin.sportTypeId !== 5) {
                     continue;
                 }
-
-                const activitiesFromDb = await this.getActivitiesFromMongoDb();
 
                 if (activitiesFromDb.some(activityFromDb => activityFromDb.activityId == activityFromGarmin.activityId)) {
                     continue;

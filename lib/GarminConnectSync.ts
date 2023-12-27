@@ -19,7 +19,7 @@ export default class GarminConnectSync {
     async importDataFromGarminConnect(force: boolean = false) {
         try {
             if (force || this.shouldUpdate(GarminConnectSync.lastUpdate)) {
-
+                console.log(`Import data from garmin connect: Force=${force}, lastUpdate=${GarminConnectSync.lastUpdate}`);
                 this.importData();
 
                 GarminConnectSync.lastUpdate = new Date();
@@ -30,8 +30,6 @@ export default class GarminConnectSync {
     }
 
     private async importData() {
-        console.log("Import data from garmin connect");
-
         const GCClient = new GarminConnect({
             username: process.env.GARMIN_EMAIL + "",
             password: process.env.GARMIN_PWD + ""

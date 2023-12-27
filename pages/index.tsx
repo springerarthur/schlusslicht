@@ -7,7 +7,7 @@ import GarminConnectSync from '../lib/GarminConnectSync';
 export async function getServerSideProps() {
   try {
     const garminConnectSync = new GarminConnectSync();
-    garminConnectSync.importDataFromGarminConnect(true);
+    garminConnectSync.importDataFromGarminConnect();
   } catch (e) {
     console.error(e);
   }

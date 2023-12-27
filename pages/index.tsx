@@ -192,27 +192,27 @@ export default function Home({ activities }) {
           <div id="progress-container">
             <div className="progress">
               <div id="progress-bar-swim" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentSwim + '%' }}>
-                <div className="progress-text text1">{team1_swim.toFixed(3)}</div>
+                <div className="progress-text text1">{team1_swim.toFixed(2)}</div>
                 <div className="progress-text text2">🏊</div>
-                <div className="progress-text text3">{team2_swim.toFixed(3)}</div>
+                <div className="progress-text text3">{team2_swim.toFixed(2)}</div>
               </div>
             </div>
           </div>
           <div id="progress-container">
             <div className="progress">
               <div id="progress-bar-bike" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentBike + '%' }}>
-                <div className="progress-text text1">{team1_bike.toFixed(3)}</div>
+                <div className="progress-text text1">{team1_bike.toFixed(2)}</div>
                 <div className="progress-text text2">🚴</div>
-                <div className="progress-text text3">{team2_bike.toFixed(3)}</div>
+                <div className="progress-text text3">{team2_bike.toFixed(2)}</div>
               </div>
             </div>
           </div>
           <div id="progress-container">
             <div className="progress">
               <div id="progress-bar-run" className="progress-bar" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} style={{ 'width': percentRun + '%' }} >
-                <div className="progress-text text1">{team1_run.toFixed(3)}</div>
+                <div className="progress-text text1">{team1_run.toFixed(2)}</div>
                 <div className="progress-text text2">🏃</div>
-                <div className="progress-text text3">{team2_run.toFixed(3)}</div>
+                <div className="progress-text text3">{team2_run.toFixed(2)}</div>
               </div>
             </div>
           </div>
@@ -234,6 +234,19 @@ export default function Home({ activities }) {
                 showTimelineMarker = true;
               }
 
+              function formatDuration(movingDuration: number): string {
+                const hours: number = Math.floor(movingDuration / 3600);
+                const minutes: number = Math.floor((movingDuration % 3600) / 60);
+                const seconds: number = Math.floor(movingDuration % 60);
+            
+                // Füge führende Nullen hinzu, wenn die Werte einstellig sind
+                const formattedhours: string = (hours < 10) ? "0" + hours : hours.toString();
+                const formattedMinutes: string = (minutes < 10) ? "0" + minutes : minutes.toString();
+                const formattedSeconds: string = (seconds < 10) ? "0" + seconds : seconds.toString();
+            
+                return formattedhours + ":" + formattedMinutes + ":" + formattedSeconds;
+            }
+
               return (
                 <><hr className="timeline-marker" data-content={timelineMarkerText} style={{ display: showTimelineMarker ? 'visible' : 'none' }} /><div className='row' key={activity.activityId}>
                   <div className={getActivityTeamClassName(activity.ownerDisplayName) + " pb-4"}>
@@ -241,8 +254,8 @@ export default function Home({ activities }) {
                       <Image src={getProfielImage(activity.ownerDisplayName)} width={50} height={50} className="rounded-circle" alt={activity.ownerDisplayName} />
                     </div>
                     <div className="activity-details col-9 flex-shrink-1 rounded py-2 px-3 mr-3">
-                      <b className="font-weight-bold mb-1">{getSportIdIcon(activity.sportTypeId)} {activity.activityName}</b><br />
-                      {(activity.distance / 1000).toFixed(3)} Km
+                      <h6> {activity.activityName}</h6>
+                      {getSportIdIcon(activity.sportTypeId)}{(activity.distance / 1000).toFixed(2)}Km ⏱️{formatDuration(activity.movingDuration)}
                     </div>
                   </div>
                 </div></>

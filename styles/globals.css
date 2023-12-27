@@ -69,13 +69,11 @@ body {
     /* Adjust the margin as needed */
 }
 
-
 .progress-bar-container {
     display: flex;
     align-items: center;
     height: 50px;
     background: #f8f9fa;
-    /* Hintergrundfarbe */
 }
 
 #progress-container {
@@ -129,6 +127,7 @@ body {
 .activity-left,
 .activity-right {
     display: flex;
+    align-items: center;
     flex-shrink: 0
 }
 
@@ -180,4 +179,8 @@ body {
     line-height: 1.5em;
     color: #818078;
     background-color: #f8f9fa;
+}
+
+.distance-unit {
+    
 }

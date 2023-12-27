@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { GarminConnect } from 'garmin-connect';
 import { IActivity } from 'garmin-connect/dist/garmin/types';
 import clientPromise from '../../lib/mongodb';
+import GarminConnect from '../../lib/GarminConnect';
 
 const arthurGarminId = 'Springer.arthur';
 const waldiGarminId = 'f8d6b455-0aec-4c46-b3e1-5621cac1719f';
@@ -19,34 +19,29 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse,
 ) {
-  const activitesFromDb = await getActivitiesFromMongoDb();
-
-  console.log(activitesFromDb);
-
   const GCClient = new GarminConnect({
     username: process.env.GARMIN_EMAIL + "",
     password: process.env.GARMIN_PWD + ""
   });
   await GCClient.login();
 
-  await addActivitiesIfNotExists(activitesFromDb, GCClient, arthurGarminId);
-  await addActivitiesIfNotExists(activitesFromDb, GCClient, waldiGarminId);
-  await addActivitiesIfNotExists(activitesFromDb, GCClient, danielGarminId);
-  await addActivitiesIfNotExists(activitesFromDb, GCClient, rolandGarminId);
+  await addActivitiesIfNotExists(GCClient, arthurGarminId);
+  await addActivitiesIfNotExists(GCClient, waldiGarminId);
+  await addActivitiesIfNotExists(GCClient, danielGarminId);
+  await addActivitiesIfNotExists(GCClient, rolandGarminId);
 
-  await addActivitiesIfNotExists(activitesFromDb, GCClient, alexHGarminId);
-  await addActivitiesIfNotExists(activitesFromDb, GCClient, alexSGarminId);
-  // await addActivitiesIfNotExists(activitesFromDb, GCClient, janGarminId);
-  await addActivitiesIfNotExists(activitesFromDb, GCClient, thomasGarminId);
+  await addActivitiesIfNotExists(GCClient, alexHGarminId);
+  await addActivitiesIfNotExists(GCClient, alexSGarminId);
+  // await addActivitiesIfNotExists(GCClient, janGarminId);
+  await addActivitiesIfNotExists(GCClient, thomasGarminId);
 
   response.status(200).json({});
 }
 
-async function addActivitiesIfNotExists(activitiesFromDb: IActivity[], GCClient: GarminConnect, garminConnectUserId: string) {
-  const response = await GCClient.get(getActivitiesUrl + garminConnectUserId, { start: 0, limit: 10 });
-  let activitiesFromGarmin = response.activityList as IActivity[];
-  // const activitiesFromGarmin = await GCClient.getActivities(0, 1);
-  for (let activityFromGarmin of activitiesFromGarmin) {    
+async function addActivitiesIfNotExists(GCClient: GarminConnect, garminConnectUserId: string) {
+  const activitiesFromGarmin = await GCClient.getActivitiesForUser(garminConnectUserId, 0, 15);
+  
+  for (const activityFromGarmin of activitiesFromGarmin) {
     // sportTypeId
     // 1 => Laufen
     // 2 => Fahrrad
@@ -54,6 +49,9 @@ async function addActivitiesIfNotExists(activitiesFromDb: IActivity[], GCClient:
     if(activityFromGarmin.sportTypeId !== 1 && activityFromGarmin.sportTypeId !== 2 && activityFromGarmin.sportTypeId !== 5) {
       continue;
     }
+
+    const activitiesFromDb = await getActivitiesFromMongoDb();
+
     if (activitiesFromDb.some(activityFromDb => activityFromDb.activityId == activityFromGarmin.activityId)) {
       continue;
     }

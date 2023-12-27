@@ -2,8 +2,35 @@ import Head from 'next/head'
 import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
 import { IActivity } from 'garmin-connect/dist/garmin/types';
+import { getLastUpdate, setLastUpdate } from '../lib/cache';
 
-export async function getServerSideProps() {
+function istDatumInVergangenheit(date: Date): boolean {
+  const now = new Date();
+  const differenzInMs = now.getTime() - date.getTime();
+
+  const differenzInMinuten = differenzInMs / (1000 * 60);
+
+  return differenzInMinuten > 15;
+}
+
+export async function getServerSideProps(context) {
+  try {
+    const lastUpdate = getLastUpdate();
+    if (lastUpdate == undefined || istDatumInVergangenheit(lastUpdate)) {
+      const istHttps = context.req.headers['x-forwarded-proto'] === 'https';
+
+      // Verwende context.req.headers.host, um die aktuelle Host-URL zu erhalten
+      const protocol = istHttps ? 'https' : 'http';
+      const updateUrl = `${protocol}://${context.req.headers.host}${context.req.url}api/update`;
+      console.log(`Do update with URL: ${updateUrl}`);
+      await fetch(updateUrl);
+
+      setLastUpdate();
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
   try {
     const client = await clientPromise;
     const db = client.db("schlusslicht");
@@ -22,7 +49,7 @@ export async function getServerSideProps() {
   }
 }
 
-export default function Home({ activities }) {//: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ activities }) {
 
   const profileImageWidth = 60;
 
@@ -148,7 +175,7 @@ export default function Home({ activities }) {//: InferGetServerSidePropsType<ty
 
 function getTotalSumOfDistanz(team1Activities: IActivity[], sportTypeId: number) {
   var sumDistance = 0;
-  team1Activities.filter(activity => activity.sportTypeId == sportTypeId).forEach(function(activity) {
+  team1Activities.filter(activity => activity.sportTypeId == sportTypeId).forEach(function (activity) {
     sumDistance += (activity.distance / 1000);
   });
 

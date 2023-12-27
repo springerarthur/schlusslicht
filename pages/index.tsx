@@ -216,7 +216,7 @@ export default function Home({ activities }) {
               </div>
             </div>
           </div>
-          
+
           <div className='mt-5'>
             {activities.map((activity: IActivity) => {
               let timelineMarkerText = moment(activity.startTimeLocal).calendar({
@@ -227,7 +227,7 @@ export default function Home({ activities }) {
               });
 
               let showTimelineMarker = true;
-              if(lastTimelineMarkerText === timelineMarkerText) {
+              if (lastTimelineMarkerText === timelineMarkerText) {
                 showTimelineMarker = false;
               } else {
                 lastTimelineMarkerText = timelineMarkerText;
@@ -235,8 +235,7 @@ export default function Home({ activities }) {
               }
 
               return (
-                <div className='row' key={activity.activityId}>
-                  <hr className="hr-text" data-content={timelineMarkerText} style={{ display: showTimelineMarker ? 'visible' : 'none' }} />
+                <><hr className="timeline-marker" data-content={timelineMarkerText} style={{ display: showTimelineMarker ? 'visible' : 'none' }} /><div className='row' key={activity.activityId}>
                   <div className={getActivityTeamClassName(activity.ownerDisplayName) + " pb-4"}>
                     <div className='col-2'>
                       <Image src={getProfielImage(activity.ownerDisplayName)} width={50} height={50} className="rounded-circle" alt={activity.ownerDisplayName} />
@@ -246,7 +245,7 @@ export default function Home({ activities }) {
                       {(activity.distance / 1000).toFixed(3)} Km
                     </div>
                   </div>
-                </div>
+                </div></>
               )
             })}
           </div>

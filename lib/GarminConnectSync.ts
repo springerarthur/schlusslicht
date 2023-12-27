@@ -1,6 +1,6 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
-import GarminConnect from "./GarminConnect";
 import clientPromise from "./mongodb";
+import { GarminConnect } from "garmin-connect";
 
 const arthurGarminId = 'Springer.arthur';
 const waldiGarminId = 'f8d6b455-0aec-4c46-b3e1-5621cac1719f';
@@ -13,14 +13,19 @@ const janGarminId = '20434747-96b2-4592-be63-6cf0c93d42ce';
 const thomasGarminId = 'b936a5d7-ed2f-4ca6-a535-25e6d25707bc';
 
 export default class GarminConnectSync {
-    static lastUpdate: Date = new Date();
+    private static lastUpdate : Date;
+    
     readonly syncInterval: number = 15;
 
     async importDataFromGarminConnect(force: boolean = false) {
         try {
+            if(GarminConnectSync.lastUpdate === undefined) {
+                GarminConnectSync.lastUpdate = new Date();
+            }
+
             if (force || this.shouldUpdate(GarminConnectSync.lastUpdate)) {
                 console.log(`Import data from garmin connect: Force=${force}, lastUpdate=${GarminConnectSync.lastUpdate}`);
-                this.importData();
+                await this.importData();
 
                 GarminConnectSync.lastUpdate = new Date();
             }
@@ -36,31 +41,24 @@ export default class GarminConnectSync {
         });
         await GCClient.login();
 
-        await this.addActivitiesIfNotExists(GCClient, arthurGarminId);
-        await this.addActivitiesIfNotExists(GCClient, waldiGarminId);
-        await this.addActivitiesIfNotExists(GCClient, danielGarminId);
-        await this.addActivitiesIfNotExists(GCClient, rolandGarminId);
+        const activitiesFromDb = await this.getActivitiesFromMongoDb();
 
-        await this.addActivitiesIfNotExists(GCClient, alexHGarminId);
-        await this.addActivitiesIfNotExists(GCClient, alexSGarminId);
-        await this.addActivitiesIfNotExists(GCClient, janGarminId);
-        await this.addActivitiesIfNotExists(GCClient, thomasGarminId);
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, arthurGarminId);
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, waldiGarminId);
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, danielGarminId);
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, rolandGarminId);
+
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, alexHGarminId);
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, alexSGarminId);
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, janGarminId);
+        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, thomasGarminId);
     }
 
-    private shouldUpdate(date: Date): boolean {
-        const now = new Date();
-        const differenzInMs = now.getTime() - date.getTime();
-
-        const differenzInMinuten = differenzInMs / (1000 * 60);
-
-        return differenzInMinuten > this.syncInterval;
-    }
-
-    private async addActivitiesIfNotExists(GCClient: GarminConnect, garminConnectUserId: string) {
+    private async addActivitiesIfNotExists(activitiesFromDb: IActivity[], gcClient: GarminConnect, garminConnectUserId: string) {
         try {
-            const activitiesFromGarmin = await GCClient.getActivitiesForUser(garminConnectUserId, 0, 15);
-
-            const activitiesFromDb = await this.getActivitiesFromMongoDb();
+            const activitiesFromGarmin = (await gcClient.get<any>('https://connectapi.garmin.com/activitylist-service/activities/' + garminConnectUserId, {
+                params: { start: 0, limit: 5 }
+            })).activityList as IActivity[];
 
             for (const activityFromGarmin of activitiesFromGarmin) {
                 // sportTypeId
@@ -76,13 +74,23 @@ export default class GarminConnectSync {
                 }
 
                 const garminStartDate = new Date(activityFromGarmin.startTimeLocal);
-                if (garminStartDate.getFullYear() === 2023 && garminStartDate.getMonth() + 1 === 12) {
+                let now = new Date();
+                if (garminStartDate.getFullYear() === now.getFullYear() && garminStartDate.getMonth() === now.getMonth()) {
                     await this.insertActivityToMongoDb(activityFromGarmin);
                 }
             }
         } catch (e) {
             console.error(e);
         }
+    }
+
+    private shouldUpdate(date: Date): boolean {
+        const now = new Date();
+        const differenzInMs = now.getTime() - date.getTime();
+
+        const differenzInMinuten = differenzInMs / (1000 * 60);
+
+        return differenzInMinuten > this.syncInterval;
     }
 
     private async getActivitiesFromMongoDb(): Promise<IActivity[]> {

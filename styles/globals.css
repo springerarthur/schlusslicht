@@ -40,17 +40,6 @@ body {
     padding-top: 54px;
 }
 
-.profile-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.profile-icon img {
-    object-fit: cover;
-}
-
 .profile-left {
     margin-right: -25px;
 }
@@ -135,4 +124,25 @@ body {
     right: 0;
     text-align: right;
     padding-right: 10px;
+}
+
+.activity-left,
+.activity-right {
+    display: flex;
+    flex-shrink: 0
+}
+
+.activity-left {
+    margin-right: auto
+}
+.activity-left .activity-details {
+    background-color: #F9D6B4;
+}
+
+.activity-right {
+    flex-direction: row-reverse;
+    margin-left: auto
+}
+.activity-right .activity-details {
+    background-color: #96FAEC;
 }

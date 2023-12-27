@@ -3,23 +3,20 @@ import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
 import { IActivity } from 'garmin-connect/dist/garmin/types';
 import GarminConnectSync from '../lib/GarminConnectSync';
+import moment from 'moment';
 
 export async function getServerSideProps() {
-  try {
-    const garminConnectSync = new GarminConnectSync();
-    garminConnectSync.importDataFromGarminConnect();
-  } catch (e) {
-    console.error(e);
-  }
+  const garminConnectSync = new GarminConnectSync();
+  await garminConnectSync.importDataFromGarminConnect();
 
   try {
     const client = await clientPromise;
-    const db = client.db("schlusslicht");
 
     const activities = await client
       .db("schlusslicht")
       .collection("activities")
       .find()
+      .sort({ startTimeLocal: -1 })
       .toArray();
 
     return {
@@ -28,9 +25,20 @@ export async function getServerSideProps() {
   } catch (e) {
     console.error(e);
   }
+
+  return {
+    props: { activities: { activities: [{}] } },
+  };
 }
 
 export default function Home({ activities }) {
+  if (activities == undefined) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        Fehler biem Laden der Daten!
+      </div>
+    );
+  }
 
   const profileImageWidth = 60;
 
@@ -90,6 +98,59 @@ export default function Home({ activities }) {
   var sumRun = team1_run + team2_run;
   var percentRun = team1_run / sumRun * 100;
 
+  function getActivityTeamClassName(ownerDisplayName: string) {
+    if (ownerDisplayName == arthurGarminId || ownerDisplayName == waldiGarminId || ownerDisplayName == danielGarminId || ownerDisplayName == rolandGarminId) {
+      return 'activity-left';
+    }
+    if (ownerDisplayName == alexHGarminId || ownerDisplayName == alexSGarminId || ownerDisplayName == thomasGarminId || ownerDisplayName == janGarminId) {
+      return 'activity-right';
+    }
+  }
+
+  function getProfielImage(ownerDisplayName: string): string {
+    if (ownerDisplayName == arthurGarminId) {
+      return "/Arthur.png"
+    }
+    if (ownerDisplayName == waldiGarminId) {
+      return "/Waldi.png"
+    }
+    if (ownerDisplayName == danielGarminId) {
+      return "/Daniel.png"
+    }
+    if (ownerDisplayName == rolandGarminId) {
+      return "/Roland.png"
+    }
+    if (ownerDisplayName == alexHGarminId) {
+      return "/AlexH.png"
+    }
+    if (ownerDisplayName == alexSGarminId) {
+      return "/AlexS.png"
+    }
+    if (ownerDisplayName == thomasGarminId) {
+      return "/Thomas.png"
+    }
+    if (ownerDisplayName == janGarminId) {
+      return "/Jan.png"
+    }
+
+    return "";
+  }
+
+  let currentDate: Date;
+
+  function getSportIdIcon(sportTypeId: number): string {
+    if (sportTypeId === 1) {
+      return "🏃";
+    }
+    if (sportTypeId === 2) {
+      return "🚴";
+    }
+    if (sportTypeId === 5) {
+      return "🏊";
+    }
+    return "";
+  }
+
   return (
     <div className="container">
       <Head>
@@ -99,11 +160,16 @@ export default function Home({ activities }) {
       <main>
         <div className="container mt-4 main-content text-center">
           <div className="row justify-content-center">
+
+            <div className="alert alert-danger" style={{ display: Object.keys(activities).length === 0 ? 'visible' : 'none' }} role="alert">
+              Es konnten keine Daten geladen werden!
+            </div>
+
             <div className="col-2 mt-5 profile-icons text-end">
-              <Image src="/Daniel.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-left" alt="Daniel" />
-              <Image src="/Waldi.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Waldi" />
-              <Image src="/Roland.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Roland" />
-              <Image src="/Arthur.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-left" alt="Arthur" />
+              <Image src="/Daniel.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle profile-left" alt="Daniel" />
+              <Image src="/Waldi.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle" alt="Waldi" />
+              <Image src="/Roland.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle" alt="Roland" />
+              <Image src="/Arthur.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle profile-left" alt="Arthur" />
             </div>
 
             <div className="col-2 pokal">
@@ -113,10 +179,10 @@ export default function Home({ activities }) {
             </div>
 
             <div className="col-2 mt-5 profile-icons text-start">
-              <Image src="/AlexH.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-right" alt="Alex H." />
-              <Image src="/AlexS.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Alex S." />
-              <Image src="/Thomas.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon" alt="Thomas" />
-              <Image src="/Jan.jpg" width={profileImageWidth} height={profileImageWidth} className="mb-2 profile-icon profile-right" alt="Jan" />
+              <Image src="/AlexH.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle profile-right" alt="Alex H." />
+              <Image src="/AlexS.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle" alt="Alex S." />
+              <Image src="/Thomas.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle" alt="Thomas" />
+              <Image src="/Jan.jpg" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle profile-right" alt="Jan" />
             </div>
           </div>
 
@@ -147,7 +213,23 @@ export default function Home({ activities }) {
               </div>
             </div>
           </div>
-          <hr />
+
+          <hr className="mt-5 mb-5" />
+
+          <h2 className='mb-4'>Getrackte Aktivitäten</h2>
+          <div className='row'>
+            {activities.map((activity: IActivity) => (
+              <div key={activity.activityId} className={getActivityTeamClassName(activity.ownerDisplayName) + " pb-4"}>
+                <div className='col-2'>
+                  <Image src={getProfielImage(activity.ownerDisplayName)} width={50} height={50} className="rounded-circle" alt="Daniel" />
+                </div>
+                <div className="activity-details col-9 flex-shrink-1 rounded py-2 px-3 mr-3">
+                  <b className="font-weight-bold mb-1">{getSportIdIcon(activity.sportTypeId)} {activity.activityName}</b><br />
+                  {(activity.distance / 1000).toFixed(3)} Km
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
 

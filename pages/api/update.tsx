@@ -6,7 +6,7 @@ export default async function handler(
   response: NextApiResponse,
 ) {
   const garminConnectSync = new GarminConnectSync();
-  garminConnectSync.importDataFromGarminConnect(true);
+  await garminConnectSync.importDataFromGarminConnect(true);
 
   response.status(200).json({});
 }

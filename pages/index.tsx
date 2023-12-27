@@ -4,6 +4,9 @@ import clientPromise from '../lib/mongodb'
 import { IActivity } from 'garmin-connect/dist/garmin/types';
 import GarminConnectSync from '../lib/GarminConnectSync';
 import moment from 'moment';
+import 'moment/locale/de';
+
+moment.locale('de');
 
 export async function getServerSideProps() {
   const garminConnectSync = new GarminConnectSync();
@@ -39,6 +42,8 @@ export default function Home({ activities }) {
       </div>
     );
   }
+
+  let lastTimelineMarkerText: string;
 
   const profileImageWidth = 60;
 
@@ -136,8 +141,6 @@ export default function Home({ activities }) {
     return "";
   }
 
-  let currentDate: Date;
-
   function getSportIdIcon(sportTypeId: number): string {
     if (sportTypeId === 1) {
       return "🏃";
@@ -213,22 +216,39 @@ export default function Home({ activities }) {
               </div>
             </div>
           </div>
+          
+          <div className='mt-5'>
+            {activities.map((activity: IActivity) => {
+              let timelineMarkerText = moment(activity.startTimeLocal).calendar({
+                sameDay: '[Heute]',
+                lastDay: '[Gestern]',
+                lastWeek: 'dddd',
+                sameElse: 'DD.MM.YYYY'
+              });
 
-          <hr className="mt-5 mb-5" />
+              let showTimelineMarker = true;
+              if(lastTimelineMarkerText === timelineMarkerText) {
+                showTimelineMarker = false;
+              } else {
+                lastTimelineMarkerText = timelineMarkerText;
+                showTimelineMarker = true;
+              }
 
-          <h2 className='mb-4'>Getrackte Aktivitäten</h2>
-          <div className='row'>
-            {activities.map((activity: IActivity) => (
-              <div key={activity.activityId} className={getActivityTeamClassName(activity.ownerDisplayName) + " pb-4"}>
-                <div className='col-2'>
-                  <Image src={getProfielImage(activity.ownerDisplayName)} width={50} height={50} className="rounded-circle" alt="Daniel" />
+              return (
+                <div className='row' key={activity.activityId}>
+                  <hr className="hr-text" data-content={timelineMarkerText} style={{ display: showTimelineMarker ? 'visible' : 'none' }} />
+                  <div className={getActivityTeamClassName(activity.ownerDisplayName) + " pb-4"}>
+                    <div className='col-2'>
+                      <Image src={getProfielImage(activity.ownerDisplayName)} width={50} height={50} className="rounded-circle" alt={activity.ownerDisplayName} />
+                    </div>
+                    <div className="activity-details col-9 flex-shrink-1 rounded py-2 px-3 mr-3">
+                      <b className="font-weight-bold mb-1">{getSportIdIcon(activity.sportTypeId)} {activity.activityName}</b><br />
+                      {(activity.distance / 1000).toFixed(3)} Km
+                    </div>
+                  </div>
                 </div>
-                <div className="activity-details col-9 flex-shrink-1 rounded py-2 px-3 mr-3">
-                  <b className="font-weight-bold mb-1">{getSportIdIcon(activity.sportTypeId)} {activity.activityName}</b><br />
-                  {(activity.distance / 1000).toFixed(3)} Km
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </main>

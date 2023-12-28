@@ -10,6 +10,7 @@ export default class GarminConnectSync {
 
     async importDataFromGarminConnect(force: boolean = false) {
         try {
+            console.log(`Check for import data timestamp. GarminConnectSync.lastUpdate=${GarminConnectSync.lastUpdate}`);
             if (GarminConnectSync.lastUpdate === undefined) {
                 GarminConnectSync.lastUpdate = new Date();
             }

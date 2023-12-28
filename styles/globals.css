@@ -136,7 +136,7 @@ body {
 }
 
 .activity-left .activity-details {
-    background-color: #F9D6B4;
+    background-color: #96FAEC;
 }
 
 .activity-right {
@@ -145,7 +145,7 @@ body {
 }
 
 .activity-right .activity-details {
-    background-color: #96FAEC;
+    background-color: #F9D6B4;
 }
 
 .timeline-marker {
@@ -179,8 +179,4 @@ body {
     line-height: 1.5em;
     color: #818078;
     background-color: #f8f9fa;
-}
-
-.distance-unit {
-    
 }

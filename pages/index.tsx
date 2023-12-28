@@ -3,6 +3,7 @@ import Image from 'next/image'
 import clientPromise from '../lib/mongodb'
 import { IActivity } from 'garmin-connect/dist/garmin/types';
 import GarminConnectSync from '../lib/GarminConnectSync';
+import { GarminUserIds, SportTypeIds } from '../lib/GarminConstants';
 import moment from 'moment';
 import 'moment/locale/de';
 
@@ -47,26 +48,16 @@ export default function Home({ activities }) {
 
   const profileImageWidth = 60;
 
-  const arthurGarminId = 'Springer.arthur';
-  const waldiGarminId = 'f8d6b455-0aec-4c46-b3e1-5621cac1719f';
-  const danielGarminId = '6d29db1b-2cc2-4d32-b63c-479a1fa38471';
-  const rolandGarminId = '97e62216-5e5d-42b2-a7d1-f9452a5363b4';
+  const team1Activities = activities.filter(activity => activity.ownerDisplayName == GarminUserIds.arthur || activity.ownerDisplayName == GarminUserIds.waldi || activity.ownerDisplayName == GarminUserIds.daniel || activity.ownerDisplayName == GarminUserIds.roland);
+  const team2Activities = activities.filter(activity => activity.ownerDisplayName == GarminUserIds.alexH || activity.ownerDisplayName == GarminUserIds.alexS || activity.ownerDisplayName == GarminUserIds.jan || activity.ownerDisplayName == GarminUserIds.thomas);
 
-  const alexHGarminId = '1690439f-a46f-4079-9709-33ffa337c80c';
-  const alexSGarminId = 'skipper2193';
-  const janGarminId = '20434747-96b2-4592-be63-6cf0c93d42ce';
-  const thomasGarminId = 'b936a5d7-ed2f-4ca6-a535-25e6d25707bc';
+  var team1_swim = getTotalSumOfDistanz(team1Activities, SportTypeIds.swimming);
+  var team1_bike = getTotalSumOfDistanz(team1Activities, SportTypeIds.bike);
+  var team1_run = getTotalSumOfDistanz(team1Activities, SportTypeIds.running);
 
-  const team1Activities = activities.filter(activity => activity.ownerDisplayName == arthurGarminId || activity.ownerDisplayName == waldiGarminId || activity.ownerDisplayName == danielGarminId || activity.ownerDisplayName == rolandGarminId);
-  const team2Activities = activities.filter(activity => activity.ownerDisplayName == alexHGarminId || activity.ownerDisplayName == alexSGarminId || activity.ownerDisplayName == janGarminId || activity.ownerDisplayName == thomasGarminId);
-
-  var team1_swim = getTotalSumOfDistanz(team1Activities, 5);
-  var team1_bike = getTotalSumOfDistanz(team1Activities, 2);
-  var team1_run = getTotalSumOfDistanz(team1Activities, 1);
-
-  var team2_swim = getTotalSumOfDistanz(team2Activities, 5);
-  var team2_bike = getTotalSumOfDistanz(team2Activities, 2);
-  var team2_run = getTotalSumOfDistanz(team2Activities, 1);
+  var team2_swim = getTotalSumOfDistanz(team2Activities, SportTypeIds.swimming);
+  var team2_bike = getTotalSumOfDistanz(team2Activities, SportTypeIds.bike);
+  var team2_run = getTotalSumOfDistanz(team2Activities, SportTypeIds.running);
 
   var team1Points = 0;
   if (team1_swim > team2_swim) { team1Points++; }
@@ -104,51 +95,51 @@ export default function Home({ activities }) {
   var percentRun = team1_run / sumRun * 100;
 
   function getActivityTeamClassName(ownerDisplayName: string) {
-    if (ownerDisplayName == arthurGarminId || ownerDisplayName == waldiGarminId || ownerDisplayName == danielGarminId || ownerDisplayName == rolandGarminId) {
+    if (ownerDisplayName == GarminUserIds.arthur || ownerDisplayName == GarminUserIds.waldi || ownerDisplayName == GarminUserIds.daniel || ownerDisplayName == GarminUserIds.roland) {
       return 'activity-left';
     }
-    if (ownerDisplayName == alexHGarminId || ownerDisplayName == alexSGarminId || ownerDisplayName == thomasGarminId || ownerDisplayName == janGarminId) {
+    if (ownerDisplayName == GarminUserIds.alexH || ownerDisplayName == GarminUserIds.alexS || ownerDisplayName == GarminUserIds.thomas || ownerDisplayName == GarminUserIds.jan) {
       return 'activity-right';
     }
   }
 
   function getProfielImage(ownerDisplayName: string): string {
-    if (ownerDisplayName == arthurGarminId) {
+    if (ownerDisplayName == GarminUserIds.arthur) {
       return "/Arthur.png"
     }
-    if (ownerDisplayName == waldiGarminId) {
+    if (ownerDisplayName == GarminUserIds.waldi) {
       return "/Waldi.png"
     }
-    if (ownerDisplayName == danielGarminId) {
+    if (ownerDisplayName == GarminUserIds.daniel) {
       return "/Daniel.png"
     }
-    if (ownerDisplayName == rolandGarminId) {
+    if (ownerDisplayName == GarminUserIds.roland) {
       return "/Roland.png"
     }
-    if (ownerDisplayName == alexHGarminId) {
+    if (ownerDisplayName == GarminUserIds.alexH) {
       return "/AlexH.png"
     }
-    if (ownerDisplayName == alexSGarminId) {
+    if (ownerDisplayName == GarminUserIds.alexS) {
       return "/AlexS.png"
     }
-    if (ownerDisplayName == thomasGarminId) {
-      return "/Thomas.png"
-    }
-    if (ownerDisplayName == janGarminId) {
+    if (ownerDisplayName == GarminUserIds.jan) {
       return "/Jan.png"
+    }
+    if (ownerDisplayName == GarminUserIds.thomas) {
+      return "/Thomas.png"
     }
 
     return "";
   }
 
   function getSportIdIcon(sportTypeId: number): string {
-    if (sportTypeId === 1) {
+    if (sportTypeId === SportTypeIds.running) {
       return "🏃";
     }
-    if (sportTypeId === 2) {
+    if (sportTypeId === SportTypeIds.bike) {
       return "🚴";
     }
-    if (sportTypeId === 5) {
+    if (sportTypeId === SportTypeIds.swimming) {
       return "🏊";
     }
     return "";

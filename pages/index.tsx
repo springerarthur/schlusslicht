@@ -123,7 +123,7 @@ export default function Home({ activities }) {
       return "/AlexS.png"
     }
     if (ownerDisplayName == GarminUserIds.jan) {
-      return "/Jan.png"
+      return "/Jan.jpg"
     }
     if (ownerDisplayName == GarminUserIds.thomas) {
       return "/Thomas.png"

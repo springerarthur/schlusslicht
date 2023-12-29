@@ -113,7 +113,10 @@ export default class GarminConnectSync {
         await mongoDbClient
             .db("schlusslicht")
             .collection<KeyValuePair>("configuration")
-            .insertOne({ key: 'lastUpdateTimeStamp', value: new Date()});
+            .updateOne(
+                { key: "lastUpdateTimeStamp" },
+                { "$set": { value: new Date() } },
+                { "upsert": true });
     }
 }
 

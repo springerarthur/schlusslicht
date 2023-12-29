@@ -158,7 +158,6 @@ export default function Home({ activities }) {
             <div className="alert alert-danger" style={{ display: Object.keys(activities).length === 0 ? 'visible' : 'none' }} role="alert">
               Es konnten keine Daten geladen werden!
             </div>
-{process.env.GARMIN_EMAIL} - {process.env.GARMIN_PWD}
             <div className="col-2 mt-5 profile-icons text-end">
               <Image src="/Daniel.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle profile-left" alt="Daniel" />
               <Image src="/Waldi.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle" alt="Waldi" />

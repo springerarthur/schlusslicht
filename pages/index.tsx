@@ -12,7 +12,7 @@ moment.locale('de');
 export async function getServerSideProps() {
   const garminConnectSync = new GarminConnectSync();
   await garminConnectSync.importDataFromGarminConnect();
-
+  
   try {
     const client = await clientPromise;
 
@@ -158,7 +158,7 @@ export default function Home({ activities }) {
             <div className="alert alert-danger" style={{ display: Object.keys(activities).length === 0 ? 'visible' : 'none' }} role="alert">
               Es konnten keine Daten geladen werden!
             </div>
-
+{process.env.GARMIN_EMAIL} - {process.env.GARMIN_PWD}
             <div className="col-2 mt-5 profile-icons text-end">
               <Image src="/Daniel.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle profile-left" alt="Daniel" />
               <Image src="/Waldi.png" width={profileImageWidth} height={profileImageWidth} className="mb-2 rounded-circle" alt="Waldi" />
@@ -225,10 +225,10 @@ export default function Home({ activities }) {
                 showTimelineMarker = true;
               }
 
-              function formatDuration(movingDuration: number): string {
-                const hours: number = Math.floor(movingDuration / 3600);
-                const minutes: number = Math.floor((movingDuration % 3600) / 60);
-                const seconds: number = Math.floor(movingDuration % 60);
+              function formatDuration(duration: number): string {
+                const hours: number = Math.floor(duration / 3600);
+                const minutes: number = Math.floor((duration % 3600) / 60);
+                const seconds: number = Math.floor(duration % 60);
             
                 // Füge führende Nullen hinzu, wenn die Werte einstellig sind
                 const formattedhours: string = (hours < 10) ? "0" + hours : hours.toString();
@@ -246,7 +246,7 @@ export default function Home({ activities }) {
                     </div>
                     <div className="activity-details col-9 flex-shrink-1 rounded py-2 px-3 mr-3">
                       <h6> {activity.activityName}</h6>
-                      {getSportIdIcon(activity.sportTypeId)}{(activity.distance / 1000).toFixed(2)}Km ⏱️{formatDuration(activity.movingDuration)}
+                      {getSportIdIcon(activity.sportTypeId)}{(activity.distance / 1000).toFixed(2)}Km ⏱️{formatDuration(activity.duration)}
                     </div>
                   </div>
                 </div></>

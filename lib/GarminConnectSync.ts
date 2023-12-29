@@ -4,22 +4,17 @@ import { GarminConnect } from "garmin-connect";
 import { GarminUserIds, SportTypeIds, getActivitiesForUserURL } from './GarminConstants';
 
 export default class GarminConnectSync {
-    private static lastUpdate: Date;
-
     readonly syncInterval: number = 15;
 
     async importDataFromGarminConnect(force: boolean = false) {
         try {
-            console.log(`Check for import data timestamp. GarminConnectSync.lastUpdate=${GarminConnectSync.lastUpdate}`);
-            if (GarminConnectSync.lastUpdate === undefined) {
-                GarminConnectSync.lastUpdate = new Date();
-            }
+            const lastUpdateTimeStamp = await this.getLastUpdateTimeStampFromDb();
 
-            if (force || this.shouldUpdate(GarminConnectSync.lastUpdate)) {
-                console.log(`Import data from garmin connect: Force=${force}, lastUpdate=${GarminConnectSync.lastUpdate}`);
+            if (force || this.shouldUpdate(lastUpdateTimeStamp)) {
+                console.log(`Import data from garmin connect: Force=${force}, lastUpdate=${lastUpdateTimeStamp}`);
                 await this.importData();
 
-                GarminConnectSync.lastUpdate = new Date();
+                await this.updateLastUpdateTimeStampInDb();
             }
         } catch (e) {
             console.error(e);
@@ -33,7 +28,7 @@ export default class GarminConnectSync {
         });
         await GCClient.login();
 
-        const activitiesFromDb = await this.getActivitiesFromMongoDb();
+        const activitiesFromDb = await this.getActivitiesFromDb();
 
         await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.arthur);
         await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.waldi);
@@ -64,7 +59,7 @@ export default class GarminConnectSync {
                 const garminStartDate = new Date(activityFromGarmin.startTimeLocal);
                 let now = new Date();
                 if (garminStartDate.getFullYear() === now.getFullYear() && garminStartDate.getMonth() === now.getMonth()) {
-                    await this.insertActivityToMongoDb(activityFromGarmin);
+                    await this.insertActivityToDb(activityFromGarmin);
                 }
             }
         } catch (e) {
@@ -81,7 +76,7 @@ export default class GarminConnectSync {
         return differenzInMinuten > this.syncInterval;
     }
 
-    private async getActivitiesFromMongoDb(): Promise<IActivity[]> {
+    private async getActivitiesFromDb(): Promise<IActivity[]> {
         const mongoDbClient = await clientPromise;
 
         return await mongoDbClient
@@ -91,12 +86,38 @@ export default class GarminConnectSync {
             .toArray();
     }
 
-    private async insertActivityToMongoDb(activity: IActivity) {
+    private async insertActivityToDb(activity: IActivity) {
         const mongoDbClient = await clientPromise;
 
-        return await mongoDbClient
+        await mongoDbClient
             .db("schlusslicht")
             .collection<IActivity>("activities")
             .insertOne(activity);
     }
+
+    private async getLastUpdateTimeStampFromDb(): Promise<Date> {
+        const mongoDbClient = await clientPromise;
+
+        let lastUpdateTimeStamp = (await mongoDbClient
+            .db("schlusslicht")
+            .collection<KeyValuePair>("configuration")
+            .findOne({ key: "lastUpdateTimeStamp" }) as KeyValuePair)
+            ?.value ?? new Date();
+
+        return new Date(lastUpdateTimeStamp);
+    }
+
+    private async updateLastUpdateTimeStampInDb() {
+        const mongoDbClient = await clientPromise;
+
+        await mongoDbClient
+            .db("schlusslicht")
+            .collection<KeyValuePair>("configuration")
+            .insertOne({ key: 'lastUpdateTimeStamp', value: new Date()});
+    }
+}
+
+export interface KeyValuePair {
+    key: string;
+    value: any;
 }

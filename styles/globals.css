@@ -76,7 +76,7 @@ body {
     background: #f8f9fa;
 }
 
-#progress-container {
+.progress-container {
     margin-top: 20px;
     position: relative;
 }

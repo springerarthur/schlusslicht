@@ -1,20 +1,29 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
-import clientPromise from "./mongodb";
 import { GarminConnect } from "garmin-connect";
-import { GarminUserIds, SportTypeIds, getActivitiesForUserURL } from './GarminConstants';
+import { SportTypeIds, getActivitiesForUserURL } from './GarminConstants';
+import { Users } from "../datastore/Users";
+import ActivityService from "./ActivityService";
+import ConfigurationService from "./ConfigurationService";
 
 export default class GarminConnectSync {
     readonly syncInterval: number = 15;
 
+    private activityService = new ActivityService();
+    private configurationService = new ConfigurationService();
+
     async importDataFromGarminConnect(force: boolean = false) {
+        if (!force && process.env.DISABLE_AUTOUPDATE) {
+            return;
+        }
+
         try {
-            const lastUpdateTimeStamp = await this.getLastUpdateTimeStampFromDb();
+            const lastUpdateTimeStamp = await this.configurationService.getLastUpdateTimeStamp();
 
             if (force || this.shouldUpdate(lastUpdateTimeStamp)) {
                 console.log(`Import data from garmin connect: Force=${force}, lastUpdate=${lastUpdateTimeStamp}`);
                 await this.importData();
 
-                await this.updateLastUpdateTimeStampInDb();
+                await this.configurationService.upsertLastUpdateTimeStamp();
             }
         } catch (e) {
             console.error(e);
@@ -28,17 +37,11 @@ export default class GarminConnectSync {
         });
         await GCClient.login();
 
-        const activitiesFromDb = await this.getActivitiesFromDb();
+        const activitiesFromDb = await this.activityService.getActivities();
 
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.arthur);
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.waldi);
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.daniel);
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.roland);
-
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.alexH);
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.alexS);
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.jan);
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, GarminUserIds.thomas);
+        Users.forEach(async user => {
+            await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, user.garminUserId);
+        });
     }
 
     private async addActivitiesIfNotExists(activitiesFromDb: IActivity[], gcClient: GarminConnect, garminConnectUserId: string) {
@@ -59,7 +62,7 @@ export default class GarminConnectSync {
                 const garminStartDate = new Date(activityFromGarmin.startTimeLocal);
                 let now = new Date();
                 if (garminStartDate.getFullYear() === now.getFullYear() && garminStartDate.getMonth() === now.getMonth()) {
-                    await this.insertActivityToDb(activityFromGarmin);
+                    await this.activityService.insertActivity(activityFromGarmin);
                 }
             }
         } catch (e) {
@@ -75,52 +78,4 @@ export default class GarminConnectSync {
 
         return differenzInMinuten > this.syncInterval;
     }
-
-    private async getActivitiesFromDb(): Promise<IActivity[]> {
-        const mongoDbClient = await clientPromise;
-
-        return await mongoDbClient
-            .db("schlusslicht")
-            .collection<IActivity>("activities")
-            .find()
-            .toArray();
-    }
-
-    private async insertActivityToDb(activity: IActivity) {
-        const mongoDbClient = await clientPromise;
-
-        await mongoDbClient
-            .db("schlusslicht")
-            .collection<IActivity>("activities")
-            .insertOne(activity);
-    }
-
-    private async getLastUpdateTimeStampFromDb(): Promise<Date> {
-        const mongoDbClient = await clientPromise;
-
-        let lastUpdateTimeStamp = (await mongoDbClient
-            .db("schlusslicht")
-            .collection<KeyValuePair>("configuration")
-            .findOne({ key: "lastUpdateTimeStamp" }) as KeyValuePair)
-            ?.value ?? new Date();
-
-        return new Date(lastUpdateTimeStamp);
-    }
-
-    private async updateLastUpdateTimeStampInDb() {
-        const mongoDbClient = await clientPromise;
-
-        await mongoDbClient
-            .db("schlusslicht")
-            .collection<KeyValuePair>("configuration")
-            .updateOne(
-                { key: "lastUpdateTimeStamp" },
-                { "$set": { value: new Date() } },
-                { "upsert": true });
-    }
-}
-
-export interface KeyValuePair {
-    key: string;
-    value: any;
 }

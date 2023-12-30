@@ -7,9 +7,6 @@ export const Team1: IUser[] = [
     Roland,
     Waldi,
 ];
-export function isInTeam1(garminUserId: string): boolean {
-    return Team1.find(user => user.garminUserId === garminUserId) !== undefined;
-};
 
 export const Team2: IUser[] = [
     AlexH,
@@ -17,6 +14,3 @@ export const Team2: IUser[] = [
     Thomas,
     Jan,
 ];
-export function isInTeam2(garminUserId: string): boolean {
-    return Team2.find(user => user.garminUserId === garminUserId) !== undefined;
-};

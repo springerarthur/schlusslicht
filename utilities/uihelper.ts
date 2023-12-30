@@ -1,9 +1,7 @@
-import { IActivity } from 'garmin-connect/dist/garmin/types';
 import moment from 'moment';
 import { SportTypeIds } from '../lib/GarminConstants';
-import { isInTeam1, isInTeam2 } from '../datastore/Teams';
 
-export class UiHelper {
+export default class UiHelper {
     public static formatDuration(duration: number): string {
         const hours: number = Math.floor(duration / 3600);
         const minutes: number = Math.floor((duration % 3600) / 60);
@@ -14,15 +12,6 @@ export class UiHelper {
         const formattedSeconds: string = (seconds < 10) ? "0" + seconds : seconds.toString();
 
         return formattedhours + ":" + formattedMinutes + ":" + formattedSeconds;
-    }
-
-    public static getTotalSumOfDistanz(team1Activities: IActivity[], sportTypeId: number) {
-        var sumDistance = 0;
-        team1Activities.filter(activity => activity.sportTypeId == sportTypeId).forEach(function (activity) {
-            sumDistance += (activity.distance / 1000);
-        });
-
-        return sumDistance;
     }
 
     public static formatTimelineMarkerDate(date: string): string {
@@ -45,14 +34,5 @@ export class UiHelper {
             return "🏊";
         }
         return "";
-    }
-
-    public static getActivityTeamClassName(ownerDisplayName: string) {
-        if (isInTeam1(ownerDisplayName)) {
-            return 'activity-left';
-        }
-        if (isInTeam2(ownerDisplayName)) {
-            return 'activity-right';
-        }
     }
 }

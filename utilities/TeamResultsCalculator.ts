@@ -3,6 +3,7 @@ import IUser from "../lib/IUser";
 import { SportTypeIds } from "../lib/GarminConstants";
 import { ITeamResults } from "./ITeamResults";
 import { Distances } from "./Distances";
+import { Distance } from "./Distance";
 
 export default class TeamResultsCalculator {
   public getTeamResults(
@@ -10,41 +11,9 @@ export default class TeamResultsCalculator {
     team1: IUser[],
     team2: IUser[]
   ): ITeamResults {
-    const team1Distances = this.calculateDistancesForTeam(activities, team1);
-    const team2Distances = this.calculateDistancesForTeam(activities, team2);
-
-    const team1Score = this.calculateScoreForTeam(
-      team1Distances,
-      team2Distances
-    );
-    const team2Score = this.calculateScoreForTeam(
-      team2Distances,
-      team1Distances
-    );
-
-    const swimPercentage = this.calculatePercentage(
-      team1Distances.swimDistance.distance,
-      team2Distances.swimDistance.distance
-    );
-    const bikePercentage = this.calculatePercentage(
-      team1Distances.bikeDistance.distance,
-      team2Distances.bikeDistance.distance
-    );
-    const runPercentage = this.calculatePercentage(
-      team1Distances.runDistance.distance,
-      team2Distances.runDistance.distance
-    );
-
     return {
-      team1Distances: team1Distances,
-      team1Score: team1Score,
-
-      team2Distances: team2Distances,
-      team2Score: team2Score,
-
-      swimPercentage: swimPercentage,
-      bikePercentage: bikePercentage,
-      runPercentage: runPercentage,
+      team1Distances: this.calculateDistancesForTeam(activities, team1),
+      team2Distances: this.calculateDistancesForTeam(activities, team2),
     };
   }
 
@@ -54,24 +23,24 @@ export default class TeamResultsCalculator {
   ): Distances {
     const teamActivities = this.getActivitiesForTeam(activities, team);
 
-    const swimTotalDistance = this.sumTotalDistanceForSportType(
+    const swimDistance = this.sumTotalDistanceForSportType(
       teamActivities,
       SportTypeIds.swimming
     );
-    const bikeTotalDistance = this.sumTotalDistanceForSportType(
+    const bikeDistance = this.sumTotalDistanceForSportType(
       teamActivities,
       SportTypeIds.bike
     );
-    const runTotalDistance = this.sumTotalDistanceForSportType(
+    const runDistance = this.sumTotalDistanceForSportType(
       teamActivities,
       SportTypeIds.running
     );
 
-    return new Distances(
-      swimTotalDistance,
-      bikeTotalDistance,
-      runTotalDistance
-    );
+    return {
+      swimDistance: new Distance(swimDistance),
+      bikeDistance: new Distance(bikeDistance),
+      runDistance: new Distance(runDistance)
+    };
   }
 
   private getActivitiesForTeam(
@@ -91,33 +60,5 @@ export default class TeamResultsCalculator {
       .filter((activity) => activity.sportTypeId === sportTypeId)
       .map((activity) => activity.distance / 1000)
       .reduce((sum, distance) => sum + distance, 0);
-  }
-
-  private calculatePercentage(team1Distance: number, team2Distance: number) : number {
-    const totalDistance = team1Distance + team2Distance;
-    if (totalDistance == 0) {
-      return 0;
-    }
-
-    return (team1Distance / totalDistance) * 100;
-  }
-
-  private calculateScoreForTeam(
-    distances: Distances,
-    otherTeamDistances: Distances
-  ): number {
-    let score = 0;
-
-    if (distances.swimDistance > otherTeamDistances.swimDistance) {
-      score++;
-    }
-    if (distances.bikeDistance > otherTeamDistances.bikeDistance) {
-      score++;
-    }
-    if (distances.runDistance > otherTeamDistances.runDistance) {
-      score++;
-    }
-
-    return score;
   }
 }

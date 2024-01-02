@@ -75,21 +75,18 @@ export default function Home({
           <TeamProgress
             team1Distance={teamResults.team1Distances.swimDistance}
             team2Distance={teamResults.team2Distances.swimDistance}
-            percentage={teamResults.swimPercentage}
             sportTypeId={SportTypeIds.swimming}
           ></TeamProgress>
 
           <TeamProgress
             team1Distance={teamResults.team1Distances.bikeDistance}
             team2Distance={teamResults.team2Distances.bikeDistance}
-            percentage={teamResults.bikePercentage}
             sportTypeId={SportTypeIds.bike}
           ></TeamProgress>
 
           <TeamProgress
             team1Distance={teamResults.team1Distances.runDistance}
             team2Distance={teamResults.team2Distances.runDistance}
-            percentage={teamResults.runPercentage}
             sportTypeId={SportTypeIds.running}
           ></TeamProgress>
 

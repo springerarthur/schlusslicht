@@ -13,6 +13,7 @@ import {
 import ProfileImage from "./profile-image";
 import { ITeamResults } from "../utilities/ITeamResults";
 import styles from "./team-score.module.css";
+import { Distances } from "../utilities/Distances";
 
 export default function TeamScore({
   teamResults,
@@ -21,6 +22,12 @@ export default function TeamScore({
 }) {
   let cupWidth = 105;
   let cupHeight = 258;
+
+  const team1Score = calculateScoreForTeam(teamResults.team1Distances, teamResults.team2Distances);
+  const team2Score = calculateScoreForTeam(teamResults.team2Distances, teamResults.team1Distances);
+
+  const team1Wins = team1Score > team2Score;
+  const team2Wins = team2Score > team2Score;
 
   return (
     <div className="row justify-content-center">
@@ -41,8 +48,8 @@ export default function TeamScore({
 
       <div className={"col-2 " + styles.cup}>
         <h1 className={styles.score}>
-          <span>{teamResults.team1Score}</span> :{" "}
-          <span>{teamResults.team2Score}</span>
+          <span>{team1Score}</span> :{" "}
+          <span>{team2Score}</span>
         </h1>
         <Image
           src="/Pokal-links.png"
@@ -51,8 +58,11 @@ export default function TeamScore({
           alt="Pokal Team Blau"
           className={
             "img-fluid mb-2 " +
-            styles.cupPart + " " +
-            (teamResults.team1Score > teamResults.team2Score ? styles.cupWinner : "")
+            styles.cupPart +
+            " " +
+            (team1Wins
+              ? styles.cupWinner
+              : "")
           }
         />
         <Image
@@ -62,8 +72,11 @@ export default function TeamScore({
           alt="Pokal Team Gelb"
           className={
             "img-fluid mb-2 " +
-            styles.cupPart + " " +
-            (teamResults.team2Score > teamResults.team1Score ? styles.cupWinner : "")
+            styles.cupPart +
+            " " +
+            (team2Wins
+              ? styles.cupWinner
+              : "")
           }
         />
       </div>
@@ -76,12 +89,27 @@ export default function TeamScore({
         />
         <ProfileImage user={AlexS} size={60} className={"mb-2 "} />
         <ProfileImage user={Thomas} size={60} className={"mb-2 "} />
-        <ProfileImage
-          user={Jan}
-          size={60}
-          className={"mb-2 " + styles.right}
-        />
+        <ProfileImage user={Jan} size={60} className={"mb-2 " + styles.right} />
       </div>
     </div>
   );
+
+  function calculateScoreForTeam(
+    distances: Distances,
+    otherTeamDistances: Distances
+  ): number {
+    let score = 0;
+
+    if (distances.swimDistance > otherTeamDistances.swimDistance) {
+      score++;
+    }
+    if (distances.bikeDistance > otherTeamDistances.bikeDistance) {
+      score++;
+    }
+    if (distances.runDistance > otherTeamDistances.runDistance) {
+      score++;
+    }
+
+    return score;
+  }
 }

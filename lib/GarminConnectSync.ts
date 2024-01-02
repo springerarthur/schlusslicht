@@ -60,7 +60,7 @@ export default class GarminConnectSync {
             })).activityList as IActivity[];
 
             for (const activityFromGarmin of activitiesFromGarmin) {
-                if (activityFromGarmin.activityName !== 'Lippstadt Radfahren' && activityFromGarmin.sportTypeId !== SportTypeIds.running && activityFromGarmin.sportTypeId !== SportTypeIds.bike && activityFromGarmin.sportTypeId !== SportTypeIds.swimming) {
+                if (activityFromGarmin.sportTypeId !== SportTypeIds.running && activityFromGarmin.sportTypeId !== SportTypeIds.bike && activityFromGarmin.sportTypeId !== SportTypeIds.swimming) {
                     continue;
                 }
 

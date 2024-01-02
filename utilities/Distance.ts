@@ -10,7 +10,7 @@ export class Distance {
     return this.distance;
   }
 
-  public toString(): string {
+  toString(): string {
     const roundedDistance = Math.round(this.distance * 100) / 100;
 
     const formattedDistance = roundedDistance.toLocaleString("de-DE", {

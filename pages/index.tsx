@@ -1,29 +1,24 @@
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { IActivity } from 'garmin-connect/dist/garmin/types';
 
-import clientPromise from '../lib/mongodb'
-import GarminConnectSync from '../lib/GarminConnectSync';
-
-import { Team1, Team2 } from '../datastore/Teams';
 import { AlexH, AlexS, Arthur, Daniel, Jan, Roland, Thomas, Users, Waldi } from '../datastore/Users';
+import { Team1, Team2 } from '../datastore/Teams';
+
 import TeamScoreCalculator from '../utilities/TeamPointCalculator';
 import UiHelper from '../utilities/UiHelper';
 
-export const getServerSideProps = (async () => {
+import ActivityService from '../lib/ActivityService';
+import GarminConnectSync from '../lib/GarminConnectSync';
+
+import { IActivity } from 'garmin-connect/dist/garmin/types';
+
+export async function getServerSideProps() {
   const garminConnectSync = new GarminConnectSync();
   await garminConnectSync.importDataFromGarminConnect();
 
   try {
-    const client = await clientPromise;
-
-    const activities = await client
-      .db("schlusslicht")
-      .collection("activities")
-      .find()
-      .sort({ startTimeLocal: -1 })
-      .toArray();
+    const activityService = new ActivityService();
+    const activities = await activityService.getActivities();
 
     return {
       props: { activities: JSON.parse(JSON.stringify(activities)) },
@@ -31,13 +26,12 @@ export const getServerSideProps = (async () => {
   } catch (e) {
     console.error(e);
   }
-
   return {
     props: { activities: { activities: [{}] } },
   };
-}) satisfies GetServerSideProps<{ activities: IActivity[] }>
+}
 
-export default function Home({ activities }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ activities }) {
   let lastTimelineMarkerText: string;
 
   const teamScoreCalculator = new TeamScoreCalculator(Team1, Team2);
@@ -157,9 +151,9 @@ export default function Home({ activities }: InferGetServerSidePropsType<typeof 
 
 function getActivityTeamClassName(ownerDisplayName: string) {
   if (Team1.some(user => user.garminUserId === ownerDisplayName)) {
-      return 'activity-left';
+    return 'activity-left';
   }
   if (Team2.some(user => user.garminUserId === ownerDisplayName)) {
-      return 'activity-right';
+    return 'activity-right';
   }
 }

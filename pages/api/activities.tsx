@@ -7,7 +7,7 @@ export default async function handler(
 ) {
     const activityService = new ActivityService();
 
-    const activities = activityService.getActivities();
+    const activities = await activityService.getActivities();
 
     await new Promise(f => setTimeout(f, 5000));
 

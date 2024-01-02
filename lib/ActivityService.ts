@@ -9,6 +9,7 @@ export default class ActivityService {
             .db("schlusslicht")
             .collection<IActivity>("activities")
             .find()
+            .sort({ startTimeLocal: -1 })
             .toArray();
     }
 

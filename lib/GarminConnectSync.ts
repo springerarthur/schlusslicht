@@ -30,7 +30,6 @@ export default class GarminConnectSync {
 
         try {
             if (force || await this.updateRequired()) {
-                console.log(`Import data from garmin connect: Force=${force}, lastUpdate=${lastUpdateTimeStamp}`);
                 await this.importData();
 
                 await this.configurationService.upsertLastUpdateTimeStamp();
@@ -78,8 +77,5 @@ export default class GarminConnectSync {
         } catch (e) {
             console.error(e);
         }
-    }
-
-    private shouldUpdate(date: Date): boolean {
     }
 }

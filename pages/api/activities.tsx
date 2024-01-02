@@ -12,5 +12,7 @@ export default async function handler(
   const activityService = new ActivityService();
   const activities = await activityService.getActivities();
 
+  // await new Promise((f) => setTimeout(f, 5000));
+
   response.status(200).json(JSON.parse(JSON.stringify(activities)));
 }

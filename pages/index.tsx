@@ -85,7 +85,7 @@ export default function Home({
       <main>
         <div className="container mt-4 main-content text-center">
           {isLoading && (
-            <div className="alert alert-info">
+            <div className="alert alert-info fixed-top update-activities">
               <div
                 className="spinner-border spinner-border-sm text-info me-2"
                 role="status"

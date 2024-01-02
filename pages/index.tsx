@@ -5,7 +5,7 @@ import { AlexH, AlexS, Arthur, Daniel, Jan, Roland, Thomas, Users, Waldi } from 
 import { Team1, Team2 } from '../datastore/Teams';
 
 import TeamScoreCalculator from '../utilities/TeamPointCalculator';
-import UiHelper from '../utilities/UiHelper';
+import UiHelper from '../utilities/UiHelper2';
 
 import ActivityService from '../lib/ActivityService';
 import GarminConnectSync from '../lib/GarminConnectSync';

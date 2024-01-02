@@ -48,9 +48,15 @@ export default class GarminConnectSync {
 
     const activitiesFromDb = await this.activityService.getActivities();
 
-    Users.forEach(async user => {
-        await this.addActivitiesIfNotExists(activitiesFromDb, GCClient, user.garminUserId);
-    });
+    await Promise.all(
+      Users.map(async (user) => {
+        await this.addActivitiesIfNotExists(
+          activitiesFromDb,
+          GCClient,
+          user.garminUserId
+        );
+      })
+    );
   }
 
   private async addActivitiesIfNotExists(

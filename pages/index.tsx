@@ -43,7 +43,8 @@ export default function Home({
       .then((data) => {
         setActivities(data);
         setLoading(false);
-      });
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   const teamResultsCalculator = new TeamResultsCalculator();

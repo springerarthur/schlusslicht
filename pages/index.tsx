@@ -35,16 +35,29 @@ export default function Home({
   initialActivities: IActivity[];
 }) {
   const [activities, setActivities] = useState(initialActivities);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    let updateCompleted = false;
+
+    setTimeout(() => {
+      if (!updateCompleted) {
+        setLoading(true);
+      }
+    }, 1000);
+
     fetch("/api/activities")
       .then((res) => res.json())
       .then((data) => {
         setActivities(data);
         setLoading(false);
+        updateCompleted = true;
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+        updateCompleted = true;
+      });
   }, []);
 
   const teamResultsCalculator = new TeamResultsCalculator();

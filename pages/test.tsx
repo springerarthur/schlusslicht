@@ -1,58 +1,39 @@
-// Importe
-import { useState, useEffect } from 'react';
+import { IActivity } from "garmin-connect/dist/garmin/types";
+import ActivityService from "../lib/ActivityService";
+import { useEffect, useState } from "react";
 
-// Typen
-interface Data {
-  // Hier die Typen für deine Daten definieren
-  // Beispiel: 
-  id: number;
-  name: string;
+export async function getServerSideProps() {
+  try {
+    const activityService = new ActivityService();
+    const activities = await activityService.getActivities();
+
+    return {
+      props: { initialActivities: JSON.parse(JSON.stringify(activities)) },
+    };
+  } catch (e) {
+    console.error(e);
+  }
+  return {
+    props: { initialActivities: { initialActivities: [{}] } },
+  };
 }
 
-// Deine Funktionskomponente
-const YourPage = () => {
-  // State für die geladenen Daten
-  const [data, setData] = useState<Data[]>([]);
+export default function Home({
+  initialActivities,
+}: {
+  initialActivities: IActivity[];
+}) {
+  const [activities, setActivities] = useState(initialActivities);
+  const [isLoading, setLoading] = useState(true);
 
-  // State, um den Ladezustand zu verfolgen
-  const [loading, setLoading] = useState<boolean>(true);
-
-  // useEffect für das Nachladen der Daten
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Daten laden, z.B. von einer API
-        const response = await fetch('api/activities');
-        const result = await response.json();
-
-        // Daten setzen und Ladezustand aktualisieren
-        setData(result);
+    fetch("/api/activities")
+      .then((res) => res.json())
+      .then((data) => {
+        setActivities(data);
         setLoading(false);
-      } catch (error) {
-        console.error('Fehler beim Laden der Daten:', error);
-        setLoading(false);
-      }
-    };
+      });
+  }, []);
 
-    // Funktion für das Nachladen aufrufen
-    fetchData();
-  }, []); // Leeres Abhängigkeitsarray bedeutet, dass der Effekt nur einmal nach dem Rendern aufgerufen wird
-
-  return (
-    <div>
-      {loading ? (
-        // Anzeige während des Ladens
-        <p>Lade Daten...</p>
-      ) : (
-        // Anzeige nach dem Laden
-        <ul>
-          {data.map((item) => (
-            <li key={item.id}>{item.name}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+  return <></>;
 };
-
-export default YourPage;

@@ -38,11 +38,9 @@ export default class TeamResultsCalculator {
     return {
       team1Distances: team1Distances,
       team1Score: team1Score,
-      team1Wins: team1Score > team2Score,
 
       team2Distances: team2Distances,
       team2Score: team2Score,
-      team2Wins: team2Score > team1Score,
 
       swimPercentage: swimPercentage,
       bikePercentage: bikePercentage,

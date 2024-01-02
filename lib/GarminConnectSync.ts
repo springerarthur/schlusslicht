@@ -6,20 +6,30 @@ import ActivityService from "./ActivityService";
 import ConfigurationService from "./ConfigurationService";
 
 export default class GarminConnectSync {
+
     readonly syncInterval: number = 15;
 
     private activityService = new ActivityService();
     private configurationService = new ConfigurationService();
 
-    async importDataFromGarminConnect(force: boolean = false) {
+    public async updateRequired(): Promise<boolean> {
+        const lastUpdateTimeStamp = await this.configurationService.getLastUpdateTimeStamp();
+
+        const now = new Date();
+        const differenceInMs = now.getTime() - lastUpdateTimeStamp.getTime();
+
+        const differenceInMinutes = differenceInMs / (1000 * 60);
+
+        return differenceInMinutes > this.syncInterval;
+    }
+
+    public async importDataFromGarminConnect(force: boolean = false) {
         if (!force && process.env.DISABLE_AUTOUPDATE) {
             return;
         }
 
         try {
-            const lastUpdateTimeStamp = await this.configurationService.getLastUpdateTimeStamp();
-
-            if (force || this.shouldUpdate(lastUpdateTimeStamp)) {
+            if (force || await this.updateRequired()) {
                 console.log(`Import data from garmin connect: Force=${force}, lastUpdate=${lastUpdateTimeStamp}`);
                 await this.importData();
 
@@ -71,11 +81,5 @@ export default class GarminConnectSync {
     }
 
     private shouldUpdate(date: Date): boolean {
-        const now = new Date();
-        const differenzInMs = now.getTime() - date.getTime();
-
-        const differenzInMinuten = differenzInMs / (1000 * 60);
-
-        return differenzInMinuten > this.syncInterval;
     }
 }

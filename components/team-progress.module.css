@@ -1,0 +1,50 @@
+.container {
+  margin-top: 20px;
+  position: relative;
+}
+
+.progress {
+  background-color: #f9d6b4;
+  height: 50px;
+  border-radius: 25px;
+}
+.empty {
+  background-color: #d8d8d8;
+}
+
+.progressbar {
+  background-color: #96faec;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+
+.text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+  font-size: 24pt;
+  color: rgb(24, 24, 24);
+}
+
+.text1 {
+  left: 0;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.text2 {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+}
+
+.text3 {
+  right: 0;
+  text-align: right;
+  padding-right: 10px;
+}

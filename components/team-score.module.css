@@ -1,0 +1,31 @@
+.icons {
+  width: 60px;
+  margin: 0;
+  padding: 0;
+  padding-top: 54px;
+}
+
+.left {
+  margin-right: -25px;
+}
+
+.right {
+  margin-left: -25px;
+}
+
+.score {
+  font-size: 4.5em;
+}
+
+.cup {
+  width: 230px;
+  padding: 0;
+}
+
+.cupPart {
+  width: 105px;
+}
+
+.cupWinner {
+  width: 115px;
+}

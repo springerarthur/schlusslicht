@@ -21,6 +21,7 @@ import UiHelper from "../utilities/UiHelper";
 
 import ActivityService from "../lib/ActivityService";
 import { useEffect, useState } from "react";
+import { Distance } from "../utilities/Distance";
 
 export async function getServerSideProps() {
   try {
@@ -178,7 +179,14 @@ export default function Home({
           </div>
 
           <div className="progress-container">
-            <div className="progress">
+            <div
+              className={
+                "progress" +
+                (teamResults.team1Distances.swimDistance.distance === 0
+                  ? " progress-empty"
+                  : "")
+              }
+            >
               <div
                 id="progress-bar-swim"
                 className="progress-bar"
@@ -189,17 +197,24 @@ export default function Home({
                 style={{ width: teamResults.swimPercentage + "%" }}
               >
                 <div className="progress-text text1">
-                  {teamResults.team1Distances.getFormattedSwimDistance()}
+                  {teamResults.team1Distances.swimDistance.toString()}
                 </div>
                 <div className="progress-text text2">🏊</div>
                 <div className="progress-text text3">
-                  {teamResults.team2Distances.getFormattedSwimDistance()}
+                  {teamResults.team2Distances.swimDistance.toString()}
                 </div>
               </div>
             </div>
           </div>
           <div className="progress-container">
-            <div className="progress">
+          <div
+              className={
+                "progress" +
+                (teamResults.team1Distances.bikeDistance.distance === 0
+                  ? " progress-empty"
+                  : "")
+              }
+            >
               <div
                 id="progress-bar-bike"
                 className="progress-bar"
@@ -210,17 +225,23 @@ export default function Home({
                 style={{ width: teamResults.bikePercentage + "%" }}
               >
                 <div className="progress-text text1">
-                  {teamResults.team1Distances.getFormattedBikeDistance()}
+                  {teamResults.team1Distances.bikeDistance.toString()}
                 </div>
                 <div className="progress-text text2">🚴</div>
                 <div className="progress-text text3">
-                  {teamResults.team2Distances.getFormattedBikeDistance()}
+                  {teamResults.team2Distances.bikeDistance.toString()}
                 </div>
               </div>
             </div>
           </div>
-          <div className="progress-container">
-            <div className="progress">
+          <div className="progress-container"><div
+              className={
+                "progress" +
+                (teamResults.team1Distances.runDistance.distance === 0
+                  ? " progress-empty"
+                  : "")
+              }
+            >
               <div
                 id="progress-bar-run"
                 className="progress-bar"
@@ -231,11 +252,11 @@ export default function Home({
                 style={{ width: teamResults.runPercentage + "%" }}
               >
                 <div className="progress-text text1">
-                  {teamResults.team1Distances.getFormattedRunDistance()}
+                  {teamResults.team1Distances.runDistance.toString()}
                 </div>
                 <div className="progress-text text2">🏃</div>
                 <div className="progress-text text3">
-                  {teamResults.team2Distances.getFormattedRunDistance()}
+                  {teamResults.team2Distances.runDistance.toString()}
                 </div>
               </div>
             </div>
@@ -258,6 +279,8 @@ export default function Home({
                 lastTimelineMarkerText = timelineMarkerText;
                 showTimelineMarker = true;
               }
+
+              const distance = new Distance(activity.distance / 1000);
 
               return (
                 <div key={activity.activityId}>
@@ -285,7 +308,7 @@ export default function Home({
                       <div className="activity-details col-9 flex-shrink-1 rounded py-2 px-3 mr-3">
                         <h6> {activity.activityName}</h6>
                         {UiHelper.getSportIdIcon(activity.sportTypeId)}
-                        {(activity.distance / 1000).toFixed(2)}
+                        {distance.toString()}
                         Km ⏱️
                         {UiHelper.formatDuration(activity.duration)}
                       </div>

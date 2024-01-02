@@ -91,6 +91,9 @@ body {
   height: 50px;
   border-radius: 25px;
 }
+.progress-empty {
+  background-color: #d8d8d8;
+}
 
 .progress-bar {
   background-color: #96faec;

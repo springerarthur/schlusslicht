@@ -2,7 +2,7 @@ import { IActivity } from "garmin-connect/dist/garmin/types";
 import IUser from "../lib/IUser";
 import { SportTypeIds } from "../lib/GarminConstants";
 import { ITeamResults } from "./ITeamResults";
-import { Distances } from "./IDistances";
+import { Distances } from "./Distances";
 
 export default class TeamResultsCalculator {
   public getTeamResults(
@@ -23,16 +23,16 @@ export default class TeamResultsCalculator {
     );
 
     const swimPercentage = this.calculatePercentage(
-      team1Distances.swimDistance,
-      team2Distances.swimDistance
+      team1Distances.swimDistance.distance,
+      team2Distances.swimDistance.distance
     );
     const bikePercentage = this.calculatePercentage(
-      team1Distances.bikeDistance,
-      team2Distances.bikeDistance
+      team1Distances.bikeDistance.distance,
+      team2Distances.bikeDistance.distance
     );
     const runPercentage = this.calculatePercentage(
-      team1Distances.runDistance,
-      team2Distances.runDistance
+      team1Distances.runDistance.distance,
+      team2Distances.runDistance.distance
     );
 
     return {
@@ -42,7 +42,7 @@ export default class TeamResultsCalculator {
 
       team2Distances: team2Distances,
       team2Score: team2Score,
-      team2Wins: team1Score > team2Score,
+      team2Wins: team2Score > team1Score,
 
       swimPercentage: swimPercentage,
       bikePercentage: bikePercentage,
@@ -89,18 +89,18 @@ export default class TeamResultsCalculator {
     teamActivities: IActivity[],
     sportTypeId: number
   ): number {
-    let sumDistance = 0;
-    teamActivities
-      .filter((activity) => activity.sportTypeId == sportTypeId)
-      .forEach(function (activity) {
-        sumDistance += activity.distance / 1000;
-      });
-
-    return sumDistance;
+    return teamActivities
+      .filter((activity) => activity.sportTypeId === sportTypeId)
+      .map((activity) => activity.distance / 1000)
+      .reduce((sum, distance) => sum + distance, 0);
   }
 
-  private calculatePercentage(team1Distance: number, team2Distance: number) {
+  private calculatePercentage(team1Distance: number, team2Distance: number) : number {
     const totalDistance = team1Distance + team2Distance;
+    if (totalDistance == 0) {
+      return 0;
+    }
+
     return (team1Distance / totalDistance) * 100;
   }
 

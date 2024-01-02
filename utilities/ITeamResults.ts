@@ -1,4 +1,4 @@
-import { Distances } from "./IDistances";
+import { Distances } from "./Distances";
 
 export interface ITeamResults {
   team1Score: number;

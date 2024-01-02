@@ -16,7 +16,7 @@ import {
 } from "../datastore/Users";
 import { Team1, Team2 } from "../datastore/Teams";
 
-import TeamScoreCalculator from "../utilities/TeamScoreCalculator";
+import TeamResultsCalculator from "../utilities/TeamResultsCalculator";
 import UiHelper from "../utilities/UiHelper";
 
 import ActivityService from "../lib/ActivityService";
@@ -57,24 +57,15 @@ export default function Home({
 
   let lastTimelineMarkerText: string;
 
-  const teamScoreCalculator = new TeamScoreCalculator(Team1, Team2);
-  const teamScore = teamScoreCalculator.getTeamScore(activities);
+  const teamResultsCalculator = new TeamResultsCalculator();
+  const teamResults = teamResultsCalculator.getTeamResults(
+    activities,
+    Team1,
+    Team2
+  );
 
-  let team1PokalWidth = 105;
-  let team1PokalHeight = 258;
-  let team2PokalWidth = 105;
-  let team2PokalHeight = 258;
-
-  const team1wins = teamScore.team1Score > teamScore.team2Score;
-  if (team1wins) {
-    team1PokalWidth = 115;
-    team1PokalHeight = 282;
-  }
-  const team2wins = teamScore.team2Score > teamScore.team1Score;
-  if (team2wins) {
-    team2PokalWidth = 115;
-    team2PokalHeight = 282;
-  }
+  let pokalWidth = 105;
+  let pokalHeight = 258;
 
   return (
     <div className="container">
@@ -127,29 +118,29 @@ export default function Home({
 
             <div className="col-2 pokal">
               <h1 className="points">
-                <span id="points-left">{teamScore.team1Score}</span> :{" "}
-                <span id="points-right">{teamScore.team2Score}</span>
+                <span id="points-left">{teamResults.team1Score}</span> :{" "}
+                <span id="points-right">{teamResults.team2Score}</span>
               </h1>
               <Image
                 src="/Pokal-links.png"
-                width={team1PokalWidth}
-                height={team1PokalHeight}
+                width={pokalWidth}
+                height={pokalHeight}
                 alt="Pokal Team Blau"
                 id="pokal-left"
                 className={
                   "img-fluid mb-2 pokal-part" +
-                  (team1wins ? " pokal-winner" : "")
+                  (teamResults.team1Wins ? " pokal-winner" : "")
                 }
               />
               <Image
                 src="/Pokal-rechts.png"
-                width={team2PokalWidth}
-                height={team2PokalHeight}
+                width={pokalWidth}
+                height={pokalHeight}
                 alt="Pokal Team Rot"
                 id="pokal-right"
                 className={
                   "img-fluid mb-2 pokal-part" +
-                  (team2wins ? " pokal-winner" : "")
+                  (teamResults.team2Wins ? " pokal-winner" : "")
                 }
               />
             </div>
@@ -195,14 +186,14 @@ export default function Home({
                 aria-valuenow={50}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                style={{ width: teamScore.swimPercentage + "%" }}
+                style={{ width: teamResults.swimPercentage + "%" }}
               >
                 <div className="progress-text text1">
-                  {teamScore.team1Distances.swimDistance.toFixed(2)}
+                  {teamResults.team1Distances.getFormattedSwimDistance()}
                 </div>
                 <div className="progress-text text2">🏊</div>
                 <div className="progress-text text3">
-                  {teamScore.team2Distances.swimDistance.toFixed(2)}
+                  {teamResults.team2Distances.getFormattedSwimDistance()}
                 </div>
               </div>
             </div>
@@ -216,14 +207,14 @@ export default function Home({
                 aria-valuenow={50}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                style={{ width: teamScore.bikePercentage + "%" }}
+                style={{ width: teamResults.bikePercentage + "%" }}
               >
                 <div className="progress-text text1">
-                  {teamScore.team1Distances.bikeDistance.toFixed(2)}
+                  {teamResults.team1Distances.getFormattedBikeDistance()}
                 </div>
                 <div className="progress-text text2">🚴</div>
                 <div className="progress-text text3">
-                  {teamScore.team2Distances.bikeDistance.toFixed(2)}
+                  {teamResults.team2Distances.getFormattedBikeDistance()}
                 </div>
               </div>
             </div>
@@ -237,14 +228,14 @@ export default function Home({
                 aria-valuenow={50}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                style={{ width: teamScore.runPercentage + "%" }}
+                style={{ width: teamResults.runPercentage + "%" }}
               >
                 <div className="progress-text text1">
-                  {teamScore.team1Distances.runDistance.toFixed(2)}
+                  {teamResults.team1Distances.getFormattedRunDistance()}
                 </div>
                 <div className="progress-text text2">🏃</div>
                 <div className="progress-text text3">
-                  {teamScore.team2Distances.runDistance.toFixed(2)}
+                  {teamResults.team2Distances.getFormattedRunDistance()}
                 </div>
               </div>
             </div>
@@ -294,7 +285,8 @@ export default function Home({
                       <div className="activity-details col-9 flex-shrink-1 rounded py-2 px-3 mr-3">
                         <h6> {activity.activityName}</h6>
                         {UiHelper.getSportIdIcon(activity.sportTypeId)}
-                        {(activity.distance / 1000).toFixed(2)}Km ⏱️
+                        {(activity.distance / 1000).toFixed(2)}
+                        Km ⏱️
                         {UiHelper.formatDuration(activity.duration)}
                       </div>
                     </div>

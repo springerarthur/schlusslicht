@@ -1,26 +1,25 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import IUser from "../lib/IUser";
 import { SportTypeIds } from "../lib/GarminConstants";
-import { IScores } from "./ITeamScore";
-import { IDistances } from "./IDistances";
+import { ITeamResults } from "./ITeamResults";
+import { Distances } from "./IDistances";
 
-export default class TeamScoreCalculator {
-  private team1: IUser[];
-  private team2: IUser[];
+export default class TeamResultsCalculator {
+  public getTeamResults(
+    activities: IActivity[],
+    team1: IUser[],
+    team2: IUser[]
+  ): ITeamResults {
+    const team1Distances = this.calculateDistancesForTeam(activities, team1);
+    const team2Distances = this.calculateDistancesForTeam(activities, team2);
 
-  constructor(team1: IUser[], team2: IUser[]) {
-    this.team1 = team1;
-    this.team2 = team2;
-  }
-
-  public getTeamScore(activities: IActivity[]): IScores {
-    const team1Distances = this.calculateDistancesForTeam(
-      activities,
-      this.team1
+    const team1Score = this.calculateScoreForTeam(
+      team1Distances,
+      team2Distances
     );
-    const team2Distances = this.calculateDistancesForTeam(
-      activities,
-      this.team2
+    const team2Score = this.calculateScoreForTeam(
+      team2Distances,
+      team1Distances
     );
 
     const swimPercentage = this.calculatePercentage(
@@ -38,10 +37,12 @@ export default class TeamScoreCalculator {
 
     return {
       team1Distances: team1Distances,
-      team2Distances: team2Distances,
+      team1Score: team1Score,
+      team1Wins: team1Score > team2Score,
 
-      team1Score: this.calculateScoreForTeam(team1Distances, team2Distances),
-      team2Score: this.calculateScoreForTeam(team2Distances, team1Distances),
+      team2Distances: team2Distances,
+      team2Score: team2Score,
+      team2Wins: team1Score > team2Score,
 
       swimPercentage: swimPercentage,
       bikePercentage: bikePercentage,
@@ -52,7 +53,7 @@ export default class TeamScoreCalculator {
   private calculateDistancesForTeam(
     activities: IActivity[],
     team: IUser[]
-  ): IDistances {
+  ): Distances {
     const teamActivities = this.getActivitiesForTeam(activities, team);
 
     const swimTotalDistance = this.sumTotalDistanceForSportType(
@@ -68,11 +69,11 @@ export default class TeamScoreCalculator {
       SportTypeIds.running
     );
 
-    return {
-      swimDistance: swimTotalDistance,
-      bikeDistance: bikeTotalDistance,
-      runDistance: runTotalDistance,
-    };
+    return new Distances(
+      swimTotalDistance,
+      bikeTotalDistance,
+      runTotalDistance
+    );
   }
 
   private getActivitiesForTeam(
@@ -104,8 +105,8 @@ export default class TeamScoreCalculator {
   }
 
   private calculateScoreForTeam(
-    distances: IDistances,
-    otherTeamDistances: IDistances
+    distances: Distances,
+    otherTeamDistances: Distances
   ): number {
     let score = 0;
 

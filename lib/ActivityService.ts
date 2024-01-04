@@ -1,6 +1,5 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import clientPromise from "./mongodb";
-import { SportTypeIds } from "./GarminConstants";
 
 export default class ActivityService {
   public async getActivities(): Promise<IActivity[]> {
@@ -10,6 +9,22 @@ export default class ActivityService {
       .db("schlusslicht")
       .collection<IActivity>("activities")
       .find()
+      .sort({ startTimeLocal: -1 })
+      .toArray();
+  }
+
+  public async getActivitiesForUser(
+    garminUserId: string | undefined
+  ): Promise<IActivity[]> {
+    if (garminUserId === undefined) {
+      return [];
+    }
+    const mongoDbClient = await clientPromise;
+
+    return await mongoDbClient
+      .db("schlusslicht")
+      .collection<IActivity>("activities")
+      .find({ ownerDisplayName: garminUserId })
       .sort({ startTimeLocal: -1 })
       .toArray();
   }
@@ -27,10 +42,10 @@ export default class ActivityService {
     const mongoDbClient = await clientPromise;
 
     try {
-        const result = await mongoDbClient
-          .db("schlusslicht")
-          .collection<IActivity>("activities")
-          .deleteOne({ activityId: activitiyId });
+      const result = await mongoDbClient
+        .db("schlusslicht")
+        .collection<IActivity>("activities")
+        .deleteOne({ activityId: activitiyId });
 
       return await this.getActivities();
     } catch (err) {

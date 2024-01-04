@@ -12,7 +12,6 @@ import ActivitiesFeed from "../components/activities/activities-feed";
 import TeamProgress from "../components/team-progress";
 import TeamScore from "../components/team-score";
 import { SportTypeIds } from "../lib/GarminConstants";
-import UiHelper from "../utilities/UiHelper";
 
 export async function getServerSideProps() {
   try {

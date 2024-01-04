@@ -5,12 +5,15 @@ import UiHelper from "../../utilities/UiHelper";
 import { Team1, Team2 } from "../../datastore/Teams";
 import ProfileImage from "../profile-image";
 import styles from "./activities-feed.module.css";
+import { useState } from "react";
 
 export default function ActivitiesFeed({
-  activities,
+  initialActivities,
 }: {
-  activities: IActivity[];
+  initialActivities: IActivity[];
 }) {
+  const [activities, setActivities] = useState(initialActivities);
+
   let lastTimelineMarkerText: string;
 
   return (
@@ -24,8 +27,8 @@ export default function ActivitiesFeed({
           (user) => user.garminUserId == activity.ownerDisplayName
         );
 
-        if(user === undefined) {
-            return (<></>);
+        if (user === undefined) {
+          return <></>;
         }
 
         let showTimelineMarker = true;
@@ -37,6 +40,39 @@ export default function ActivitiesFeed({
         }
 
         const distance = new Distance(activity.distance / 1000);
+
+        function deleteActivity(
+          activityId: number,
+          activityName: string
+        ): void {
+          if (
+            window.confirm(
+              `Bist du sicher, dass du die Aktivität "${activityName}" löschen möchtest?`
+            )
+          ) {
+            try {
+              fetch("/api/activities/delete", {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: activityId }),
+              })
+                .then(async (response) => {
+                  if (response.ok) {
+                    const updatedActivities = await response.json();
+                    setActivities(updatedActivities);
+                  } else {
+                    const errorData = await response.json();
+                    console.error("Error:", errorData.message);
+                  }
+                })
+            } catch (error) {
+              console.error("Error deleting activity:", error);
+              alert("Fehler beim Löschen der Aktivität");
+            }
+          }
+        }
 
         return (
           <div key={activity.activityId}>
@@ -54,8 +90,21 @@ export default function ActivitiesFeed({
                 <div className="col-2">
                   <ProfileImage user={user} size={50} />
                 </div>
-                <div className={"col-9 flex-shrink-1 rounded py-2 px-3 mr-3 " + styles.details}>
-                  <h6> {activity.activityName}</h6>
+                <div
+                  className={
+                    "col-9 flex-shrink-1 rounded py-2 px-3 mr-3 " +
+                    styles.details
+                  }
+                >
+                  <span
+                    className={styles.deleteicon}
+                    onClick={() =>
+                      deleteActivity(activity.activityId, activity.activityName)
+                    }
+                  >
+                    ❌
+                  </span>
+                  <h6>{activity.activityName}</h6>
                   {UiHelper.getSportIdIcon(activity.sportTypeId)}
                   {distance.toString()}
                   Km ⏱️

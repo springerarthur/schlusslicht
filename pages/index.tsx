@@ -12,6 +12,7 @@ import ActivitiesFeed from "../components/activities/activities-feed";
 import TeamProgress from "../components/team-progress";
 import TeamScore from "../components/team-score";
 import { SportTypeIds } from "../lib/GarminConstants";
+import UiHelper from "../utilities/UiHelper";
 
 export async function getServerSideProps() {
   try {
@@ -104,7 +105,7 @@ export default function Home({
             sportTypeId={SportTypeIds.running}
           ></TeamProgress>
 
-          <ActivitiesFeed activities={activities}></ActivitiesFeed>
+          <ActivitiesFeed initialActivities={activities}></ActivitiesFeed>
         </div>
       </main>
     </div>

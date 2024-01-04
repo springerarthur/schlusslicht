@@ -29,3 +29,14 @@
 .cupWinner {
   width: 115px;
 }
+
+.totalTime {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.totalTime:hover,
+.totalTime:focus {
+  opacity: 0;
+  opacity: 1;
+}

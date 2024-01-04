@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import ActivityService from "../../lib/ActivityService";
-import GarminConnectSync from "../../lib/GarminConnectSync";
+import ActivityService from "../../../lib/ActivityService";
+import GarminConnectSync from "../../../lib/GarminConnectSync";
 
 export default async function handler(
   request: NextApiRequest,

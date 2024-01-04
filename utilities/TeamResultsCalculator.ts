@@ -13,7 +13,10 @@ export default class TeamResultsCalculator {
   ): ITeamResults {
     return {
       team1Distances: this.calculateDistancesForTeam(activities, team1),
+      team1TotalTime: this.calculateTotalTimeForTeam(activities, team1),
+
       team2Distances: this.calculateDistancesForTeam(activities, team2),
+      team2TotalTime: this.calculateTotalTimeForTeam(activities, team2),
     };
   }
 
@@ -39,8 +42,16 @@ export default class TeamResultsCalculator {
     return {
       swimDistance: new Distance(swimDistance),
       bikeDistance: new Distance(bikeDistance),
-      runDistance: new Distance(runDistance)
+      runDistance: new Distance(runDistance),
     };
+  }
+
+  calculateTotalTimeForTeam(activities: IActivity[], team: IUser[]): number {
+    const teamActivities = this.getActivitiesForTeam(activities, team);
+
+    return teamActivities
+      .map((activity) => activity.duration)
+      .reduce((sum, duration) => sum + duration, 0);
   }
 
   private getActivitiesForTeam(

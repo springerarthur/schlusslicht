@@ -27,7 +27,7 @@ export default function TeamScore({
   const team2Score = calculateScoreForTeam(teamResults.team2Distances, teamResults.team1Distances);
 
   const team1Wins = team1Score > team2Score;
-  const team2Wins = team2Score > team2Score;
+  const team2Wins = team2Score > team1Score;
 
   return (
     <div className="row justify-content-center">

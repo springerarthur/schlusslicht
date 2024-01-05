@@ -12,7 +12,7 @@ export default function ProfileImage({
   user: IUser;
   size: number;
   className?: string;
-  linkToProfile: boolean;
+  linkToProfile?: boolean;
 }) {
   if (linkToProfile) {
     return (

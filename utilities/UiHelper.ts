@@ -1,5 +1,5 @@
 import moment from "moment";
-import { SportTypeIds } from "../lib/GarminConstants";
+import { SportType } from "../lib/GarminConstants";
 
 export default class UiHelper {
   public static formatDuration(duration: number): string {
@@ -26,13 +26,13 @@ export default class UiHelper {
   }
 
   public static getSportIdIcon(sportTypeId: number): string {
-    if (sportTypeId === SportTypeIds.running) {
+    if (sportTypeId === SportType.RUNNING) {
       return "🏃";
     }
-    if (sportTypeId === SportTypeIds.bike) {
+    if (sportTypeId === SportType.BIKE) {
       return "🚴";
     }
-    if (sportTypeId === SportTypeIds.swimming) {
+    if (sportTypeId === SportType.SWIMMING) {
       return "🏊";
     }
     return "";

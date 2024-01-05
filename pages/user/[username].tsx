@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import IUser from "../../lib/IUser";
+import { User } from "../../lib/User";
 import UserService from "../../lib/UserService";
 import ProfileImage from "../../components/profile-image";
 import { IActivity } from "garmin-connect/dist/garmin/types";
@@ -22,7 +22,7 @@ export async function getServerSideProps(context) {
 }
 
 // Create the user page component
-export default function UserPage({ user, activities }: { user: IUser, activities: IActivity[] }) {
+export default function UserPage({ user, activities }: { user: User, activities: IActivity[] }) {
   return (
     <div className="container">
       <Head>

@@ -1,4 +1,4 @@
-export default interface IUser {
+export type User = {
     displayName: string;
     garminUserId: string;
     profileImg: string;

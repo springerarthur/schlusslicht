@@ -1,6 +1,6 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
-import IUser from "../lib/IUser";
-import { SportTypeIds } from "../lib/GarminConstants";
+import { User } from "../lib/User";
+import { SportType } from "../lib/GarminConstants";
 import { ITeamResults } from "./ITeamResults";
 import { Distances } from "./Distances";
 import { Distance } from "./Distance";
@@ -8,8 +8,8 @@ import { Distance } from "./Distance";
 export default class TeamResultsCalculator {
   public getTeamResults(
     activities: IActivity[],
-    team1: IUser[],
-    team2: IUser[]
+    team1: User[],
+    team2: User[]
   ): ITeamResults {
     return {
       team1Distances: this.calculateDistancesForTeam(activities, team1),
@@ -22,21 +22,21 @@ export default class TeamResultsCalculator {
 
   private calculateDistancesForTeam(
     activities: IActivity[],
-    team: IUser[]
+    team: User[]
   ): Distances {
     const teamActivities = this.getActivitiesForTeam(activities, team);
 
     const swimDistance = this.sumTotalDistanceForSportType(
       teamActivities,
-      SportTypeIds.swimming
+      SportType.SWIMMING
     );
     const bikeDistance = this.sumTotalDistanceForSportType(
       teamActivities,
-      SportTypeIds.bike
+      SportType.BIKE
     );
     const runDistance = this.sumTotalDistanceForSportType(
       teamActivities,
-      SportTypeIds.running
+      SportType.RUNNING
     );
 
     return {
@@ -46,7 +46,7 @@ export default class TeamResultsCalculator {
     };
   }
 
-  calculateTotalTimeForTeam(activities: IActivity[], team: IUser[]): number {
+  calculateTotalTimeForTeam(activities: IActivity[], team: User[]): number {
     const teamActivities = this.getActivitiesForTeam(activities, team);
 
     return teamActivities
@@ -56,7 +56,7 @@ export default class TeamResultsCalculator {
 
   private getActivitiesForTeam(
     activities: IActivity[],
-    team: IUser[]
+    team: User[]
   ): IActivity[] {
     return activities.filter((activity) =>
       team.some((user) => user.garminUserId === activity.ownerDisplayName)

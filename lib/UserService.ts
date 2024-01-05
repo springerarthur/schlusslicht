@@ -1,10 +1,10 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import clientPromise from "./mongodb";
-import IUser from "./IUser";
+import { User } from "./User";
 import { Users } from "../datastore/Users";
 
 export default class ActivityService {
-  public async getUserByGarminUserId(garminUserId: string): Promise<IUser | undefined> {
+  public async getUserByGarminUserId(garminUserId: string): Promise<User | undefined> {
     return Users.find((user) => user.garminUserId === garminUserId);
   }
 }

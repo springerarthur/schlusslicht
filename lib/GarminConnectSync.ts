@@ -1,6 +1,6 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import { GarminConnect } from "garmin-connect";
-import { SportTypeIds, getActivitiesForUserURL } from "./GarminConstants";
+import { SportType, getActivitiesForUserURL } from "./GarminConstants";
 import { Roland, Users } from "../datastore/Users";
 import ActivityService from "./ActivityService";
 import ConfigurationService from "./ConfigurationService";
@@ -74,9 +74,9 @@ export default class GarminConnectSync {
       await Promise.all(
         activitiesFromGarmin.map(async (activityFromGarmin) => {
           if (
-            activityFromGarmin.sportTypeId !== SportTypeIds.running &&
-            activityFromGarmin.sportTypeId !== SportTypeIds.bike &&
-            activityFromGarmin.sportTypeId !== SportTypeIds.swimming
+            activityFromGarmin.sportTypeId !== SportType.RUNNING &&
+            activityFromGarmin.sportTypeId !== SportType.BIKE &&
+            activityFromGarmin.sportTypeId !== SportType.SWIMMING
           ) {
             return;
           }

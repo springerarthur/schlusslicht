@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import ActivitiesFeed from "../components/activities/activities-feed";
 import TeamProgress from "../components/team-progress";
 import TeamScore from "../components/team-score";
-import { SportTypeIds } from "../lib/GarminConstants";
+import { SportType } from "../lib/GarminConstants";
 
 export async function getServerSideProps() {
   try {
@@ -89,19 +89,19 @@ export default function Home({
           <TeamProgress
             team1Distance={teamResults.team1Distances.swimDistance}
             team2Distance={teamResults.team2Distances.swimDistance}
-            sportTypeId={SportTypeIds.swimming}
+            sportTypeId={SportType.SWIMMING}
           ></TeamProgress>
 
           <TeamProgress
             team1Distance={teamResults.team1Distances.bikeDistance}
             team2Distance={teamResults.team2Distances.bikeDistance}
-            sportTypeId={SportTypeIds.bike}
+            sportTypeId={SportType.BIKE}
           ></TeamProgress>
 
           <TeamProgress
             team1Distance={teamResults.team1Distances.runDistance}
             team2Distance={teamResults.team2Distances.runDistance}
-            sportTypeId={SportTypeIds.running}
+            sportTypeId={SportType.RUNNING}
           ></TeamProgress>
 
           <ActivitiesFeed initialActivities={activities}></ActivitiesFeed>

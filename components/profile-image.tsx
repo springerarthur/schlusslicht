@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import IUser from "../lib/IUser";
+import { User } from "../lib/User";
 import Link from "next/link";
 
 export default function ProfileImage({
@@ -9,7 +9,7 @@ export default function ProfileImage({
   className = "",
   linkToProfile = true,
 }: {
-  user: IUser;
+  user: User;
   size: number;
   className?: string;
   linkToProfile?: boolean;

@@ -1,11 +1,13 @@
 import Head from "next/head";
+import { IActivity } from "garmin-connect/dist/garmin/types";
 
 import { User } from "../../lib/User";
 import UserService from "../../lib/UserService";
 import ProfileImage from "../../components/profile-image";
-import { IActivity } from "garmin-connect/dist/garmin/types";
 import ActivityService from "../../lib/ActivityService";
-import ActivitiesFeed from "../../components/activities/activities-feed";
+import ActivitiesFeed from "../../components/activities/ActivitiesFeed";
+import { calculateTotalTimeForTeam } from "../../utilities/TeamResultsCalculator";
+import { formatDuration } from "../../utilities/UiHelper";
 
 export async function getServerSideProps(context) {
   const username = context.query.username;
@@ -14,15 +16,26 @@ export async function getServerSideProps(context) {
   const user = await userService.getUserByGarminUserId(username);
 
   const activityService = new ActivityService();
-  const activities = await activityService.getActivitiesForUser(user?.garminUserId);
+  const activities = await activityService.getActivitiesForUser(
+    user?.garminUserId
+  );
 
   return {
-    props: { user: JSON.parse(JSON.stringify(user)), activities: JSON.parse(JSON.stringify(activities)) },
+    props: {
+      user: JSON.parse(JSON.stringify(user)),
+      activities: JSON.parse(JSON.stringify(activities)),
+    },
   };
 }
 
-// Create the user page component
-export default function UserPage({ user, activities }: { user: User, activities: IActivity[] }) {
+export default function UserPage({
+  user,
+  activities,
+}: {
+  user: User;
+  activities: IActivity[];
+}) {
+  const totalTime = calculateTotalTimeForTeam(activities, [user]);
   return (
     <div className="container">
       <Head>
@@ -35,6 +48,7 @@ export default function UserPage({ user, activities }: { user: User, activities:
           <div>
             <ProfileImage user={user} size={250} linkToProfile={false} />
           </div>
+          <div>⏱️{formatDuration(totalTime)}</div>
           <div>
             <ActivitiesFeed initialActivities={activities}></ActivitiesFeed>
           </div>

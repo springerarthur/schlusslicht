@@ -10,7 +10,7 @@
 }
 
 .left .details {
-  background-color: #96faec;
+  background-color: #97A1AB;
 }
 
 .right {
@@ -39,7 +39,7 @@
 }
 
 .timelineMarker {
-  line-height: 1em;
+  line-height: 1em;  
   position: relative;
   outline: 0;
   border: 0;

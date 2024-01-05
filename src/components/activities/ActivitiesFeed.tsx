@@ -1,11 +1,14 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import { Users } from "../../datastore/Users";
-import { Team1, Team2 } from "../../datastore/Teams";
 import { Distance } from "../../types/Distance";
 import ProfileImage from "../profile-image";
-import styles from "./activities-feed.module.css";
+import styles from "./ActivitiesFeed.module.css";
 import { useState } from "react";
-import { formatDuration, formatTimelineMarkerDate, getSportIdIcon } from "../../utilities/UiHelper";
+import {
+  formatDuration,
+  formatTimelineMarkerDate,
+  getSportIdIcon,
+} from "../../utilities/UiHelper";
 
 export default function ActivitiesFeed({
   initialActivities,
@@ -57,16 +60,15 @@ export default function ActivitiesFeed({
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ id: activityId }),
-              })
-                .then(async (response) => {
-                  if (response.ok) {
-                    const updatedActivities = await response.json();
-                    setActivities(updatedActivities);
-                  } else {
-                    const errorData = await response.json();
-                    console.error("Error:", errorData.message);
-                  }
-                })
+              }).then(async (response) => {
+                if (response.ok) {
+                  const updatedActivities = await response.json();
+                  setActivities(updatedActivities);
+                } else {
+                  const errorData = await response.json();
+                  console.error("Error:", errorData.message);
+                }
+              });
             } catch (error) {
               console.error("Error deleting activity:", error);
               alert("Fehler beim Löschen der Aktivität");
@@ -77,16 +79,12 @@ export default function ActivitiesFeed({
         return (
           <div key={activity.activityId}>
             <hr
-              className={styles.timelineMarker}
+              className={"mt-1 " + styles.timelineMarker}
               data-content={timelineMarkerText}
               style={{ display: showTimelineMarker ? "visible" : "none" }}
             />
             <div className="row">
-              <div
-                className={
-                  getActivityTeamClassName(activity.ownerDisplayName) + " pb-4"
-                }
-              >
+              <div className={"pb-4 " + styles.left}>
                 <div className="col-2">
                   <ProfileImage user={user} size={50} />
                 </div>
@@ -117,13 +115,4 @@ export default function ActivitiesFeed({
       })}
     </div>
   );
-}
-
-function getActivityTeamClassName(ownerDisplayName: string) {
-  if (Team1.some((user) => user.garminUserId === ownerDisplayName)) {
-    return styles.left;
-  }
-  if (Team2.some((user) => user.garminUserId === ownerDisplayName)) {
-    return styles.right;
-  }
 }

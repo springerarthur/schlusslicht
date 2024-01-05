@@ -19,6 +19,17 @@ export function getTeamResults(
   };
 }
 
+export function calculateTotalTimeForTeam(
+  activities: IActivity[],
+  team: User[]
+): number {
+  const teamActivities = getActivitiesForTeam(activities, team);
+
+  return teamActivities
+    .map((activity) => activity.duration)
+    .reduce((sum, duration) => sum + duration, 0);
+}
+
 function calculateDistancesForTeam(
   activities: IActivity[],
   team: User[]
@@ -43,17 +54,6 @@ function calculateDistancesForTeam(
     bikeDistance: new Distance(bikeDistance),
     runDistance: new Distance(runDistance),
   };
-}
-
-function calculateTotalTimeForTeam(
-  activities: IActivity[],
-  team: User[]
-): number {
-  const teamActivities = getActivitiesForTeam(activities, team);
-
-  return teamActivities
-    .map((activity) => activity.duration)
-    .reduce((sum, duration) => sum + duration, 0);
 }
 
 function getActivitiesForTeam(

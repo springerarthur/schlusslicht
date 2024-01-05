@@ -1,6 +1,6 @@
 import { Distances } from "./Distances";
 
-export interface ITeamResults {
+export type TeamResults = {
   team1Distances: Distances;
   team1TotalTime: number;
 

@@ -4,7 +4,7 @@ import { IActivity } from "garmin-connect/dist/garmin/types";
 
 import { Team1, Team2 } from "../datastore/Teams";
 
-import TeamResultsCalculator from "../utilities/TeamResultsCalculator";
+import { getTeamResults } from "../utilities/TeamResultsCalculator";
 
 import ActivityService from "../lib/ActivityService";
 import { useEffect, useState } from "react";
@@ -29,7 +29,7 @@ export async function getServerSideProps() {
   };
 }
 
-export default function Home({
+export default function TeamChallenge({
   initialActivities,
 }: {
   initialActivities: IActivity[];
@@ -60,8 +60,7 @@ export default function Home({
       });
   }, []);
 
-  const teamResultsCalculator = new TeamResultsCalculator();
-  const teamResults = teamResultsCalculator.getTeamResults(
+  const teamResults = getTeamResults(
     activities,
     Team1,
     Team2

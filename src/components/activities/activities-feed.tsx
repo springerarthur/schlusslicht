@@ -1,11 +1,11 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import { Users } from "../../datastore/Users";
 import { Team1, Team2 } from "../../datastore/Teams";
-import { Distance } from "../../utilities/Distance";
-import UiHelper from "../../utilities/UiHelper";
+import { Distance } from "../../types/Distance";
 import ProfileImage from "../profile-image";
 import styles from "./activities-feed.module.css";
 import { useState } from "react";
+import { formatDuration, formatTimelineMarkerDate, getSportIdIcon } from "../../utilities/UiHelper";
 
 export default function ActivitiesFeed({
   initialActivities,
@@ -19,7 +19,7 @@ export default function ActivitiesFeed({
   return (
     <div className="mt-5">
       {activities.map((activity: IActivity) => {
-        let timelineMarkerText = UiHelper.formatTimelineMarkerDate(
+        let timelineMarkerText = formatTimelineMarkerDate(
           activity.startTimeLocal
         );
 
@@ -105,10 +105,10 @@ export default function ActivitiesFeed({
                     ❌
                   </span>
                   <h6>{activity.activityName}</h6>
-                  {UiHelper.getSportIdIcon(activity.sportTypeId)}
+                  {getSportIdIcon(activity.sportTypeId)}
                   {distance.toString()}
                   Km ⏱️
-                  {UiHelper.formatDuration(activity.duration)}
+                  {formatDuration(activity.duration)}
                 </div>
               </div>
             </div>

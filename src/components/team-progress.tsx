@@ -1,6 +1,6 @@
-import { Distance } from "../utilities/Distance";
+import { Distance } from "../types/Distance";
+import { getSportIdIcon } from "../utilities/UiHelper";
 import styles from "./team-progress.module.css";
-import UiHelper from "../utilities/UiHelper";
 
 export default function TeamProgress({
   team1Distance,
@@ -36,7 +36,7 @@ export default function TeamProgress({
             {team1Distance.toString()}
           </div>
           <div className={styles.text + " " + styles.text2}>
-            {UiHelper.getSportIdIcon(sportTypeId)}
+            {getSportIdIcon(sportTypeId)}
           </div>
           <div className={styles.text + " " + styles.text3}>
             {team2Distance.toString()}

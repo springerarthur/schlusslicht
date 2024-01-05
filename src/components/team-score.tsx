@@ -11,15 +11,15 @@ import {
   Jan,
 } from "../datastore/Users";
 import ProfileImage from "./profile-image";
-import { ITeamResults } from "../utilities/ITeamResults";
+import { TeamResults } from "../types/TeamResults";
 import styles from "./team-score.module.css";
-import { Distances } from "../utilities/Distances";
-import UiHelper from "../utilities/UiHelper";
+import { Distances } from "../types/Distances";
+import { formatDuration } from "../utilities/UiHelper";
 
 export default function TeamScore({
   teamResults,
 }: {
-  teamResults: ITeamResults;
+  teamResults: TeamResults;
 }) {
   let cupWidth = 105;
   let cupHeight = 258;
@@ -104,10 +104,10 @@ export default function TeamScore({
       </div>
       <div className={"row justify-content-center " + styles.totalTime}>
         <div className="col-6 text-end">
-          ⏱️{UiHelper.formatDuration(team1TotalTime)}
+          ⏱️{formatDuration(team1TotalTime)}
         </div>
         <div className="col-6 text-start">
-          ⏱️{UiHelper.formatDuration(team2TotalTime)}
+          ⏱️{formatDuration(team2TotalTime)}
         </div>
       </div>
     </>

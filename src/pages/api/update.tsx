@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import GarminConnectSync from '../../src/lib/GarminConnectSync';
+import GarminConnectSync from '../../lib/GarminConnectSync';
 
 export default async function handler(
   request: NextApiRequest,

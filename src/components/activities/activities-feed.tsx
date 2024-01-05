@@ -1,8 +1,8 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
-import { Users } from "../../src/datastore/Users";
-import { Team1, Team2 } from "../../src/datastore/Teams";
-import { Distance } from "../../src/utilities/Distance";
-import UiHelper from "../../src/utilities/UiHelper";
+import { Users } from "../../datastore/Users";
+import { Team1, Team2 } from "../../datastore/Teams";
+import { Distance } from "../../utilities/Distance";
+import UiHelper from "../../utilities/UiHelper";
 import ProfileImage from "../profile-image";
 import styles from "./activities-feed.module.css";
 import { useState } from "react";

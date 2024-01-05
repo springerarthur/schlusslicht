@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { User } from "../src/lib/User";
+import { User } from "../lib/User";
 import Link from "next/link";
 
 export default function ProfileImage({

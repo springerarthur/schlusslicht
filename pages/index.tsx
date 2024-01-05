@@ -2,16 +2,16 @@ import Head from "next/head";
 
 import { IActivity } from "garmin-connect/dist/garmin/types";
 
-import { Team1, Team2 } from "../datastore/Teams";
+import { Team1, Team2 } from "../src/datastore/Teams";
 
-import TeamResultsCalculator from "../utilities/TeamResultsCalculator";
+import TeamResultsCalculator from "../src/utilities/TeamResultsCalculator";
 
-import ActivityService from "../lib/ActivityService";
+import ActivityService from "../src/lib/ActivityService";
 import { useEffect, useState } from "react";
 import ActivitiesFeed from "../components/activities/activities-feed";
 import TeamProgress from "../components/team-progress";
 import TeamScore from "../components/team-score";
-import { SportType } from "../lib/GarminConstants";
+import { SportType } from "../src/lib/GarminConstants";
 
 export async function getServerSideProps() {
   try {

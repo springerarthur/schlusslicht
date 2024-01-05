@@ -1,5 +1,5 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
-import ActivityService from "../lib/ActivityService";
+import ActivityService from "../src/lib/ActivityService";
 import { useEffect, useState } from "react";
 
 export async function getServerSideProps() {

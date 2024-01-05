@@ -1,10 +1,10 @@
 import Head from "next/head";
 
-import { User } from "../../lib/User";
-import UserService from "../../lib/UserService";
+import { User } from "../../src/lib/User";
+import UserService from "../../src/lib/UserService";
 import ProfileImage from "../../components/profile-image";
 import { IActivity } from "garmin-connect/dist/garmin/types";
-import ActivityService from "../../lib/ActivityService";
+import ActivityService from "../../src/lib/ActivityService";
 import ActivitiesFeed from "../../components/activities/activities-feed";
 
 export async function getServerSideProps(context) {

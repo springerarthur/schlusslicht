@@ -9,12 +9,12 @@ import {
   AlexS,
   Thomas,
   Jan,
-} from "../datastore/Users";
+} from "../src/datastore/Users";
 import ProfileImage from "./profile-image";
-import { ITeamResults } from "../utilities/ITeamResults";
+import { ITeamResults } from "../src/utilities/ITeamResults";
 import styles from "./team-score.module.css";
-import { Distances } from "../utilities/Distances";
-import UiHelper from "../utilities/UiHelper";
+import { Distances } from "../src/utilities/Distances";
+import UiHelper from "../src/utilities/UiHelper";
 
 export default function TeamScore({
   teamResults,

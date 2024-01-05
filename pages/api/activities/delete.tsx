@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import ActivityService from "../../../lib/ActivityService";
+import ActivityService from "../../../src/lib/ActivityService";
 
 export default async function handler(
   req: NextApiRequest,

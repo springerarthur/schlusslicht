@@ -1,6 +1,6 @@
-import { Distance } from "../utilities/Distance";
+import { Distance } from "../src/utilities/Distance";
 import styles from "./team-progress.module.css";
-import UiHelper from "../utilities/UiHelper";
+import UiHelper from "../src/utilities/UiHelper";
 
 export default function TeamProgress({
   team1Distance,

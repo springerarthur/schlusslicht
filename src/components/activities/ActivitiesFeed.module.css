@@ -1,5 +1,6 @@
 .left,
-.right {
+.right,
+.impartial {
   display: flex;
   align-items: center;
   flex-shrink: 0;
@@ -10,7 +11,7 @@
 }
 
 .left .details {
-  background-color: #97A1AB;
+  background-color: #96faec;
 }
 
 .right {
@@ -20,6 +21,10 @@
 
 .right .details {
   background-color: #f9d6b4;
+}
+
+.impartial .details {
+  background-color: #97A1AB;
 }
 
 .deleteicon {
@@ -39,7 +44,7 @@
 }
 
 .timelineMarker {
-  line-height: 1em;  
+  line-height: 1em;
   position: relative;
   outline: 0;
   border: 0;
@@ -64,9 +69,20 @@
   position: relative;
   display: inline-block;
   color: black;
-
   padding: 0 0.5em;
   line-height: 1.5em;
   color: #818078;
   background-color: #f8f9fa;
+}
+
+.activeFilter {
+  background-color:  #007bff;
+  color: #fff;
+  text-decoration: none;
+}
+
+.inactiveFilter {
+  background-color: #f8f9fa;
+  color: #007bff;
+  text-decoration: none;
 }

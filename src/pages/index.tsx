@@ -8,7 +8,7 @@ import { getTeamResults } from "../utilities/TeamResultsCalculator";
 
 import ActivityService from "../lib/ActivityService";
 import { useEffect, useState } from "react";
-import TeamActivitiesFeed from "../components/activities/TeamActivitiesFeed";
+import ActivitiesFeed from "../components/activities/ActivitiesFeed";
 import TeamProgress from "../components/team-progress";
 import TeamScore from "../components/team-score";
 import { SportType } from "../lib/GarminConstants";
@@ -103,7 +103,7 @@ export default function TeamChallenge({
             sportTypeId={SportType.RUNNING}
           ></TeamProgress>
 
-          <TeamActivitiesFeed initialActivities={activities} leftTeam={Team1} rightTeam={Team2}></TeamActivitiesFeed>
+          <ActivitiesFeed initialActivities={activities} leftTeam={Team1} rightTeam={Team2}></ActivitiesFeed>
         </div>
       </main>
     </div>

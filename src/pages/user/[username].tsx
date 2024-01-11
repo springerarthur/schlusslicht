@@ -5,9 +5,9 @@ import { User } from "../../lib/User";
 import UserService from "../../lib/UserService";
 import ProfileImage from "../../components/profile-image";
 import ActivityService from "../../lib/ActivityService";
-import ActivitiesFeed from "../../components/activities/ActivitiesFeed";
 import { calculateTotalTimeForTeam } from "../../utilities/TeamResultsCalculator";
 import { formatDuration } from "../../utilities/UiHelper";
+import ActivitiesFeed from "../../components/activities/ActivitiesFeed";
 
 export async function getServerSideProps(context) {
   const username = context.query.username;
@@ -50,7 +50,7 @@ export default function UserPage({
           </div>
           <div>⏱️{formatDuration(totalTime)}</div>
           <div>
-            <ActivitiesFeed initialActivities={activities}></ActivitiesFeed>
+            <ActivitiesFeed initialActivities={activities} leftTeam={[]} rightTeam={[]}></ActivitiesFeed>
           </div>
         </div>
       </main>

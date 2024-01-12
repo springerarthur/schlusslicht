@@ -50,7 +50,7 @@ export default function UserPage({
           </div>
           <div>⏱️{formatDuration(totalTime)}</div>
           <div>
-            <ActivitiesFeed initialActivities={activities} leftTeam={[]} rightTeam={[]}></ActivitiesFeed>
+            <ActivitiesFeed userId={user.garminUserId} leftTeam={[]} rightTeam={[]}></ActivitiesFeed>
           </div>
         </div>
       </main>

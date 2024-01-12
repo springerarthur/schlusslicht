@@ -3,7 +3,7 @@ import { Users } from "../../datastore/Users";
 import { Distance } from "../../types/Distance";
 import ProfileImage from "../profile-image";
 import styles from "./ActivitiesFeed.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   formatDuration,
   formatTimelineMarkerDate,
@@ -14,18 +14,34 @@ import { SportType, getActivityDetailsLink } from "../../lib/GarminConstants";
 import Link from "next/link";
 
 export default function ActivitiesFeed({
-  initialActivities,
+  userId,
   leftTeam,
   rightTeam,
 }: {
-  initialActivities: IActivity[];
+  userId?: string;
   leftTeam: User[];
   rightTeam: User[];
 }) {
-  const [activities, setActivities] = useState(initialActivities);
+  const [activities, setActivities] = useState<IActivity[]>([]);
   const [filterType, setFilterType] = useState<SportType | undefined>(
     undefined
   );
+
+  useEffect(() => {
+    let url = "/api/activities";
+    if (userId !== undefined) {
+      url += "?userId=" + userId;
+    }
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        setActivities(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [userId]);
 
   let lastTimelineMarkerText: string;
 

@@ -103,7 +103,7 @@ export default function TeamChallenge({
             sportTypeId={SportType.RUNNING}
           ></TeamProgress>
 
-          <ActivitiesFeed initialActivities={activities} leftTeam={Team1} rightTeam={Team2}></ActivitiesFeed>
+          <ActivitiesFeed leftTeam={Team1} rightTeam={Team2}></ActivitiesFeed>
         </div>
       </main>
     </div>

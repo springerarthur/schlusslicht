@@ -75,14 +75,11 @@
   background-color: #f8f9fa;
 }
 
-.activeFilter {
-  background-color:  #007bff;
-  color: #fff;
-  text-decoration: none;
+.inactiveFilter {
+  background-color: rgba(207, 244, 252, 0.4);
+  color: #000;
 }
 
-.inactiveFilter {
-  background-color: #f8f9fa;
-  color: #007bff;
-  text-decoration: none;
+.activityLink {
+  color: inherit;
 }

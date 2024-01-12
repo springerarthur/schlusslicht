@@ -10,7 +10,8 @@ import {
   getSportIdIcon,
 } from "../../utilities/UiHelper";
 import { User } from "../../lib/User";
-import { SportType } from "../../lib/GarminConstants";
+import { SportType, getActivityDetailsLink } from "../../lib/GarminConstants";
+import Link from "next/link";
 
 export default function ActivitiesFeed({
   initialActivities,
@@ -30,7 +31,11 @@ export default function ActivitiesFeed({
 
   return (
     <div className="mt-5 justify-content-center ">
-      <div className="btn-group mb-3" role="group" aria-label="Filter Activities">
+      <div
+        className={"btn-group mb-3 " + styles.filter}
+        role="group"
+        aria-label="Filter Activities"
+      >
         <button
           type="button"
           className={`btn btn-primary  px-3 py-2 ${
@@ -170,11 +175,21 @@ export default function ActivitiesFeed({
                     >
                       ❌
                     </span>
-                    <h6>{activity.activityName}</h6>
+                    <h6>
+                      <Link
+                        href={getActivityDetailsLink(activity.activityId)}
+                        target="_blank"
+                        className={styles.activityLink}
+                      >
+                        {activity.activityName}
+                      </Link>
+                    </h6>
                     {getSportIdIcon(activity.sportTypeId)}
                     {distance.toString()}
                     Km ⏱️
-                    {formatDuration(activity.movingDuration ?? activity.duration)}
+                    {formatDuration(
+                      activity.movingDuration ?? activity.duration
+                    )}
                   </div>
                 </div>
               </div>

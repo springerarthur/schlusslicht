@@ -1,7 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { User } from "../lib/User";
-import Link from "next/link";
 
 export default function ProfileImage({
   user,
@@ -14,11 +14,13 @@ export default function ProfileImage({
   className?: string;
   linkToProfile?: boolean;
 }) {
+  const imageSrc = size <= 120 ? user.profileImgSmall : user.profileImg;
+
   if (linkToProfile) {
     return (
       <Link href={`/user/${user.garminUserId}`}>
         <Image
-          src={user.profileImg}
+          src={imageSrc}
           width={size}
           height={size}
           className={"rounded-circle " + className}
@@ -29,7 +31,7 @@ export default function ProfileImage({
   } else {
     return (
       <Image
-        src={user.profileImg}
+        src={imageSrc}
         width={size}
         height={size}
         className={"rounded-circle " + className}

@@ -42,7 +42,7 @@ export default class ActivityService {
     const mongoDbClient = await clientPromise;
 
     try {
-      const result = await mongoDbClient
+      await mongoDbClient
         .db("schlusslicht")
         .collection<IActivity>("activities")
         .deleteOne({ activityId: activitiyId });

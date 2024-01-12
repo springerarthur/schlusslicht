@@ -26,7 +26,7 @@ export function calculateTotalTimeForTeam(
   const teamActivities = getActivitiesForTeam(activities, team);
 
   return teamActivities
-    .map((activity) => activity.duration)
+    .map((activity) => activity.movingDuration ?? activity.duration)
     .reduce((sum, duration) => sum + duration, 0);
 }
 

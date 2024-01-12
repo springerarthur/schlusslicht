@@ -174,7 +174,7 @@ export default function ActivitiesFeed({
                     {getSportIdIcon(activity.sportTypeId)}
                     {distance.toString()}
                     Km ⏱️
-                    {formatDuration(activity.duration)}
+                    {formatDuration(activity.movingDuration ?? activity.duration)}
                   </div>
                 </div>
               </div>

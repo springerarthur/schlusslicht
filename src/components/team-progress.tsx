@@ -1,5 +1,4 @@
-import { Distance } from "../types/Distance";
-import { getSportIdIcon } from "../utilities/UiHelper";
+import { getSportIdIcon, formatDistance } from '../utilities/UiHelper';
 import styles from "./team-progress.module.css";
 
 export default function TeamProgress({
@@ -7,17 +6,18 @@ export default function TeamProgress({
   team2Distance,
   sportTypeId,
 }: {
-  team1Distance: Distance;
-  team2Distance: Distance;
+  team1Distance: number;
+  team2Distance: number;
   sportTypeId: number;
 }) {
+
   return (
     <div className={styles.container}>
       <div
         className={
           styles.progress +
           " progress " +
-          (team1Distance.distance === 0 && team2Distance.distance === 0
+          (team1Distance === 0 && team2Distance === 0
             ? styles.empty
             : "")
         }
@@ -27,19 +27,19 @@ export default function TeamProgress({
           style={{
             width:
               calculatePercentage(
-                team1Distance.distance,
-                team2Distance.distance
+                team1Distance,
+                team2Distance
               ) + "%",
           }}
         >
           <div className={styles.text + " " + styles.text1}>
-            {team1Distance.toString()}
+            {formatDistance(team1Distance)}
           </div>
           <div className={styles.text + " " + styles.text2}>
             {getSportIdIcon(sportTypeId)}
           </div>
           <div className={styles.text + " " + styles.text3}>
-            {team2Distance.toString()}
+            {formatDistance(team2Distance)}
           </div>
         </div>
       </div>

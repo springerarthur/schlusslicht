@@ -1,10 +1,10 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import { Users } from "../../datastore/Users";
-import { Distance } from "../../types/Distance";
 import ProfileImage from "../profile-image";
 import styles from "./ActivitiesFeed.module.css";
 import { useEffect, useState } from "react";
 import {
+  formatDistance,
   formatDuration,
   formatTimelineMarkerDate,
   getSportIdIcon,
@@ -123,8 +123,6 @@ export default function ActivitiesFeed({
             lastTimelineMarkerText = timelineMarkerText;
           }
 
-          const distance = new Distance(activity.distance / 1000);
-
           function deleteActivity(
             activityId: number,
             activityName: string
@@ -201,7 +199,7 @@ export default function ActivitiesFeed({
                       </Link>
                     </h6>
                     {getSportIdIcon(activity.sportTypeId)}
-                    {distance.toString()}
+                    {formatDistance(activity.distance)}
                     Km ⏱️
                     {formatDuration(
                       activity.movingDuration ?? activity.duration

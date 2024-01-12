@@ -36,3 +36,15 @@ export function getSportIdIcon(sportTypeId: number): string {
   }
   return "";
 }
+
+export function formatDistance(distance: number): string {
+  const distanceInKiloMeter = distance / 1000
+  const roundedDistance = Math.round(distanceInKiloMeter * 100) / 100;
+
+  const formattedDistance = roundedDistance.toLocaleString("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  return formattedDistance;
+}

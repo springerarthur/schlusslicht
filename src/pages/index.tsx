@@ -12,29 +12,36 @@ import ActivitiesFeed from "../components/activities/ActivitiesFeed";
 import TeamProgress from "../components/team-progress";
 import TeamScore from "../components/team-score";
 import { SportType } from "../lib/GarminConstants";
+import { TeamResults } from "../types/TeamResults";
 
 export async function getServerSideProps() {
   try {
     const activityService = new ActivityService();
     const activities = await activityService.getActivities();
 
+    const teamResults = getTeamResults(
+      activities,
+      Team1,
+      Team2
+    );
+
     return {
-      props: { initialActivities: JSON.parse(JSON.stringify(activities)) },
+      props: { teamResults: JSON.parse(JSON.stringify(teamResults)) },
     };
   } catch (e) {
     console.error(e);
   }
   return {
-    props: { initialActivities: { initialActivities: [{}] } },
+    props: { teamResults: { teamResults: [{}] } },
   };
 }
 
 export default function TeamChallenge({
-  initialActivities,
+  teamResults,
 }: {
-  initialActivities: IActivity[];
+  teamResults: TeamResults;
 }) {
-  const [activities, setActivities] = useState(initialActivities);
+  const [results, setTeamResults] = useState<TeamResults>(teamResults);
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -46,10 +53,16 @@ export default function TeamChallenge({
       }
     }, 1000);
 
-    fetch("/api/activities")
+    fetch("/api/update")
       .then((res) => res.json())
       .then((data) => {
-        setActivities(data);
+        const teamResults = getTeamResults(
+          data,
+          Team1,
+          Team2
+        );
+
+        setTeamResults(teamResults);
         setLoading(false);
         updateCompleted = true;
       })
@@ -59,12 +72,6 @@ export default function TeamChallenge({
         updateCompleted = true;
       });
   }, []);
-
-  const teamResults = getTeamResults(
-    activities,
-    Team1,
-    Team2
-  );
 
   return (
     <div className="container">
@@ -83,23 +90,23 @@ export default function TeamChallenge({
               Garmin-Aktivitäten werden aktualisiert!
             </div>
           )}
-          <TeamScore teamResults={teamResults}></TeamScore>
+          <TeamScore teamResults={results}></TeamScore>
 
           <TeamProgress
-            team1Distance={teamResults.team1Distances.swimDistance}
-            team2Distance={teamResults.team2Distances.swimDistance}
+            team1Distance={results.team1Distances.swimDistance}
+            team2Distance={results.team2Distances.swimDistance}
             sportTypeId={SportType.SWIMMING}
           ></TeamProgress>
 
           <TeamProgress
-            team1Distance={teamResults.team1Distances.bikeDistance}
-            team2Distance={teamResults.team2Distances.bikeDistance}
+            team1Distance={results.team1Distances.bikeDistance}
+            team2Distance={results.team2Distances.bikeDistance}
             sportTypeId={SportType.BIKE}
           ></TeamProgress>
 
           <TeamProgress
-            team1Distance={teamResults.team1Distances.runDistance}
-            team2Distance={teamResults.team2Distances.runDistance}
+            team1Distance={results.team1Distances.runDistance}
+            team2Distance={results.team2Distances.runDistance}
             sportTypeId={SportType.RUNNING}
           ></TeamProgress>
 

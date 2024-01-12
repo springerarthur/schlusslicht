@@ -3,7 +3,6 @@ import { User } from "../lib/User";
 import { SportType } from "../lib/GarminConstants";
 import { TeamResults } from "../types/TeamResults";
 import { Distances } from "../types/Distances";
-import { Distance } from "../types/Distance";
 
 export function getTeamResults(
   activities: IActivity[],
@@ -50,9 +49,9 @@ function calculateDistancesForTeam(
   );
 
   return {
-    swimDistance: new Distance(swimDistance),
-    bikeDistance: new Distance(bikeDistance),
-    runDistance: new Distance(runDistance),
+    swimDistance: swimDistance,
+    bikeDistance: bikeDistance,
+    runDistance: runDistance,
   };
 }
 
@@ -71,6 +70,6 @@ function sumTotalDistanceForSportType(
 ): number {
   return teamActivities
     .filter((activity) => activity.sportTypeId === sportTypeId)
-    .map((activity) => activity.distance / 1000)
+    .map((activity) => activity.distance)
     .reduce((sum, distance) => sum + distance, 0);
 }

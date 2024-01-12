@@ -1,11 +1,15 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import ActivityService from "../../../lib/ActivityService";
-import { IActivity } from "garmin-connect/dist/garmin/types";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import GarminConnectSync from '../../../lib/GarminConnectSync';
+import ActivityService from '../../../lib/ActivityService';
+import { IActivity } from 'garmin-connect/dist/garmin/types';
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
+  const garminConnectSync = new GarminConnectSync();
+  await garminConnectSync.importDataFromGarminConnect();
+
   const activityService = new ActivityService();
 
   const { userId } = request.query;
@@ -15,6 +19,8 @@ export default async function handler(
   } else {
     activities = await activityService.getActivities();
   }
+
+  // await new Promise((f) => setTimeout(f, 5000));
 
   response.status(200).json(JSON.parse(JSON.stringify(activities)));
 }

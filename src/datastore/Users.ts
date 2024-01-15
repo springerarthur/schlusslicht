@@ -48,6 +48,12 @@ export const Thomas: User = {
     profileImg: "https://s3.amazonaws.com/garmin-connect-prod/profile_images/16415f83-a6b9-4f4f-9831-807efce8f5f5-72292761.png",
     profileImgSmall: "https://s3.amazonaws.com/garmin-connect-prod/profile_images/07d2b302-7851-40d4-a068-3401265b3f2d-72292761.png"
 };
+export const Stefan: User = {
+    displayName: "Stefan",
+    garminUserId: "854ff8e4-b756-4acf-a64c-fc38019fe319",
+    profileImg: "/Stefan.jpg",
+    profileImgSmall: "/Stefan_small.jpg"
+};
 
 export const Users: User[] = [
     Arthur, Daniel, Roland, Waldi,

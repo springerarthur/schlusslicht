@@ -16,7 +16,8 @@ export async function getServerSideProps(context) {
   const user = await userService.getUserByGarminUserId(username);
 
   const activityService = new ActivityService();
-  const activities = await activityService.getActivitiesForUser(
+  const activities = await activityService.findActivities(
+    -1,
     user?.garminUserId
   );
 

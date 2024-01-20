@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export async function getServerSideProps() {
   try {
     const activityService = new ActivityService();
-    const activities = await activityService.getActivities();
+    const activities = await activityService.getAllActivities();
 
     return {
       props: { initialActivities: JSON.parse(JSON.stringify(activities)) },

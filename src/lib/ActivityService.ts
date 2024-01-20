@@ -1,8 +1,11 @@
 import { IActivity } from "garmin-connect/dist/garmin/types";
 import clientPromise from "./mongodb";
+import { SportType } from "./GarminConstants";
 
 export default class ActivityService {
-  public async getActivities(): Promise<IActivity[]> {
+  private readonly chunksize = 2;
+
+  public async getAllActivities(): Promise<IActivity[]> {
     const mongoDbClient = await clientPromise;
 
     return await mongoDbClient
@@ -13,20 +16,32 @@ export default class ActivityService {
       .toArray();
   }
 
-  public async getActivitiesForUser(
-    garminUserId: string | undefined
+  public async findActivities(
+    page: number,
+    userId?: string,
+    sportType?: SportType
   ): Promise<IActivity[]> {
-    if (garminUserId === undefined) {
-      return [];
-    }
     const mongoDbClient = await clientPromise;
 
-    return await mongoDbClient
+    const filter: any = {};
+    if (userId) {
+      filter.ownerDisplayName = userId;
+    }
+    if (sportType) {
+      filter.sportTypeId = sportType;
+    }
+
+    const query = mongoDbClient
       .db("schlusslicht")
       .collection<IActivity>("activities")
-      .find({ ownerDisplayName: garminUserId })
-      .sort({ startTimeLocal: -1 })
-      .toArray();
+      .find(filter)
+      .sort({ startTimeLocal: -1 });
+
+    if (page >= 0) {
+      query.skip(this.chunksize * page).limit(this.chunksize);
+    }
+
+    return await query.toArray();
   }
 
   public async insertActivity(activity: IActivity) {
@@ -47,10 +62,10 @@ export default class ActivityService {
         .collection<IActivity>("activities")
         .deleteOne({ activityId: activitiyId });
 
-      return await this.getActivities();
+      return await this.getAllActivities();
     } catch (err) {
       console.error("Error deleting document:", err);
-      return await this.getActivities();
+      return await this.getAllActivities();
     }
   }
 }

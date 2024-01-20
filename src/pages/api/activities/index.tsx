@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import ActivityService from "../../../lib/ActivityService";
-import { IActivity } from "garmin-connect/dist/garmin/types";
+import { SportType } from "../../../lib/GarminConstants";
 
 export default async function handler(
   request: NextApiRequest,
@@ -8,13 +8,21 @@ export default async function handler(
 ) {
   const activityService = new ActivityService();
 
-  const { userId } = request.query;
-  let activities: IActivity[];
-  if (userId !== undefined) {
-    activities = await activityService.getActivitiesForUser(userId.toString());
-  } else {
-    activities = await activityService.getActivities();
+  const { userId, sportType } = request.query;
+
+  let sportTypeEnum: SportType | undefined = undefined;
+  if (sportType) {
+    const sportTypeNumber = Number(sportType);
+    if (Object.values(SportType).includes(sportTypeNumber)) {
+      return sportTypeNumber as SportType;
+    }
   }
+
+  const activities = await activityService.findActivities(
+    -1,
+    userId as string | undefined,
+    sportTypeEnum
+  );
 
   response.status(200).json(JSON.parse(JSON.stringify(activities)));
 }

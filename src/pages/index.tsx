@@ -17,7 +17,7 @@ import { TeamResults } from "../types/TeamResults";
 export async function getServerSideProps() {
   try {
     const activityService = new ActivityService();
-    const activities = await activityService.getActivities();
+    const activities = await activityService.getAllActivities();
 
     const teamResults = getTeamResults(
       activities,

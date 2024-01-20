@@ -28,10 +28,15 @@ export default function ActivitiesFeed({
   );
 
   useEffect(() => {
-    let url = "/api/activities";
-    if (userId !== undefined) {
-      url += "?userId=" + userId;
+    const params = new URLSearchParams();
+    if(filterType !== undefined) {
+      params.append("sportType", filterType.toString());
     }
+    if (userId !== undefined) {
+      params.append("userId", userId);
+    }
+
+    let url = `/api/activities?${params.toString()}`;
 
     fetch(url)
       .then((res) => res.json())
@@ -41,7 +46,7 @@ export default function ActivitiesFeed({
       .catch((error) => {
         console.error(error);
       });
-  }, [userId]);
+  }, [userId, filterType]);
 
   let lastTimelineMarkerText: string;
 
@@ -102,7 +107,7 @@ export default function ActivitiesFeed({
           (activity) =>
             filterType === undefined || activity.sportTypeId === filterType
         )
-        .slice(0, 20)
+        //.slice(0, 20)
         .map((activity: IActivity) => {
           let timelineMarkerText = formatTimelineMarkerDate(
             activity.startTimeLocal

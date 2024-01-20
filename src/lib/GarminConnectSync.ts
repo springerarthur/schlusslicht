@@ -46,7 +46,7 @@ export default class GarminConnectSync {
     });
     await GCClient.login();
 
-    const activitiesFromDb = await this.activityService.getActivities();
+    const activitiesFromDb = await this.activityService.getAllActivities();
 
     await Promise.all(
       Users.map(async (user) => {

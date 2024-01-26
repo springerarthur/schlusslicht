@@ -23,7 +23,7 @@ export default function ChallengeResultCard({
           </div>
           <div className="col-3 d-flex align-items-center justify-content-center">
             <span className="text-center fs-2">
-              {challengeResult.totalScore} Pkt.
+              {challengeResult.totalScore} Punkte
             </span>
           </div>
           <div className="col-6 fs-3 d-flex align-items-center justify-content-center">

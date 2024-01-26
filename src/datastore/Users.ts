@@ -57,6 +57,5 @@ export const Stefan: User = {
 
 export const Users: User[] = [
     Arthur, Daniel, Roland, Waldi,
-    AlexH, AlexS, Thomas, Jan,
-    Stefan
+    AlexH, AlexS, Thomas, Jan
 ];

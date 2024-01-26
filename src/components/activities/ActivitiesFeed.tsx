@@ -107,7 +107,6 @@ export default function ActivitiesFeed({
           (activity) =>
             filterType === undefined || activity.sportTypeId === filterType
         )
-        //.slice(0, 20)
         .map((activity: IActivity) => {
           let timelineMarkerText = formatTimelineMarkerDate(
             activity.startTimeLocal

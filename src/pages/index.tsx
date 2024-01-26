@@ -1,7 +1,5 @@
 import Head from "next/head";
 
-import { IActivity } from "garmin-connect/dist/garmin/types";
-
 import { Team1, Team2 } from "../datastore/Teams";
 
 import { getTeamResults } from "../utilities/TeamResultsCalculator";

@@ -21,8 +21,11 @@ export async function getResults(
       totalTime: sumTotalTime(activitesFoUser),
       totalScore: 0,
       swimScore: 0,
+      swimRank: 0,
       bikeScore: 0,
+      bikeRank: 0,
       runScore: 0,
+      runRank: 0,
     });
   }
 
@@ -35,6 +38,20 @@ export async function getResults(
     sortedResultBySwimDistance.swimScore = currentSwimScore++;
   }
 
+  const sortedResultsBySwimScore = challengeResults.sort(
+    (result1, result2) => result2.swimScore - result1.swimScore
+  ); // Sort by swimScore Descending
+  let currentSwimRank = 0;
+  let lastSwimScore = 0;
+  for (let sortedResultBySwimScore of sortedResultsBySwimScore) {
+    if (lastSwimScore !== sortedResultBySwimScore.swimScore) {
+      currentSwimRank++;
+      lastSwimScore = sortedResultBySwimScore.swimScore;
+    }
+
+    sortedResultBySwimScore.swimRank = currentSwimRank;
+  }
+
   const sortedResultsByBikeDistance = challengeResults.sort(
     (result1, result2) =>
       result1.distances.bikeDistance - result2.distances.bikeDistance
@@ -44,6 +61,20 @@ export async function getResults(
     sortedResultByBikeDistance.bikeScore = currentBikeScore++;
   }
 
+  const sortedResultsByBikeScore = challengeResults.sort(
+    (result1, result2) => result2.bikeScore - result1.bikeScore
+  ); // Sort by bikeScore Descending
+  let currentBikeRank = 0;
+  let lastBikeScore = 0;
+  for (let sortedResultByBikeScore of sortedResultsByBikeScore) {
+    if (lastBikeScore !== sortedResultByBikeScore.bikeScore) {
+      currentBikeRank++;
+      lastBikeScore = sortedResultByBikeScore.bikeScore;
+    }
+
+    sortedResultByBikeScore.bikeRank = currentBikeRank;
+  }
+
   const sortedResultsByRunDistance = challengeResults.sort(
     (result1, result2) =>
       result1.distances.runDistance - result2.distances.runDistance
@@ -51,6 +82,20 @@ export async function getResults(
   let currentRunScore = 1;
   for (let sortedResultByRunDistance of sortedResultsByRunDistance) {
     sortedResultByRunDistance.runScore = currentRunScore++;
+  }
+
+  const sortedResultsByRunScore = challengeResults.sort(
+    (result1, result2) => result2.runScore - result1.runScore
+  ); // Sort by runScore Descending
+  let currentRunRank = 0;
+  let lastRunScore = 0;
+  for (let sortedResultByRunScore of sortedResultsByRunScore) {
+    if (lastRunScore !== sortedResultByRunScore.runScore) {
+      currentRunRank++;
+      lastRunScore = sortedResultByRunScore.runScore;
+    }
+
+    sortedResultByRunScore.runRank = currentRunRank;
   }
 
   for (let challengeResult of challengeResults) {

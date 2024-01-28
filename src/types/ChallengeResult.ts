@@ -6,8 +6,11 @@ export type ChallengeResult = {
   user: User;
   totalScore: number;
   swimScore: number;
+  swimRank: number;
   bikeScore: number;
+  bikeRank: number;
   runScore: number;
+  runRank: number;
   distances: Distances;
   totalTime: number;
 };

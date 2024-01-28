@@ -1,41 +1,97 @@
 import { ChallengeResult } from "../types/ChallengeResult";
 import ProfileImage from "./profile-image";
+import styles from "./challenge-result-card.module.css";
+import { formatDistance } from "../utilities/UiHelper";
 
 export default function ChallengeResultCard({
   challengeResult,
 }: {
   challengeResult: ChallengeResult;
 }) {
-  function getRankClassName(challengeResult: ChallengeResult) {
-    return "rank-" + challengeResult.rank;
+  function getRankClassName(rank: number): string {
+    switch (rank) {
+      case 1:
+        return styles.rank1;
+      case 2:
+        return styles.rank2;
+      case 3:
+        return styles.rank3;
+      default:
+        return "";
+    }
+  }
+
+  function getTrophyIcon(rank: number): string {
+    switch (rank) {
+      case 1:
+        return "🥇";
+      case 2:
+        return "🥈";
+      case 3:
+        return "🥉";
+      default:
+        return "";
+    }
   }
 
   return (
-    <div className={"card mb-3 " + getRankClassName(challengeResult)}>
-      <div className="card-body">
+    <div className={"card mb-3 " + getRankClassName(challengeResult.rank)}>
+      <div className="card-body py-0">
         <div className="row g-0">
-          <div className="col-3 d-flex align-items-center justify-content-center">
+          <div className="col-2 d-flex align-items-center justify-content-center">
             <ProfileImage
               user={challengeResult.user}
               size={60}
               className="profile-img"
             />
           </div>
-          <div className="col-3 d-flex align-items-center justify-content-center">
-            <span className="text-center fs-2">
-              {challengeResult.totalScore} Punkte
+          <div className="col-3 d-flex align-items-center">
+            <span className="text-center fs-1">
+              <span className={styles.trophyIcon}>
+                {getTrophyIcon(challengeResult.rank)}
+              </span>
+              {challengeResult.totalScore}
             </span>
           </div>
-          <div className="col-6 fs-3 d-flex align-items-center justify-content-center">
-            <span>
-              🏊{challengeResult.swimScore} | 🚴{challengeResult.bikeScore} | 🏃
-              {challengeResult.runScore}
-            </span>
-            {/* <ul className="list-group list-group-flush">
-            <li className="list-group-item">Schwimmen</li>
-            <li className="list-group-item">Fahrrad</li>
-            <li className="list-group-item">Laufen</li>
-          </ul> */}
+          <div className="col-7">
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <span className="row">
+                  <span className="col-2">🏊</span>
+                  <span className={"col-2"}>
+                    {getTrophyIcon(challengeResult.swimRank)}
+                  </span>
+                  <span className={"col-2"}>{challengeResult.swimScore}</span>
+                  <span className={"col-6 text-start"}>
+                    {formatDistance(challengeResult.distances.swimDistance)}
+                  </span>
+                </span>
+              </li>
+              <li className="list-group-item">
+                <span className="row">
+                  <span className="col-2">🚴</span>
+                  <span className={"col-2"}>
+                    {getTrophyIcon(challengeResult.bikeRank)}
+                  </span>
+                  <span className={"col-2"}>{challengeResult.bikeScore}</span>
+                  <span className={"col-6 text-start"}>
+                    {formatDistance(challengeResult.distances.bikeDistance)}
+                  </span>
+                </span>
+              </li>
+              <li className="list-group-item">
+                <span className="row">
+                  <span className="col-2">🏃</span>
+                  <span className={"col-2"}>
+                    {getTrophyIcon(challengeResult.runRank)}
+                  </span>
+                  <span className={"col-2"}>{challengeResult.runScore}</span>
+                  <span className={"col-6 text-start"}>
+                    {formatDistance(challengeResult.distances.runDistance)}
+                  </span>
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

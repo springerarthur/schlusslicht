@@ -14,8 +14,10 @@ import { TeamResults } from "../types/TeamResults";
 
 export async function getServerSideProps() {
   try {
+    const startDate = new Date(2024, 0, 1);
+    const endDate = new Date(2024, 0, 31);
     const activityService = new ActivityService();
-    const activities = await activityService.getAllActivities();
+    const activities = await activityService.findActivities({date: {startDate: startDate, endDate: endDate}});
 
     const teamResults = getTeamResults(
       activities,

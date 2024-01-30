@@ -90,14 +90,7 @@ export default class GarminConnectSync {
             return;
           }
 
-          const garminStartDate = new Date(activityFromGarmin.startTimeLocal);
-          let now = new Date();
-          if (
-            garminStartDate.getFullYear() === now.getFullYear() &&
-            garminStartDate.getMonth() === now.getMonth()
-          ) {
-            await this.activityService.insertActivity(activityFromGarmin);
-          }
+          await this.activityService.insertActivity(activityFromGarmin);
         })
       );
     } catch (e) {

@@ -2,8 +2,15 @@ import { IActivity } from "garmin-connect/dist/garmin/types";
 import clientPromise from "./mongodb";
 import { SportType } from "./GarminConstants";
 
+export interface FindActivitiesOptions {
+  page?: number;
+  userId?: string;
+  sportType?: SportType;
+  date?: {startDate: Date, endDate: Date};
+}
+
 export default class ActivityService {
-  private readonly chunksize = 2;
+  private readonly chunksize = 25;
 
   public async getAllActivities(): Promise<IActivity[]> {
     const mongoDbClient = await clientPromise;
@@ -17,18 +24,22 @@ export default class ActivityService {
   }
 
   public async findActivities(
-    page: number,
-    userId?: string,
-    sportType?: SportType
+    findActivitiesOptions: FindActivitiesOptions
   ): Promise<IActivity[]> {
     const mongoDbClient = await clientPromise;
 
     const filter: any = {};
-    if (userId) {
-      filter.ownerDisplayName = userId;
+    if (findActivitiesOptions.userId !== undefined) {
+      filter.ownerDisplayName = findActivitiesOptions.userId;
     }
-    if (sportType) {
-      filter.sportTypeId = sportType;
+    if (findActivitiesOptions.sportType !== undefined) {
+      filter.sportTypeId = findActivitiesOptions.sportType;
+    }
+    if (findActivitiesOptions.date !== undefined) {
+      filter.startTimeLocal = {
+        $gte: findActivitiesOptions.date.startDate.toISOString(),
+        $lte: findActivitiesOptions.date.endDate.toISOString(),
+      }
     }
 
     const query = mongoDbClient
@@ -37,8 +48,10 @@ export default class ActivityService {
       .find(filter)
       .sort({ startTimeLocal: -1 });
 
-    if (page >= 0) {
-      query.skip(this.chunksize * page).limit(this.chunksize);
+    if (findActivitiesOptions.page !== undefined) {
+      query
+        .skip(this.chunksize * findActivitiesOptions.page)
+        .limit(this.chunksize);
     }
 
     return await query.toArray();

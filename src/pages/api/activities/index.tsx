@@ -18,11 +18,11 @@ export default async function handler(
     }
   }
 
-  const activities = await activityService.findActivities(
-    -1,
-    userId as string | undefined,
-    sportTypeEnum
-  );
+  const activities = await activityService.findActivities({
+    page: 0,
+    userId: userId as string | undefined,
+    sportType: sportTypeEnum,
+  });
 
   response.status(200).json(JSON.parse(JSON.stringify(activities)));
 }

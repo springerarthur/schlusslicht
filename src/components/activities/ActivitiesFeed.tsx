@@ -17,10 +17,12 @@ export default function ActivitiesFeed({
   userId,
   leftTeam,
   rightTeam,
+  activitiesChanged
 }: {
   userId?: string;
   leftTeam: User[];
   rightTeam: User[];
+  activitiesChanged: boolean;
 }) {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [filterType, setFilterType] = useState<SportType | undefined>(
@@ -40,13 +42,13 @@ export default function ActivitiesFeed({
 
     fetch(url)
       .then((res) => res.json())
-      .then((data) => {
-        setActivities(data);
+      .then((activities) => {
+        setActivities(activities);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, [userId, filterType]);
+  }, [userId, filterType, activitiesChanged]);
 
   let lastTimelineMarkerText: string;
 

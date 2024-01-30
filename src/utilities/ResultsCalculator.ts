@@ -4,7 +4,7 @@ import { ChallengeResult } from "../types/ChallengeResult";
 import { Distances } from "../types/Distances";
 import { SportType } from "../lib/GarminConstants";
 
-export async function getResults(
+export async function calculateChallengeResults(
   activities: IActivity[],
   users: User[]
 ): Promise<ChallengeResult[]> {

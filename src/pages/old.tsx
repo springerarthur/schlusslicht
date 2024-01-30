@@ -55,9 +55,9 @@ export default function TeamChallenge({
 
     fetch("/api/update")
       .then((res) => res.json())
-      .then((data) => {
+      .then((activities) => {
         const teamResults = getTeamResults(
-          data,
+          activities,
           Team1,
           Team2
         );

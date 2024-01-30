@@ -24,7 +24,7 @@ export default class GarminConnectSync {
   }
 
   public async importDataFromGarminConnect(force: boolean = false) {
-    if (!force && process.env.DISABLE_AUTOUPDATE) {
+    if (!force && process.env.DISABLE_AUTOUPDATE === 'true') {
       return;
     }
 

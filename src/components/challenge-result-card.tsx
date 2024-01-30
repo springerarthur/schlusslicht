@@ -21,7 +21,11 @@ export default function ChallengeResultCard({
     }
   }
 
-  function getTrophyIcon(rank: number): string {
+  function getTrophyIcon(rank: number, score: number): string {
+    if(score == 0) {
+      return "";
+    }
+
     switch (rank) {
       case 1:
         return "🥇";
@@ -48,7 +52,7 @@ export default function ChallengeResultCard({
           <div className="col-3 d-flex align-items-center">
             <span className="text-center fs-1">
               <span className={styles.trophyIcon}>
-                {getTrophyIcon(challengeResult.rank)}
+                {getTrophyIcon(challengeResult.rank, challengeResult.totalScore)}
               </span>
               {challengeResult.totalScore}
             </span>
@@ -59,7 +63,7 @@ export default function ChallengeResultCard({
                 <span className="row">
                   <span className="col-2">🏊</span>
                   <span className={"col-2"}>
-                    {getTrophyIcon(challengeResult.swimRank)}
+                    {getTrophyIcon(challengeResult.swimRank, challengeResult.swimScore)}
                   </span>
                   <span className={"col-2"}>{challengeResult.swimScore}</span>
                   <span className={"col-6 text-start"}>
@@ -71,7 +75,7 @@ export default function ChallengeResultCard({
                 <span className="row">
                   <span className="col-2">🚴</span>
                   <span className={"col-2"}>
-                    {getTrophyIcon(challengeResult.bikeRank)}
+                    {getTrophyIcon(challengeResult.bikeRank, challengeResult.bikeScore)}
                   </span>
                   <span className={"col-2"}>{challengeResult.bikeScore}</span>
                   <span className={"col-6 text-start"}>
@@ -83,7 +87,7 @@ export default function ChallengeResultCard({
                 <span className="row">
                   <span className="col-2">🏃</span>
                   <span className={"col-2"}>
-                    {getTrophyIcon(challengeResult.runRank)}
+                    {getTrophyIcon(challengeResult.runRank, challengeResult.runScore)}
                   </span>
                   <span className={"col-2"}>{challengeResult.runScore}</span>
                   <span className={"col-6 text-start"}>

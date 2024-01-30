@@ -3,7 +3,6 @@ import ActivityService from "../lib/ActivityService";
 import { getResults as getChallengeResults } from "../utilities/ResultsCalculator";
 import { Users } from "../datastore/Users";
 import { ChallengeResult } from "../types/ChallengeResult";
-import ProfileImage from "../components/profile-image";
 import ChallengeResultCard from "../components/challenge-result-card";
 import ActivitiesFeed from "../components/activities/ActivitiesFeed";
 

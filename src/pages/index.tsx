@@ -1,6 +1,4 @@
 import Head from "next/head";
-import { calculateChallengeResults } from "../utilities/ResultsCalculator";
-import { Users } from "../datastore/Users";
 import { ChallengeResult } from "../types/ChallengeResult";
 import ChallengeResultCard from "../components/challenge-result-card";
 import ActivitiesFeed from "../components/activities/ActivitiesFeed";

@@ -22,7 +22,7 @@ export default function ActivitiesFeed({
   userId?: string;
   leftTeam: User[];
   rightTeam: User[];
-  activitiesChanged: boolean;
+  activitiesChanged?: boolean;
 }) {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [filterType, setFilterType] = useState<SportType | undefined>(

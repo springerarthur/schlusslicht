@@ -42,10 +42,10 @@ export default function ActivitiesFeed({
       params.append("userId", userId);
     }
     if (startDate !== undefined) {
-      params.append("startDate", startDate.toString());
+      params.append("startDate", startDate.toISOString());
     }
     if (endDate !== undefined) {
-      params.append("endDate", endDate.toString());
+      params.append("endDate", endDate.toISOString());
     }
 
     let url = `/api/activities?${params.toString()}`;

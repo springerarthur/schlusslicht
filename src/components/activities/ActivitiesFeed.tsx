@@ -19,7 +19,7 @@ export default function ActivitiesFeed({
   rightTeam,
   activitiesChanged,
   startDate,
-  endDate
+  endDate,
 }: {
   userId?: string;
   leftTeam: User[];
@@ -35,13 +35,15 @@ export default function ActivitiesFeed({
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if(filterType !== undefined) {
+    if (filterType !== undefined) {
       params.append("sportType", filterType.toString());
     }
     if (userId !== undefined) {
       params.append("userId", userId);
     }
     if (startDate !== undefined) {
+      console.log("ActivitiesFeed=" + startDate);
+      console.log("ActivitiesFeed-ISOString=" + startDate.toISOString());
       params.append("startDate", startDate.toISOString());
     }
     if (endDate !== undefined) {

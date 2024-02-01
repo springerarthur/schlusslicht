@@ -18,6 +18,10 @@ export default async function handler(
     }
   }
 
+  console.log("api-activities=" + startDate);
+  console.log("api-activities as string=" + startDate as string);
+  console.log("api-activities as date=" + new Date(startDate as string));
+
   const activities = await activityService.findActivities({
     page: 0,
     userId: userId as string | undefined,

@@ -36,13 +36,12 @@ export default class ActivityService {
       filter.sportTypeId = findActivitiesOptions.sportType;
     }
     if (findActivitiesOptions.date !== undefined) {
-      const startDateAsString =
-        findActivitiesOptions.date.startDate.toISOString();
-
       filter.startTimeGMT = {
         $gte: `${this.formatDate(findActivitiesOptions.date.startDate)} 00:00:00`,
         $lte: `${this.formatDate(findActivitiesOptions.date.startDate)} 23:59:59`,
       };
+      console.log("startDate" + findActivitiesOptions.date.startDate);
+      console.log(JSON.stringify(filter));
     }
 
     const query = mongoDbClient

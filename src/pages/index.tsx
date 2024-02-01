@@ -42,9 +42,9 @@ export default function Challenge({
 
   useEffect(() => {
     const updateChallengeResults = async () => {
-      // if (!updateIsRequired(latestChallengeResultSnapshot.creationTime)) {
-      //   return;
-      // }
+      if (!updateIsRequired(latestChallengeResultSnapshot.creationTime)) {
+        return;
+      }
 
       try {
         setIsLoading(true);

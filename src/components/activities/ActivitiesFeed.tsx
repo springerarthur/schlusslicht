@@ -42,8 +42,6 @@ export default function ActivitiesFeed({
       params.append("userId", userId);
     }
     if (startDate !== undefined) {
-      console.log("ActivitiesFeed=" + startDate);
-      console.log("ActivitiesFeed-ISOString=" + startDate.toISOString());
       params.append("startDate", startDate.toISOString());
     }
     if (endDate !== undefined) {

@@ -24,7 +24,6 @@ export default async function handler(
   console.log("activities: " + JSON.stringify(activities));
   const challengeResults = await calculateChallengeResults(activities, Users);
 
-  console.log("challengeResults: " + JSON.stringify(challengeResults));
   const challengeResultService = new ChallengeResultService();
   // challengeResultService.createChallengeResultSnapshot(challengeResults);
 

@@ -36,14 +36,13 @@ export default class ActivityService {
       filter.sportTypeId = findActivitiesOptions.sportType;
     }
     if (findActivitiesOptions.date !== undefined) {
-      console.warn("stacktrace: "+ console.trace());
-      console.warn("startDate: " + findActivitiesOptions.date.startDate.toISOString());
-      console.warn("endDate: " + findActivitiesOptions.date.endDate.toISOString());
       filter.startTimeLocal = {
         $gte: findActivitiesOptions.date.startDate.toISOString(),
         $lte: findActivitiesOptions.date.endDate.toISOString(),
       }
     }
+
+    console.warn("filter: " + JSON.stringify(filter));
 
     const query = mongoDbClient
       .db("schlusslicht")

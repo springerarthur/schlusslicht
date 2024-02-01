@@ -10,21 +10,23 @@ export default async function handler(
   response: NextApiResponse
 ) {
   const garminConnectSync = new GarminConnectSync();
-  await garminConnectSync.importDataFromGarminConnect();
+  // await garminConnectSync.importDataFromGarminConnect();
 
   //await new Promise((f) => setTimeout(f, 5000));
 
   const startDate = new Date(2024, 1, 1);
-  const endDate = new Date(2024, 8, 30);
+  const endDate = new Date(2024, 9, 1);
 
   const activityService = new ActivityService();
   const activities = await activityService.findActivities({
     date: { startDate: startDate, endDate: endDate },
   });
+  console.log("activities: " + activities);
   const challengeResults = await calculateChallengeResults(activities, Users);
 
+  console.log("challengeResults: " + challengeResults);
   const challengeResultService = new ChallengeResultService();
-  challengeResultService.createChallengeResultSnapshot(challengeResults);
+  // challengeResultService.createChallengeResultSnapshot(challengeResults);
 
   response.status(200).json(JSON.parse(JSON.stringify(challengeResults)));
 }

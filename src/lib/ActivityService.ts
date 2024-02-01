@@ -36,7 +36,7 @@ export default class ActivityService {
       filter.sportTypeId = findActivitiesOptions.sportType;
     }
     if (findActivitiesOptions.date !== undefined) {
-      filter.startTimeLocal = {
+      filter.startTimeGMT = {
         $gte: findActivitiesOptions.date.startDate.toISOString(),
         $lte: findActivitiesOptions.date.endDate.toISOString(),
       }

@@ -6,7 +6,7 @@ export interface FindActivitiesOptions {
   page?: number;
   userId?: string;
   sportType?: SportType;
-  date?: {startDate: Date, endDate: Date};
+  date?: { startDate: Date; endDate: Date };
 }
 
 export default class ActivityService {
@@ -36,13 +36,14 @@ export default class ActivityService {
       filter.sportTypeId = findActivitiesOptions.sportType;
     }
     if (findActivitiesOptions.date !== undefined) {
-      filter.startTimeGMT = {
-        $gte: findActivitiesOptions.date.startDate.toISOString(),
-        $lte: findActivitiesOptions.date.endDate.toISOString(),
-      }
-    }
+      const startDateAsString =
+        findActivitiesOptions.date.startDate.toISOString();
 
-    console.warn("filter: " + JSON.stringify(filter));
+      filter.startTimeGMT = {
+        $gte: `${this.formatDate(findActivitiesOptions.date.startDate)} 00:00:00`,
+        $lte: `${this.formatDate(findActivitiesOptions.date.startDate)} 23:59:59`,
+      };
+    }
 
     const query = mongoDbClient
       .db("schlusslicht")
@@ -82,5 +83,13 @@ export default class ActivityService {
       console.error("Error deleting document:", err);
       return await this.getAllActivities();
     }
+  }
+
+  private formatDate(date: Date): string {
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${year}-${month}-${day}`;
   }
 }

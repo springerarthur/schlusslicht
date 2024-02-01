@@ -15,16 +15,12 @@ export default async function handler(
   //await new Promise((f) => setTimeout(f, 5000));
 
   const startDate = new Date(2024, 1, 1);
-  const endDate = new Date(2024, 9, 1);
-
-  console.log("startDate: " + startDate);
-  console.log("endDate: " + endDate);
+  const endDate = new Date(2024, 8, 30);
 
   const activityService = new ActivityService();
   const activities = await activityService.findActivities({
     date: { startDate: startDate, endDate: endDate },
   });
-  console.log("activities: " + JSON.stringify(activities));
   const challengeResults = await calculateChallengeResults(activities, Users);
 
   const challengeResultService = new ChallengeResultService();

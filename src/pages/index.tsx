@@ -93,7 +93,7 @@ export default function Challenge({
           rightTeam={[]}
           activitiesChanged={activitiesChanged}
           startDate={new Date(2024, 1, 1)}
-          endDate={new Date(2024, 9, 1)}
+          endDate={new Date(2024, 8, 31)}
         ></ActivitiesFeed>
       </main>
     </div>

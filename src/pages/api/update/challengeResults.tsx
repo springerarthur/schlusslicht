@@ -17,6 +17,9 @@ export default async function handler(
   const startDate = new Date(2024, 1, 1);
   const endDate = new Date(2024, 9, 1);
 
+  console.log("startDate: " + startDate);
+  console.log("endDate: " + endDate);
+
   const activityService = new ActivityService();
   const activities = await activityService.findActivities({
     date: { startDate: startDate, endDate: endDate },

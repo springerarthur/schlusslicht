@@ -17,13 +17,11 @@ export async function getServerSideProps() {
     const startDate = new Date(2024, 0, 1);
     const endDate = new Date(2024, 0, 31);
     const activityService = new ActivityService();
-    const activities = await activityService.findActivities({date: {startDate: startDate, endDate: endDate}});
+    const activities = await activityService.findActivities({
+      date: { startDate: startDate, endDate: endDate },
+    });
 
-    const teamResults = getTeamResults(
-      activities,
-      Team1,
-      Team2
-    );
+    const teamResults = getTeamResults(activities, Team1, Team2);
 
     return {
       props: { teamResults: JSON.parse(JSON.stringify(teamResults)) },
@@ -56,11 +54,7 @@ export default function TeamChallenge({
     fetch("/api/update")
       .then((res) => res.json())
       .then((activities) => {
-        const teamResults = getTeamResults(
-          activities,
-          Team1,
-          Team2
-        );
+        const teamResults = getTeamResults(activities, Team1, Team2);
 
         setTeamResults(teamResults);
         setLoading(false);
@@ -110,7 +104,12 @@ export default function TeamChallenge({
             sportTypeId={SportType.RUNNING}
           ></TeamProgress>
 
-          <ActivitiesFeed leftTeam={Team1} rightTeam={Team2}></ActivitiesFeed>
+          <ActivitiesFeed
+            leftTeam={Team1}
+            rightTeam={Team2}
+            startDate={new Date(2024, 0, 1)}
+            endDate={new Date(2024, 0, 31)}
+          ></ActivitiesFeed>
         </div>
       </main>
     </div>

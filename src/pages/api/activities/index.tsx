@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   const activityService = new ActivityService();
 
-  const { userId, sportType } = request.query;
+  const { userId, sportType, startDate, endDate } = request.query;
 
   let sportTypeEnum: SportType | undefined = undefined;
   if (sportType) {
@@ -22,6 +22,10 @@ export default async function handler(
     page: 0,
     userId: userId as string | undefined,
     sportType: sportTypeEnum,
+    date: {
+      startDate: new Date(startDate as string),
+      endDate: new Date(endDate as string),
+    },
   });
 
   response.status(200).json(JSON.parse(JSON.stringify(activities)));

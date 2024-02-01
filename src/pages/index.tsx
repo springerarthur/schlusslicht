@@ -88,7 +88,13 @@ export default function Challenge({
           );
         })}
 
-        <ActivitiesFeed leftTeam={[]} rightTeam={[]} activitiesChanged={activitiesChanged}></ActivitiesFeed>
+        <ActivitiesFeed
+          leftTeam={[]}
+          rightTeam={[]}
+          activitiesChanged={activitiesChanged}
+          startDate={new Date(2024,1,1)}
+          endDate={new Date(2024,8,30)}
+        ></ActivitiesFeed>
       </main>
     </div>
   );

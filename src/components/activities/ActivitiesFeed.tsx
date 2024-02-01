@@ -17,12 +17,16 @@ export default function ActivitiesFeed({
   userId,
   leftTeam,
   rightTeam,
-  activitiesChanged
+  activitiesChanged,
+  startDate,
+  endDate
 }: {
   userId?: string;
   leftTeam: User[];
   rightTeam: User[];
   activitiesChanged?: boolean;
+  startDate?: Date;
+  endDate?: Date;
 }) {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [filterType, setFilterType] = useState<SportType | undefined>(
@@ -37,6 +41,12 @@ export default function ActivitiesFeed({
     if (userId !== undefined) {
       params.append("userId", userId);
     }
+    if (startDate !== undefined) {
+      params.append("startDate", startDate.toString());
+    }
+    if (endDate !== undefined) {
+      params.append("endDate", endDate.toString());
+    }
 
     let url = `/api/activities?${params.toString()}`;
 
@@ -48,7 +58,7 @@ export default function ActivitiesFeed({
       .catch((error) => {
         console.error(error);
       });
-  }, [userId, filterType, activitiesChanged]);
+  }, [userId, filterType, activitiesChanged, startDate, endDate]);
 
   let lastTimelineMarkerText: string;
 

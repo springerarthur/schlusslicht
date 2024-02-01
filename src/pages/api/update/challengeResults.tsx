@@ -21,10 +21,10 @@ export default async function handler(
   const activities = await activityService.findActivities({
     date: { startDate: startDate, endDate: endDate },
   });
-  console.log("activities: " + activities);
+  console.log("activities: " + JSON.stringify(activities));
   const challengeResults = await calculateChallengeResults(activities, Users);
 
-  console.log("challengeResults: " + challengeResults);
+  console.log("challengeResults: " + JSON.stringify(challengeResults));
   const challengeResultService = new ChallengeResultService();
   // challengeResultService.createChallengeResultSnapshot(challengeResults);
 

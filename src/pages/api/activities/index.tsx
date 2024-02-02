@@ -54,16 +54,5 @@ function convertParameterToNumber(
       console.error("Failed to parse string as number:", value);
       return undefined;
     }
-  } else if (Array.isArray(value)) {
-    // Handle the case where it's an array (if needed)
-    console.error(
-      "Array type is not supported for conversion to number:",
-      value
-    );
-    return undefined;
-  } else {
-    // Handle any other unexpected types
-    console.error("Unsupported type for conversion to number:", typeof value);
-    return undefined;
   }
 }

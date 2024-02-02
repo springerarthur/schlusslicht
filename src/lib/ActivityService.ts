@@ -10,7 +10,7 @@ export interface FindActivitiesOptions {
 }
 
 export default class ActivityService {
-  private readonly chunksize = 25;
+  private readonly chunksize = 10;
 
   public async getAllActivities(): Promise<IActivity[]> {
     const mongoDbClient = await clientPromise;

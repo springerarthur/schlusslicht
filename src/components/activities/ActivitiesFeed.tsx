@@ -2,7 +2,7 @@ import { IActivity } from "garmin-connect/dist/garmin/types";
 import { Users } from "../../datastore/Users";
 import ProfileImage from "../profile-image";
 import styles from "./ActivitiesFeed.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   formatDistance,
   formatDuration,
@@ -32,38 +32,86 @@ export default function ActivitiesFeed({
   const [filterType, setFilterType] = useState<SportType | undefined>(
     undefined
   );
+  const [page, setPage] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (filterType !== undefined) {
-      params.append("sportType", filterType.toString());
-    }
-    if (userId !== undefined) {
-      params.append("userId", userId);
-    }
-    if (startDate !== undefined) {
-      params.append("startDate", startDate.toISOString());
-    }
-    if (endDate !== undefined) {
-      params.append("endDate", endDate.toISOString());
+    const fetchActivities = () => {
+      const params = new URLSearchParams();
+      if (filterType !== undefined) {
+        params.append("sportType", filterType.toString());
+      }
+      if (userId !== undefined) {
+        params.append("userId", userId);
+      }
+      if (startDate !== undefined) {
+        params.append("startDate", startDate.toISOString());
+      }
+      if (endDate !== undefined) {
+        params.append("endDate", endDate.toISOString());
+      }
+
+      params.append("page", page + "");
+
+      let url = `/api/activities?${params.toString()}`;
+
+      fetch(url)
+        .then((res) => res.json())
+        .then((newActivities) => {
+          if (newActivities.length === 0) {
+            setHasMore(false);
+          } else {
+            setActivities((prevActivities) => [
+              ...prevActivities,
+              ...newActivities,
+            ]);
+            setPage((prevPage) => prevPage + 1);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        });
+    };
+
+    const options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      console.log("Intersection Observer Callback", entry);
+      if (entry.isIntersecting && !loading && hasMore) {
+        setLoading(true);
+        fetchActivities();
+      }
+    }, options);
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
     }
 
-    let url = `/api/activities?${params.toString()}`;
-
-    fetch(url)
-      .then((res) => res.json())
-      .then((activities) => {
-        setActivities(activities);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [userId, filterType, activitiesChanged, startDate, endDate]);
+    return () => observer.disconnect();
+  }, [
+    userId,
+    filterType,
+    activitiesChanged,
+    startDate,
+    endDate,
+    loading,
+    page,
+    hasMore,
+  ]);
 
   let lastTimelineMarkerText: string;
 
   return (
-    <div className="mt-5 justify-content-center ">
+    <div className="mt-5 justify-content-center">
       <div
         className={"btn-group mb-3 " + styles.filter}
         role="group"
@@ -226,6 +274,18 @@ export default function ActivitiesFeed({
             </div>
           );
         })}
+
+      {loading && (
+        <div>
+          <div
+            className="spinner-border spinner-border-sm text-info me-2"
+            role="status"
+          ></div>
+          Weitere Aktivitäten werden geladen!
+        </div>
+      )}
+      <div className="mb-2" ref={containerRef}></div>
+      <div className="mb-2"></div>
     </div>
   );
 

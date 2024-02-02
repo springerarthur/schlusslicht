@@ -15,27 +15,14 @@ export async function getServerSideProps(context) {
   const userService = new UserService();
   const user = await userService.getUserByGarminUserId(username);
 
-  const activityService = new ActivityService();
-  const activities = await activityService.findActivities({
-    userId: user?.garminUserId,
-  });
-
   return {
     props: {
       user: JSON.parse(JSON.stringify(user)),
-      activities: JSON.parse(JSON.stringify(activities)),
     },
   };
 }
 
-export default function UserPage({
-  user,
-  activities,
-}: {
-  user: User;
-  activities: IActivity[];
-}) {
-  const totalTime = calculateTotalTimeForTeam(activities, [user]);
+export default function UserPage({ user }: { user: User }) {
   return (
     <div className="container">
       <Head>
@@ -48,7 +35,6 @@ export default function UserPage({
           <div>
             <ProfileImage user={user} size={250} linkToProfile={false} />
           </div>
-          <div>⏱️{formatDuration(totalTime)}</div>
           <div>
             <ActivitiesFeed
               userId={user.garminUserId}

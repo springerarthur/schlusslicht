@@ -41,9 +41,7 @@ export default async function handler(
 function convertParameterToNumber(
   value: string | string[] | undefined
 ): number | undefined {
-  if (value === undefined) {
-    return undefined;
-  } else if (typeof value === "string") {
+  if (typeof value === "string") {
     // If it's a string, try to parse it as a number
     const parsedValue = parseFloat(value);
     // Check if the parsing was successful
@@ -55,4 +53,6 @@ function convertParameterToNumber(
       return undefined;
     }
   }
+
+  return undefined;
 }

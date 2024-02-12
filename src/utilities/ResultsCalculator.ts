@@ -29,6 +29,12 @@ export async function calculateChallengeResults(
     });
   }
 
+  return calculateRanksAndScores(challengeResults);
+}
+
+export async function calculateRanksAndScores(
+  challengeResults: ChallengeResult[]
+): Promise<ChallengeResult[]> {
   const sortedResultsBySwimDistance = challengeResults.sort(
     (result1, result2) =>
       result1.distances.swimDistance - result2.distances.swimDistance
@@ -36,7 +42,9 @@ export async function calculateChallengeResults(
   let currentSwimScore = 0;
   let lastSwimDistance = 0;
   for (let sortedResultBySwimDistance of sortedResultsBySwimDistance) {
-    if (lastSwimDistance !== sortedResultBySwimDistance.distances.swimDistance) {
+    if (
+      lastSwimDistance !== sortedResultBySwimDistance.distances.swimDistance
+    ) {
       currentSwimScore++;
       lastSwimDistance = sortedResultBySwimDistance.distances.swimDistance;
     }
@@ -64,7 +72,9 @@ export async function calculateChallengeResults(
   let currentBikeScore = 0;
   let lastBikeDistance = 0;
   for (let sortedResultByBikeDistance of sortedResultsByBikeDistance) {
-    if (lastBikeDistance !== sortedResultByBikeDistance.distances.bikeDistance) {
+    if (
+      lastBikeDistance !== sortedResultByBikeDistance.distances.bikeDistance
+    ) {
       currentBikeScore++;
       lastBikeDistance = sortedResultByBikeDistance.distances.bikeDistance;
     }

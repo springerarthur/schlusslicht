@@ -281,7 +281,7 @@ export default function ActivitiesFeed({
             className="spinner-border spinner-border-sm text-info me-2"
             role="status"
           ></div>
-          Weitere Aktivitäten werden geladen!
+          Aktivitäten werden geladen!
         </div>
       )}
       <div className="mb-2" ref={containerRef}></div>

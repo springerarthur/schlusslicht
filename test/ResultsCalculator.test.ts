@@ -33,7 +33,7 @@ describe("calculateRanksAndScores", () => {
       },
       {
         user: createDummyUser("Zweiter"),
-        distances: { swimDistance: 100, bikeDistance: 1000, runDistance: 1000 },
+        distances: { swimDistance: 10, bikeDistance: 1000, runDistance: 1000 },
         rank: 0,
         totalScore: 0,
         swimScore: 0,
@@ -63,9 +63,9 @@ describe("calculateRanksAndScores", () => {
 
     expect(results[0].user.displayName).toEqual("Erster");
     expect(results[0].rank).toEqual(1);
-    expect(results[0].totalScore).toEqual(11);
-    expect(results[0].swimRank).toEqual(2);
-    expect(results[0].swimScore).toEqual(3);
+    expect(results[0].totalScore).toEqual(12);
+    expect(results[0].swimRank).toEqual(1);
+    expect(results[0].swimScore).toEqual(4);
     expect(results[0].bikeRank).toEqual(1);
     expect(results[0].bikeScore).toEqual(4);
     expect(results[0].runRank).toEqual(1);
@@ -73,23 +73,23 @@ describe("calculateRanksAndScores", () => {
 
     expect(results[1].user.displayName).toEqual("Zweiter");
     expect(results[1].rank).toEqual(2);
-    expect(results[1].totalScore).toEqual(9);
-    expect(results[1].swimRank).toEqual(1);
-    expect(results[1].swimScore).toEqual(4);
-    expect(results[1].bikeRank).toEqual(2);
-    expect(results[1].bikeScore).toEqual(3);
+    expect(results[1].totalScore).toEqual(7);
+    expect(results[1].swimRank).toEqual(2);
+    expect(results[1].swimScore).toEqual(2);
+    expect(results[1].bikeRank).toEqual(3);
+    expect(results[1].bikeScore).toEqual(2);
     expect(results[1].runRank).toEqual(2);
     expect(results[1].runScore).toEqual(3);
 
     expect(results[2].user.displayName).toEqual("Dritter");
     expect(results[2].rank).toEqual(3);
     expect(results[2].totalScore).toEqual(5);
-    expect(results[2].swimRank).toEqual(3);
+    expect(results[2].swimRank).toEqual(2);
     expect(results[2].swimScore).toEqual(2);
     expect(results[2].bikeRank).toEqual(4);
     expect(results[2].bikeScore).toEqual(1);
-    expect(results[2].runRank).toEqual(2);
-    expect(results[2].runScore).toEqual(3);
+    expect(results[2].runRank).toEqual(3);
+    expect(results[2].runScore).toEqual(2);
 
     expect(results[3].user.displayName).toEqual("Vierter");
     expect(results[3].rank).toEqual(4);

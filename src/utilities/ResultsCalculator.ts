@@ -3,6 +3,7 @@ import { User } from "../lib/User";
 import { ChallengeResult } from "../types/ChallengeResult";
 import { Distances } from "../types/Distances";
 import { SportType } from "../lib/GarminConstants";
+import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
 
 export async function calculateChallengeResults(
   activities: IActivity[],
@@ -44,9 +45,11 @@ export async function calculateRanksAndScores(
   setDisciplineScore(challengeResults, "runDistance", "runScore");
   setDisciplineRank(challengeResults, "runScore", "runRank");
 
-  sumupTotalScore(challengeResults);
+  sumTotalScore(challengeResults);
 
   setTotalRank(challengeResults);
+
+  UpdateEqualRanksByMostMedals(challengeResults);
 
   return challengeResults.sort(
     (result1, result2) => result1.rank - result2.rank
@@ -120,7 +123,7 @@ function setDisciplineRank(
   }
 }
 
-function sumupTotalScore(challengeResults: ChallengeResult[]) {
+function sumTotalScore(challengeResults: ChallengeResult[]) {
   for (let challengeResult of challengeResults) {
     challengeResult.totalScore =
       challengeResult.swimScore +
@@ -173,3 +176,49 @@ function sumTotalTime(activities: IActivity[]): number {
     .map((activity) => activity.movingDuration ?? activity.duration)
     .reduce((sum, duration) => sum + duration, 0);
 }
+
+function UpdateEqualRanksByMostMedals(challengeResults: ChallengeResult[]) {
+  challengeResults.sort((a, b) => {
+    if (a.rank !== b.rank) {
+      return a.rank - b.rank;
+    } else {
+      for (let i = 1; i < challengeResults.length; i++) {
+        let aRankCount = getRankCount(a, i);
+        let bRankCount = getRankCount(b, i);
+
+        if(aRankCount > 0 || bRankCount > 0) {
+          return bRankCount - aRankCount;
+        }
+      }
+
+      return a.rank - b.rank;
+    }
+  });
+
+  for (let i = 1; i < challengeResults.length; i++) {
+    if (challengeResults[i].rank === challengeResults[i - 1].rank) {
+      challengeResults[i].rank += 1;
+      for (let j = i + 1; j < challengeResults.length; j++) {
+        if (challengeResults[j].rank <= challengeResults[j - 1].rank) {
+          challengeResults[j].rank = challengeResults[j - 1].rank + 1;
+        } else {
+          break;
+        }
+      }
+    }
+  }
+}
+function getRankCount(result: ChallengeResult, i: number) {
+  let rankCount = 0;
+  if (result.swimRank === i) {
+    rankCount++;
+  }
+  if (result.bikeRank === i) {
+    rankCount++;
+  }
+  if (result.runRank === i) {
+    rankCount++;
+  }
+  return rankCount;
+}
+

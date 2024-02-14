@@ -35,128 +35,25 @@ export async function calculateChallengeResults(
 export async function calculateRanksAndScores(
   challengeResults: ChallengeResult[]
 ): Promise<ChallengeResult[]> {
-  const sortedResultsBySwimDistance = challengeResults.sort(
-    (result1, result2) =>
-      result1.distances.swimDistance - result2.distances.swimDistance
-  ); // Sort by swimDistance Ascending
+  setDisciplineScore(challengeResults, "swimDistance", "swimScore");
+  setDisciplineRank(challengeResults, "swimScore", "swimRank");
 
-  let currentSwimScore = 0;
-  let nextSwimScore = 1;
-  let lastSwimDistance = 0;
-  for (let sortedResultBySwimDistance of sortedResultsBySwimDistance) {
-    if (
-      lastSwimDistance === sortedResultBySwimDistance.distances.swimDistance
-    ) {
-      sortedResultBySwimDistance.swimScore = currentSwimScore;
-    } else {
-      currentSwimScore = nextSwimScore;
-      sortedResultBySwimDistance.swimScore = nextSwimScore;
-      lastSwimDistance = sortedResultBySwimDistance.distances.swimDistance;
-    }
-    nextSwimScore++;
-  }
+  setDisciplineScore(challengeResults, "bikeDistance", "bikeScore");
+  setDisciplineRank(challengeResults, "bikeScore", "bikeRank");
 
-  const sortedResultsBySwimScore = challengeResults.sort(
-    (result1, result2) => result2.swimScore - result1.swimScore
-  ); // Sort by swimScore Descending
+  setDisciplineScore(challengeResults, "runDistance", "runScore");
+  setDisciplineRank(challengeResults, "runScore", "runRank");
 
-  let currentSwimRank = 0;
-  let nextSwimRank = 1;
-  let lastSwimScore = 0;
-  for (let sortedResultBySwimScore of sortedResultsBySwimScore) {
-    if (lastSwimScore === sortedResultBySwimScore.swimScore) {
-      sortedResultBySwimScore.swimRank = currentSwimRank;
-    } else {
-      currentSwimRank = nextSwimRank;
-      sortedResultBySwimScore.swimRank = nextSwimRank;
-      lastSwimScore = sortedResultBySwimScore.swimScore;
-    }
-    nextSwimRank++;
-  }
+  sumupTotalScore(challengeResults);
 
-  const sortedResultsByBikeDistance = challengeResults.sort(
-    (result1, result2) =>
-      result1.distances.bikeDistance - result2.distances.bikeDistance
-  ); // Sort by bikeDistance Ascending
+  setTotalRank(challengeResults);
 
-  let currentBikeScore = 0;
-  let nextBikeScore = 1;
-  let lastBikeDistance = 0;
-  for (let sortedResultByBikeDistance of sortedResultsByBikeDistance) {
-    if (
-      lastBikeDistance === sortedResultByBikeDistance.distances.bikeDistance
-    ) {
-      sortedResultByBikeDistance.bikeScore = currentBikeScore;
-    } else {
-      currentBikeScore = nextBikeScore;
-      sortedResultByBikeDistance.bikeScore = nextBikeScore;
-      lastBikeDistance = sortedResultByBikeDistance.distances.bikeDistance;
-    }
-    nextBikeScore++;
-  }
+  return challengeResults.sort(
+    (result1, result2) => result1.rank - result2.rank
+  ); // Sort by rank ascending
+}
 
-  const sortedResultsByBikeScore = challengeResults.sort(
-    (result1, result2) => result2.bikeScore - result1.bikeScore
-  ); // Sort by bikeScore Descending
-
-  let currentBikeRank = 0;
-  let nextBikeRank = 1;
-  let lastBikeScore = 0;
-  for (let sortedResultByBikeScore of sortedResultsByBikeScore) {
-    if (lastBikeScore === sortedResultByBikeScore.bikeScore) {
-      sortedResultByBikeScore.bikeRank = currentBikeRank;
-    } else {
-      currentBikeRank = nextBikeRank;
-      sortedResultByBikeScore.bikeRank = nextBikeRank;
-      lastBikeScore = sortedResultByBikeScore.bikeScore;
-    }
-    nextBikeRank++;
-  }
-
-  const sortedResultsByRunDistance = challengeResults.sort(
-    (result1, result2) =>
-      result1.distances.runDistance - result2.distances.runDistance
-  ); // Sort by runDistance Ascending
-
-  let currentRunScore = 0;
-  let nextRunScore = 1;
-  let lastRunDistance = 0;
-  for (let sortedResultByRunDistance of sortedResultsByRunDistance) {
-    if (lastRunDistance === sortedResultByRunDistance.distances.runDistance) {
-      sortedResultByRunDistance.runScore = currentRunScore;
-    } else {
-      currentRunScore = nextRunScore;
-      sortedResultByRunDistance.runScore = nextRunScore;
-      lastRunDistance = sortedResultByRunDistance.distances.runDistance;
-    }
-    nextRunScore++;
-  }
-
-  const sortedResultsByRunScore = challengeResults.sort(
-    (result1, result2) => result2.runScore - result1.runScore
-  ); // Sort by runScore Descending
-
-  let currentRunRank = 0;
-  let nextRunRank = 1;
-  let lastRunScore = 0;
-  for (let sortedResultByRunScore of sortedResultsByRunScore) {
-    if (lastRunScore === sortedResultByRunScore.runScore) {
-      sortedResultByRunScore.runRank = currentRunRank;
-    } else {
-      currentRunRank = nextRunRank;
-      sortedResultByRunScore.runRank = nextRunRank;
-      lastRunScore = sortedResultByRunScore.runScore;
-    }
-    nextRunRank++;
-  }
-
-  for (let challengeResult of challengeResults) {
-    challengeResult.totalScore =
-      challengeResult.swimScore +
-      challengeResult.bikeScore +
-      challengeResult.runScore;
-  }
-
+function setTotalRank(challengeResults: ChallengeResult[]) {
   const sortedResultsByTotalScore = challengeResults.sort(
     (result1, result2) => result2.totalScore - result1.totalScore
   ); // Sort by totalScore Descending
@@ -171,10 +68,65 @@ export async function calculateRanksAndScores(
 
     sortedResultByTotalScore.rank = currentRank;
   }
+}
 
-  return challengeResults.sort(
-    (result1, result2) => result1.rank - result2.rank
-  ); // Sort by rank ascending
+function setDisciplineScore(
+  challengeResults: ChallengeResult[],
+  disciplineDistance: keyof Distances,
+  disciplineScore: "swimScore" | "bikeScore" | "runScore"
+) {
+  const sortedResultsByDistance = challengeResults.sort(
+    (result1, result2) =>
+      result1.distances[disciplineDistance] -
+      result2.distances[disciplineDistance]
+  );
+
+  let currentScore = 0;
+  let nextScore = 1;
+  let lastDistance = 0;
+  for (let sortedResultByDistance of sortedResultsByDistance) {
+    if (lastDistance === sortedResultByDistance.distances[disciplineDistance]) {
+      sortedResultByDistance[disciplineScore] = currentScore;
+    } else {
+      currentScore = nextScore;
+      sortedResultByDistance[disciplineScore] = nextScore;
+      lastDistance = sortedResultByDistance.distances[disciplineDistance];
+    }
+    nextScore++;
+  }
+}
+
+function setDisciplineRank(
+  challengeResults: ChallengeResult[],
+  disciplineScore: "swimScore" | "bikeScore" | "runScore",
+  disciplineRank: "swimRank" | "bikeRank" | "runRank"
+) {
+  const sortedResultsByScore = challengeResults.sort(
+    (result1, result2) => result2[disciplineScore] - result1[disciplineScore]
+  ); // Sort by score Descending
+
+  let currentRank = 0;
+  let nextRank = 1;
+  let lastScore = 0;
+  for (let sortedResultByScore of sortedResultsByScore) {
+    if (lastScore === sortedResultByScore[disciplineScore]) {
+      sortedResultByScore[disciplineRank] = currentRank;
+    } else {
+      currentRank = nextRank;
+      sortedResultByScore[disciplineRank] = nextRank;
+      lastScore = sortedResultByScore[disciplineScore];
+    }
+    nextRank++;
+  }
+}
+
+function sumupTotalScore(challengeResults: ChallengeResult[]) {
+  for (let challengeResult of challengeResults) {
+    challengeResult.totalScore =
+      challengeResult.swimScore +
+      challengeResult.bikeScore +
+      challengeResult.runScore;
+  }
 }
 
 function getActivitiesForUser(

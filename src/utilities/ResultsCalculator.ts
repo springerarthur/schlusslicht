@@ -49,7 +49,10 @@ export async function calculateRanksAndScores(
 
   setTotalRank(challengeResults);
 
-  UpdateEqualRanksByMostMedals(challengeResults);
+  sortByHighestRanksCount(challengeResults);
+  sortByDirectComparison(challengeResults);
+
+  resetRanksByOrder(challengeResults);
 
   return challengeResults.sort(
     (result1, result2) => result1.rank - result2.rank
@@ -177,24 +180,7 @@ function sumTotalTime(activities: IActivity[]): number {
     .reduce((sum, duration) => sum + duration, 0);
 }
 
-function UpdateEqualRanksByMostMedals(challengeResults: ChallengeResult[]) {
-  challengeResults.sort((a, b) => {
-    if (a.rank !== b.rank) {
-      return a.rank - b.rank;
-    } else {
-      for (let i = 1; i < challengeResults.length; i++) {
-        let aRankCount = getRankCount(a, i);
-        let bRankCount = getRankCount(b, i);
-
-        if(aRankCount > 0 || bRankCount > 0) {
-          return bRankCount - aRankCount;
-        }
-      }
-
-      return a.rank - b.rank;
-    }
-  });
-
+function resetRanksByOrder(challengeResults: ChallengeResult[]) {
   for (let i = 1; i < challengeResults.length; i++) {
     if (challengeResults[i].rank === challengeResults[i - 1].rank) {
       challengeResults[i].rank += 1;
@@ -208,6 +194,26 @@ function UpdateEqualRanksByMostMedals(challengeResults: ChallengeResult[]) {
     }
   }
 }
+
+function sortByHighestRanksCount(challengeResults: ChallengeResult[]) {
+  challengeResults.sort((a, b) => {
+    if (a.rank !== b.rank) {
+      return a.rank - b.rank;
+    } else {
+      for (let i = 1; i < challengeResults.length; i++) {
+        let aRankCount = getRankCount(a, i);
+        let bRankCount = getRankCount(b, i);
+
+        if (aRankCount > 0 || bRankCount > 0) {
+          return bRankCount - aRankCount;
+        }
+      }
+
+      return a.rank - b.rank;
+    }
+  });
+}
+
 function getRankCount(result: ChallengeResult, i: number) {
   let rankCount = 0;
   if (result.swimRank === i) {
@@ -220,5 +226,9 @@ function getRankCount(result: ChallengeResult, i: number) {
     rankCount++;
   }
   return rankCount;
+}
+
+function sortByDirectComparison(challengeResults: ChallengeResult[]) {
+  
 }
 

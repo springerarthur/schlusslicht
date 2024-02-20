@@ -12,6 +12,7 @@ import {
 import { User } from "../../lib/User";
 import { SportType, getActivityDetailsLink } from "../../lib/GarminConstants";
 import Link from "next/link";
+import SportTypeFilter from "../sport-type-filter";
 
 export default function ActivitiesFeed({
   userId,
@@ -112,56 +113,7 @@ export default function ActivitiesFeed({
 
   return (
     <div className="mt-5 justify-content-center">
-      <div
-        className={"btn-group mb-3 " + styles.filter}
-        role="group"
-        aria-label="Filter Activities"
-      >
-        <button
-          type="button"
-          className={`btn btn-primary  px-3 py-2 ${
-            filterType === undefined
-              ? styles.activeFilter
-              : styles.inactiveFilter
-          }`}
-          onClick={() => setFilterType(undefined)}
-        >
-          Alle
-        </button>
-        <button
-          type="button"
-          className={`btn btn-primary  px-4 py-2 ${
-            filterType === SportType.SWIMMING
-              ? styles.activeFilter
-              : styles.inactiveFilter
-          }`}
-          onClick={() => setFilterType(SportType.SWIMMING)}
-        >
-          🏊
-        </button>
-        <button
-          className={`btn btn-primary  px-4 py-2 ${
-            filterType === SportType.BIKE
-              ? styles.activeFilter
-              : styles.inactiveFilter
-          }`}
-          onClick={() => setFilterType(SportType.BIKE)}
-        >
-          🚴
-        </button>
-        <button
-          type="button"
-          className={`btn btn-primary  px-4 py-2 ${
-            filterType === SportType.RUNNING
-              ? styles.activeFilter
-              : styles.inactiveFilter
-          }`}
-          onClick={() => setFilterType(SportType.RUNNING)}
-        >
-          🏃
-        </button>
-      </div>
-
+      <SportTypeFilter filter={filterType} onFilterChange={setFilterType}></SportTypeFilter>
       {activities
         .filter(
           (activity) =>

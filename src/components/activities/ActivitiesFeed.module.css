@@ -75,11 +75,6 @@
   background-color: #f8f9fa;
 }
 
-.inactiveFilter {
-  background-color: rgba(207, 244, 252, 0.4);
-  color: #000;
-}
-
 .activityLink {
   color: inherit;
 }

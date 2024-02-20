@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { SportType } from "../lib/GarminConstants";
 import styles from "./sport-type-filter.module.css";
 

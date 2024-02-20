@@ -5,6 +5,8 @@ import ActivitiesFeed from "../components/activities/ActivitiesFeed";
 import ChallengeResultSnapshotService from "../lib/ChallengeResultService";
 import { useEffect, useState } from "react";
 import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
+import { SportType } from "../lib/GarminConstants";
+import SportTypeFilter from "../components/sport-type-filter";
 
 export async function getServerSideProps() {
   try {
@@ -39,6 +41,9 @@ export default function Challenge({
   );
   const [isLoading, setIsLoading] = useState(false);
   const [activitiesChanged, setActivitiesChanged] = useState(false);
+  const [filter, setFilterType] = useState<SportType | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     const updateChallengeResults = async () => {
@@ -79,6 +84,12 @@ export default function Challenge({
             Garmin-Aktivitäten werden aktualisiert!
           </div>
         )}
+
+        <SportTypeFilter
+          filter={filter}
+          onFilterChange={setFilterType}
+        ></SportTypeFilter>
+
         {results.map((challengeResult: ChallengeResult) => {
           return (
             <ChallengeResultCard
@@ -94,6 +105,7 @@ export default function Challenge({
           activitiesChanged={activitiesChanged}
           startDate={new Date(2024, 1, 1)}
           endDate={new Date(2024, 8, 31)}
+          filter={filter}
         ></ActivitiesFeed>
       </main>
     </div>

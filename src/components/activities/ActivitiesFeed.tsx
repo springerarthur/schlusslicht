@@ -21,6 +21,7 @@ export default function ActivitiesFeed({
   activitiesChanged,
   startDate,
   endDate,
+  filter
 }: {
   userId?: string;
   leftTeam: User[];
@@ -28,11 +29,9 @@ export default function ActivitiesFeed({
   activitiesChanged?: boolean;
   startDate?: Date;
   endDate?: Date;
+  filter: SportType | undefined;
 }) {
   const [activities, setActivities] = useState<IActivity[]>([]);
-  const [filterType, setFilterType] = useState<SportType | undefined>(
-    undefined
-  );
   const [page, setPage] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -42,8 +41,8 @@ export default function ActivitiesFeed({
   useEffect(() => {
     const fetchActivities = () => {
       const params = new URLSearchParams();
-      if (filterType !== undefined) {
-        params.append("sportType", filterType.toString());
+      if (filter !== undefined) {
+        params.append("sportType", filter.toString());
       }
       if (userId !== undefined) {
         params.append("userId", userId);
@@ -86,7 +85,6 @@ export default function ActivitiesFeed({
     };
 
     const observer = new IntersectionObserver(([entry]) => {
-      console.log("Intersection Observer Callback", entry);
       if (entry.isIntersecting && !loading && hasMore) {
         setLoading(true);
         fetchActivities();
@@ -100,7 +98,7 @@ export default function ActivitiesFeed({
     return () => observer.disconnect();
   }, [
     userId,
-    filterType,
+    filter,
     activitiesChanged,
     startDate,
     endDate,
@@ -113,11 +111,10 @@ export default function ActivitiesFeed({
 
   return (
     <div className="mt-5 justify-content-center">
-      <SportTypeFilter filter={filterType} onFilterChange={setFilterType}></SportTypeFilter>
       {activities
         .filter(
           (activity) =>
-            filterType === undefined || activity.sportTypeId === filterType
+            filter === undefined || activity.sportTypeId === filter
         )
         .map((activity: IActivity) => {
           let timelineMarkerText = formatTimelineMarkerDate(

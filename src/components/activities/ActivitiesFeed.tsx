@@ -21,7 +21,7 @@ export default function ActivitiesFeed({
   activitiesChanged,
   startDate,
   endDate,
-  filter
+  filter,
 }: {
   userId?: string;
   leftTeam: User[];
@@ -29,7 +29,7 @@ export default function ActivitiesFeed({
   activitiesChanged?: boolean;
   startDate?: Date;
   endDate?: Date;
-  filter: SportType | undefined;
+  filter?: SportType | undefined;
 }) {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [page, setPage] = useState<number>(0);
@@ -37,6 +37,13 @@ export default function ActivitiesFeed({
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setActivities([]);
+    setPage(0)
+    setLoading(false);
+    setHasMore(true);
+  }, [filter]);
 
   useEffect(() => {
     const fetchActivities = () => {
@@ -113,8 +120,7 @@ export default function ActivitiesFeed({
     <div className="mt-5 justify-content-center">
       {activities
         .filter(
-          (activity) =>
-            filter === undefined || activity.sportTypeId === filter
+          (activity) => filter === undefined || activity.sportTypeId === filter
         )
         .map((activity: IActivity) => {
           let timelineMarkerText = formatTimelineMarkerDate(

@@ -41,9 +41,7 @@ export default function Challenge({
   );
   const [isLoading, setIsLoading] = useState(false);
   const [activitiesChanged, setActivitiesChanged] = useState(false);
-  const [filter, setFilterType] = useState<SportType | undefined>(
-    undefined
-  );
+  const [filter, setFilterType] = useState<SportType | undefined>(undefined);
 
   useEffect(() => {
     const updateChallengeResults = async () => {
@@ -68,6 +66,21 @@ export default function Challenge({
     updateChallengeResults();
   }, [latestChallengeResultSnapshot.creationTime]);
 
+  const getSortedResults = () => {
+    return results.slice().sort((result1, result2) => {
+      if (filter === SportType.SWIMMING) {
+        return result1.swimRank - result2.swimRank;
+      }
+      if (filter === SportType.BIKE) {
+        return result1.bikeRank - result2.bikeRank;
+      }
+      if (filter === SportType.RUNNING) {
+        return result1.runRank - result2.runRank;
+      }
+      return result1.rank - result2.rank;
+    });
+  };
+
   return (
     <div className="container mt-4 main-content">
       <Head>
@@ -90,7 +103,7 @@ export default function Challenge({
           onFilterChange={setFilterType}
         ></SportTypeFilter>
 
-        {results.map((challengeResult: ChallengeResult) => {
+        {getSortedResults().map((challengeResult: ChallengeResult) => {
           return (
             <ChallengeResultCard
               key={challengeResult.user.garminUserId}

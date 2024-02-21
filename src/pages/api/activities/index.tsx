@@ -16,7 +16,7 @@ export default async function handler(
   if (sportType) {
     const sportTypeNumber = Number(sportType);
     if (Object.values(SportType).includes(sportTypeNumber)) {
-      return sportTypeNumber as SportType;
+      sportTypeEnum = sportTypeNumber as SportType;
     }
   }
 

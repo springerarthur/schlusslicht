@@ -3,7 +3,6 @@ import { User } from "../lib/User";
 import { ChallengeResult } from "../types/ChallengeResult";
 import { Distances } from "../types/Distances";
 import { SportType } from "../lib/GarminConstants";
-import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
 
 export async function calculateChallengeResults(
   activities: IActivity[],
@@ -50,7 +49,6 @@ export async function calculateRanksAndScores(
   setTotalRank(challengeResults);
 
   sortByHighestRanksCount(challengeResults);
-  sortByDirectComparison(challengeResults);
 
   resetRanksByOrder(challengeResults);
 
@@ -227,8 +225,3 @@ function getRankCount(result: ChallengeResult, i: number) {
   }
   return rankCount;
 }
-
-function sortByDirectComparison(challengeResults: ChallengeResult[]) {
-  
-}
-

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
 import { SportType } from "../lib/GarminConstants";
 import SportTypeFilter from "../components/sport-type-filter";
+import FlipMove from "react-flip-move";
 
 export async function getServerSideProps() {
   try {
@@ -102,15 +103,17 @@ export default function Challenge({
           filter={filter}
           onFilterChange={setFilterType}
         ></SportTypeFilter>
-
-        {getSortedResults().map((challengeResult: ChallengeResult) => {
-          return (
-            <ChallengeResultCard
-              key={challengeResult.user.garminUserId}
-              challengeResult={challengeResult}
-            ></ChallengeResultCard>
-          );
-        })}
+        <FlipMove duration={700}>
+          {getSortedResults().map((challengeResult: ChallengeResult) => {
+            return (
+              <div key={challengeResult.user.garminUserId}>
+                <ChallengeResultCard
+                  challengeResult={challengeResult}
+                ></ChallengeResultCard>
+              </div>
+            );
+          })}
+        </FlipMove>
 
         <ActivitiesFeed
           leftTeam={[]}

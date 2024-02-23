@@ -53,8 +53,12 @@ function PushSubscriptionToggleButton() {
       if (enabled && Notification.permission === "denied") {
         alert("Aktiviere Benachrichtigungen für diese Seite auf deinem Gerät!");
       } else {
-        alert("Es ist etwas schiefgelaufen. Lade die Seite neu und versuche es noch mal.");
+        alert(
+          "Es ist etwas schiefgelaufen. Lade die Seite neu und versuche es noch mal."
+        );
       }
+
+      setLoading(false);
     }
   }
 

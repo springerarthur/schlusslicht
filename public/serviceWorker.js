@@ -33,10 +33,29 @@ serviceWorker.addEventListener("push", (event) => {
   }
 
   event.waitUntil(handlePushEvent());
+});
 
-  // const data = event.data.json();
-  // self.registration.showNotification(data, {
-  //   body: data,
-  //   icon: "favicon-32x32.png",
-  // });
+serviceWorker.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const urlToOpen = "https://schlusslicht.vercel.app/";
+
+  async function openPage() {
+    const windowClients = await serviceWorker.clients.matchAll({
+      type: "window",
+    });
+
+    for (var i = 0; i < windowClients.length; i++) {
+      var client = windowClients[i];
+      if (client.focused && client.url === urlToOpen) {
+        return client.focus();
+      }
+    }
+
+    if (serviceWorker.clients.openWindow) {
+      return serviceWorker.clients.openWindow(urlToOpen);
+    }
+  }
+
+  event.waitUntil(openPage());
 });

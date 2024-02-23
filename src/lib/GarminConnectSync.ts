@@ -142,7 +142,7 @@ export default class GarminConnectSync {
           .sendNotification(subscription, notificationPayload)
           .catch((error) => {
             console.error("Fehler beim Senden der Benachrichtigung:", error);
-            // Optional: Behandle fehlgeschlagene Subscription
+            //webPushSubscriptionService.deleteSubscription(subscription);
           })
       );
 

@@ -11,8 +11,6 @@ serviceWorker.addEventListener("push", (event) => {
   const message = event.data?.json();
   const { title, body, icon } = message;
 
-  console.log("Push received. Data: " + message);
-
   async function handlePushEvent() {
     const windowClients = await serviceWorker.clients.matchAll({
       type: "window",
@@ -23,6 +21,7 @@ serviceWorker.addEventListener("push", (event) => {
 
       if (appInForeground) {
         console.log("App is in foreground. Don't show notification");
+        return;
       }
 
       await serviceWorker.registration.showNotification(title, {

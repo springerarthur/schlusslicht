@@ -8,6 +8,10 @@ import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
 import { SportType } from "../lib/GarminConstants";
 import SportTypeFilter from "../components/sport-type-filter";
 import FlipMove from "react-flip-move";
+import {
+  getCurrentPushSubscription,
+  sendPushSubscriptionToServer,
+} from "../notifications/pushService";
 
 export async function getServerSideProps() {
   try {
@@ -43,6 +47,21 @@ export default function Challenge({
   const [isLoading, setIsLoading] = useState(false);
   const [activitiesChanged, setActivitiesChanged] = useState(false);
   const [filter, setFilterType] = useState<SportType | undefined>(undefined);
+
+  useEffect(() => {
+    async function syncPushSubscription() {
+      try {
+        const subscription = await getCurrentPushSubscription();
+        if (subscription) {
+          await sendPushSubscriptionToServer(subscription);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    syncPushSubscription();
+  }, []);
 
   useEffect(() => {
     const updateChallengeResults = async () => {

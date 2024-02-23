@@ -4,31 +4,10 @@ import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
 import {
   getCurrentPushSubscription,
   registerPushNotifications,
-  sendPushSubscriptionToServer,
   unregisterPushNotifications,
 } from "../notifications/pushService";
 
-
-export default function Subscription({
-  latestChallengeResultSnapshot,
-}: {
-  latestChallengeResultSnapshot: ChallengeResultSnapshot;
-}) {
-  useEffect(() => {
-    async function syncPushSubscription() {
-      try {
-        const subscription = await getCurrentPushSubscription();
-        if (subscription) {
-          await sendPushSubscriptionToServer(subscription);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    syncPushSubscription();
-  }, []);
-
+export default function Subscription() {
   return (
     <div className="container mt-4 main-content">
       <Head>

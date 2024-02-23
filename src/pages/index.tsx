@@ -59,6 +59,8 @@ export default function Challenge({
             setChallengeResults(challengeResults);
             setActivitiesChanged(true);
           });
+
+        await fetch("/api/webpush/notifyAllSubscriptions");
       } finally {
         setIsLoading(false);
       }

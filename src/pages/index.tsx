@@ -59,15 +59,13 @@ export default function Challenge({
             setChallengeResults(challengeResults);
             setActivitiesChanged(true);
           });
-
-        await fetch("/api/webpush/notifyAllSubscriptions");
       } finally {
         setIsLoading(false);
       }
     };
 
     updateChallengeResults();
-  }, [latestChallengeResultSnapshot.creationTime]);
+  }, [latestChallengeResultSnapshot]);
 
   const getSortedResults = () => {
     return results.slice().sort((result1, result2) => {

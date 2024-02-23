@@ -1,13 +1,6 @@
 import Head from "next/head";
-import { ChallengeResult } from "../types/ChallengeResult";
-import ChallengeResultCard from "../components/challenge-result-card";
-import ActivitiesFeed from "../components/activities/ActivitiesFeed";
-import ChallengeResultSnapshotService from "../lib/ChallengeResultService";
 import { useEffect, useState } from "react";
 import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
-import { SportType } from "../lib/GarminConstants";
-import SportTypeFilter from "../components/sport-type-filter";
-import FlipMove from "react-flip-move";
 import {
   getCurrentPushSubscription,
   registerPushNotifications,
@@ -35,10 +28,6 @@ export default function Subscription({
 
     syncPushSubscription();
   }, []);
-
-  useEffect(() => {
-    fetch("/api/webpush/notifyAllSubscriptions");
-  },);
 
   return (
     <div className="container mt-4 main-content">
@@ -85,7 +74,7 @@ function PushSubscriptionToggleButton() {
       if (enabled && Notification.permission === "denied") {
         alert("Aktiviere Benachrichtigungen für diese Seite auf deinem Gerät!");
       } else {
-        alert("Es ist etwas unerwartetes schiefgelaufen.");
+        alert("Es ist etwas schiefgelaufen. Lade die Seite neu und versuche es noch mal.");
       }
     }
   }

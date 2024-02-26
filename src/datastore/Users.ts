@@ -86,5 +86,5 @@ export const Users: User[] = [
   AlexS,
   Thomas,
   Soeren,
-  //Stefan,
+  Stefan,
 ];

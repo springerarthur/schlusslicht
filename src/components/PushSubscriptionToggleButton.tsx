@@ -14,8 +14,6 @@ export default function PushSubscriptionToggleButton() {
   useEffect(() => {
     async function getActivePushSubscription() {
       const subscription = await getCurrentPushSubscription();
-      
-      alert("Subscription: " + JSON.stringify(subscription));
       setHasActivePushSubscription(!!subscription);
     }
     getActivePushSubscription();

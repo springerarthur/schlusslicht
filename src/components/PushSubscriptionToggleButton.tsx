@@ -4,7 +4,6 @@ import {
   registerPushNotifications,
   unregisterPushNotifications,
 } from "../notifications/pushService";
-import WebPushSubscriptionService from "../lib/WebPushSubscriptionService";
 
 export default function PushSubscriptionToggleButton() {
   const [hasActivePushSubscription, setHasActivePushSubscription] =

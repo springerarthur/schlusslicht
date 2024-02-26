@@ -10,8 +10,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     async function setUpServiceWorker() {
       try {
+        alert("RegisterServiceWorker");
         registerServieWorker();
       } catch (error) {
+        alert("RegisterServiceWorker Error: " + error);
         console.error(error);
       }
     }

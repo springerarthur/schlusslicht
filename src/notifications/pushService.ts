@@ -55,4 +55,13 @@ export async function deletePushSubscriptionFromServer(
   subscription: PushSubscription
 ) {
   console.log("Deleting push subscription from server", subscription);
+
+  const response = await fetch("/api/webpush/unsubscribe", {
+    method: "DELETE",
+    body: JSON.stringify(subscription),
+  });
+
+  if (!response.ok) {
+    throw Error("Failed to delete push subscription from server");
+  }
 }

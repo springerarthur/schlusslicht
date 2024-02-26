@@ -6,6 +6,7 @@ import {
   registerPushNotifications,
   unregisterPushNotifications,
 } from "../notifications/pushService";
+import PushSubscriptionToggleButton from "../components/PushSubscriptionToggleButton";
 
 export default function Subscription() {
   return (
@@ -17,82 +18,6 @@ export default function Subscription() {
       <main>
         <PushSubscriptionToggleButton />
       </main>
-    </div>
-  );
-}
-
-function PushSubscriptionToggleButton() {
-  const [hasActivePushSubscription, setHasActivePushSubscription] =
-    useState<boolean>();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    async function getActivePushSubscription() {
-      const subscription = await getCurrentPushSubscription();
-      setHasActivePushSubscription(!!subscription);
-    }
-    getActivePushSubscription();
-  }, []);
-
-  async function setPushNotificationsEnabled(enabled: boolean) {
-    if (loading) {
-      return;
-    }
-    setLoading(true);
-
-    try {
-      if (enabled) {
-        await registerPushNotifications();
-      } else {
-        await unregisterPushNotifications();
-      }
-      setLoading(false);
-      setHasActivePushSubscription(enabled);
-    } catch (error) {
-      console.error(error);
-      if (enabled && Notification.permission === "denied") {
-        alert("Aktiviere Benachrichtigungen für diese Seite auf deinem Gerät!");
-      } else {
-        alert(
-          "Es ist ein Fehler aufgetreten. Prüfe ob dein Browser Benachrichtigungen verschicken darf. Technische Fehlermeldung: " + error
-        );
-      }
-
-      setLoading(false);
-    }
-  }
-
-  if (hasActivePushSubscription === undefined) {
-    return null;
-  }
-
-  return (
-    <div className="relative">
-      {loading && (
-        <div
-          className="spinner-border spinner-border-sm text-info me-2"
-          role="status"
-        ></div>
-      )}
-      {hasActivePushSubscription ? (
-        <span
-          role="button"
-          title="Benachrichtigungne deaktivieren"
-          onClick={() => setPushNotificationsEnabled(false)}
-          className="h1"
-        >
-          🔕
-        </span>
-      ) : (
-        <span
-          role="button"
-          title="Benachrichtigungne aktivieren"
-          onClick={() => setPushNotificationsEnabled(true)}
-          className="h1"
-        >
-          🔔
-        </span>
-      )}
     </div>
   );
 }

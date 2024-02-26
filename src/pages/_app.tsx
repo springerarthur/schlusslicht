@@ -23,6 +23,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <link rel="apple-touch-icon" href="/logo_192x192.png"></link>
       </Head>
       <Component {...pageProps} />
     </>

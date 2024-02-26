@@ -48,9 +48,9 @@ export default function PushSubscriptionToggleButton() {
     }
   }
 
-  if (hasActivePushSubscription === undefined) {
-    return null;
-  }
+  // if (hasActivePushSubscription === undefined) {
+  //   return null;
+  // }
 
   return (
     <div className="relative">

@@ -6,16 +6,22 @@ export async function getCurrentPushSubscription(): Promise<PushSubscription | n
 }
 
 export async function registerPushNotifications() {
+  alert("Register service worker");
   if (!("PushManager" in window)) {
+    alert("!PushManager in window");
     throw Error("Push notifications are not supported by this browser");
   }
 
   const existingSubscription = await getCurrentPushSubscription();
+  
+  alert("existingSubscription: " + JSON.stringify(existingSubscription));
   if (existingSubscription) {
+    alert("Existing push subscription found");
     throw Error("Existing push subscription found");
   }
 
   const serviceWorker = await getReadyServiceWorker();
+  alert("readyServiceWorker: " + JSON.stringify(serviceWorker));
   const subscription = await serviceWorker.pushManager.subscribe({
     userVisibleOnly: true,
     // applicationServerKey: process.env.VAPID_PUBLIC_KEY,

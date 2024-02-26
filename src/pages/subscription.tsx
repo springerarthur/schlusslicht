@@ -54,7 +54,7 @@ function PushSubscriptionToggleButton() {
         alert("Aktiviere Benachrichtigungen für diese Seite auf deinem Gerät!");
       } else {
         alert(
-          "Es ist etwas schiefgelaufen. Lade die Seite neu und versuche es noch mal."
+          "Es ist ein Fehler aufgetreten. Prüfe ob dein Browser Benachrichtigungen verschicken darf. Technische Fehlermeldung: " + error
         );
       }
 

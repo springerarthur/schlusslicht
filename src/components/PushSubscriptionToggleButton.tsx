@@ -14,6 +14,8 @@ export default function PushSubscriptionToggleButton() {
   useEffect(() => {
     async function getActivePushSubscription() {
       const subscription = await getCurrentPushSubscription();
+      
+      alert("Subscription: " + JSON.stringify(subscription));
       setHasActivePushSubscription(!!subscription);
     }
     getActivePushSubscription();
@@ -48,9 +50,9 @@ export default function PushSubscriptionToggleButton() {
     }
   }
 
-  // if (hasActivePushSubscription === undefined) {
-  //   return null;
-  // }
+  if (hasActivePushSubscription === undefined) {
+    return null;
+  }
 
   return (
     <div className="relative">

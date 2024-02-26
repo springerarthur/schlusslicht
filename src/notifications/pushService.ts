@@ -1,7 +1,10 @@
 import { getReadyServiceWorker } from "../utilities/serviceWorker";
 
 export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
+  alert("Lade Service Worker");
   const serviceWorker = await getReadyServiceWorker();
+  alert("Service Worker: " + JSON.stringify(serviceWorker));
+  alert("Service Worker PushManager: " + JSON.stringify(serviceWorker.pushManager));
   return serviceWorker.pushManager.getSubscription();
 }
 

@@ -18,20 +18,17 @@ export async function registerPushNotifications() {
 
   const serviceWorker = await getReadyServiceWorker();
 
-  logToServer("pushManager.permissionState()");
-  serviceWorker.pushManager
+  await serviceWorker.pushManager
     .permissionState()
     .then((permission) => {
-      logToServer(
-        "pushManager.permissionState().then. permission = " + permission
-      );
       if (permission === "granted") {
         logToServer("pushManager.permissionState().permission granted");
+        return subscribeToPush(serviceWorker);
       } else if (permission === "prompt") {
         logToServer("pushManager.permissionState().permission promt");
         Notification.requestPermission().then((subscriptionState) => {
           if (subscriptionState === "granted") {
-            logToServer("Push subscription permission granted by user");
+            return subscribeToPush(serviceWorker);
           } else {
             logToServer("Push subscription permission denied by user");
           }
@@ -43,9 +40,11 @@ export async function registerPushNotifications() {
     .catch((error) => {
       logToServer("Error checking or requesting push permission: " + error);
     });
+}
 
+async function subscribeToPush(serviceWorker: ServiceWorkerRegistration) {
   logToServer("get subscription from push manager");
-  serviceWorker.pushManager
+  await serviceWorker.pushManager
     .subscribe({
       userVisibleOnly: true,
       // applicationServerKey: process.env.VAPID_PUBLIC_KEY,

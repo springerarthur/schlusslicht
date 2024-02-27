@@ -20,9 +20,6 @@ export async function registerPushNotifications() {
   logToServer("get subscription from push manager");
   logToServer("serviceWorker.active: " + serviceWorker.active);
   logToServer("serviceWorker.installing: " + serviceWorker.installing);
-  logToServer(
-    "serviceWorker.navigationPreload: " + serviceWorker.navigationPreload
-  );
   logToServer("serviceWorker.scope: " + serviceWorker.scope);
 
   try {

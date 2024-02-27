@@ -4,6 +4,7 @@ import {
   registerPushNotifications,
   unregisterPushNotifications,
 } from "../notifications/pushService";
+import logToServer from "../utilities/logger";
 
 export default function PushSubscriptionToggleButton() {
   const [hasActivePushSubscription, setHasActivePushSubscription] =
@@ -22,20 +23,20 @@ export default function PushSubscriptionToggleButton() {
     if (loading) {
       return;
     }
-    console.log("setPushNotificationsEnabled enabled=" + enabled);
+    logToServer("setPushNotificationsEnabled enabled=" + enabled);
     setLoading(true);
 
     try {
       if (enabled) {
         await registerPushNotifications();
-        console.log("registerPushNotifications finished");
+        logToServer("registerPushNotifications finished");
       } else {
         await unregisterPushNotifications();
       }
       setLoading(false);
       setHasActivePushSubscription(enabled);
     } catch (error) {
-      console.error(error);
+      logToServer(error);
       if (enabled && Notification.permission === "denied") {
         alert("Aktiviere Benachrichtigungen für diese Seite auf deinem Gerät!");
       } else {

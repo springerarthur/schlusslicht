@@ -1,23 +1,24 @@
+import logToServer from "../utilities/logger";
 import { getReadyServiceWorker } from "../utilities/serviceWorker";
 
 export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
   const serviceWorker = await getReadyServiceWorker();
-  console.log("gotServiceWorker=" + JSON.stringify(serviceWorker));
+  logToServer("gotServiceWorker=" + JSON.stringify(serviceWorker));
   return serviceWorker.pushManager.getSubscription();
 }
 
 export async function registerPushNotifications() {
   if (!("PushManager" in window)) {
-    console.log("!PushManager in windows");
+    logToServer("!PushManager in windows");
     throw Error("Push notifications are not supported by this browser");
   }
 
-  console.log("registerPushNotifications");
+  logToServer("registerPushNotifications");
   const existingSubscription = await getCurrentPushSubscription();
 
-  console.log("gotCurrentPushSbuscription. existingSubscription=" + JSON.stringify(existingSubscription));
+  logToServer("gotCurrentPushSbuscription. existingSubscription=" + JSON.stringify(existingSubscription));
   if (existingSubscription) {
-    console.log("Existing subscription found");
+    logToServer("Existing subscription found");
     throw Error("Existing push subscription found");
   }
 
@@ -45,7 +46,7 @@ export async function unregisterPushNotifications() {
 export async function sendPushSubscriptionToServer(
   subscription: PushSubscription
 ) {
-  console.log("Sending push subscription to server", subscription);
+  logToServer("Sending push subscription to server" + JSON.stringify(subscription));
 
   const response = await fetch("/api/webpush/subscribe", {
     method: "POST",
@@ -60,7 +61,7 @@ export async function sendPushSubscriptionToServer(
 export async function deletePushSubscriptionFromServer(
   subscription: PushSubscription
 ) {
-  console.log("Deleting push subscription from server", subscription);
+  logToServer("Deleting push subscription from server" + JSON.stringify(subscription));
 
   const response = await fetch("/api/webpush/unsubscribe", {
     method: "DELETE",

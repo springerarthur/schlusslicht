@@ -22,19 +22,23 @@ export async function registerPushNotifications() {
   logToServer("serviceWorker.installing: " + serviceWorker.installing);
   logToServer("serviceWorker.scope: " + serviceWorker.scope);
 
-  try {
-    const subscription = await serviceWorker.pushManager.subscribe({
+  const subscription = await serviceWorker.pushManager
+    .subscribe({
       userVisibleOnly: true,
       // applicationServerKey: process.env.VAPID_PUBLIC_KEY,
       applicationServerKey:
         "BIcI67JnMKoBToBUDnlLITDlRQO3V2-alrfUFk5-cb2yhRlx5DJd2CnbOihkhf9atGAZRz0wFKdhrpji4WQpRy8",
+    })
+    .then((subscription) => {
+      logToServer("successfully got subscription from push manager");
+      sendPushSubscriptionToServer(subscription);
+    })
+    .catch((error) => {
+      logToServer("error on get subscription: " + error);
+    })
+    .finally(() => {
+      logToServer("finally got subscription from push manager");
     });
-
-    logToServer("got subscription from push manager");
-    await sendPushSubscriptionToServer(subscription);
-  } catch (error) {
-    logToServer("error on get subscription: " + error);
-  }
 }
 
 export async function unregisterPushNotifications() {

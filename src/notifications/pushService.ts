@@ -2,9 +2,7 @@ import logToServer from "../utilities/logger";
 import { getReadyServiceWorker } from "../utilities/serviceWorker";
 
 export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
-  logToServer("getReadyServiceWorker");
   const serviceWorker = await getReadyServiceWorker();
-  logToServer("gotReadyServiceWorker=" + JSON.stringify(serviceWorker));
   return serviceWorker.pushManager.getSubscription();
 }
 
@@ -13,21 +11,20 @@ export async function registerPushNotifications() {
     throw Error("Push notifications are not supported by this browser");
   }
 
-  logToServer("registerPushNotifications");
   const existingSubscription = await getCurrentPushSubscription();
-
-  logToServer("gotCurrentPushSbuscription. existingSubscription=" + JSON.stringify(existingSubscription));
   if (existingSubscription) {
     throw Error("Existing push subscription found");
   }
 
   const serviceWorker = await getReadyServiceWorker();
+  logToServer("get subscription from push manager");
   const subscription = await serviceWorker.pushManager.subscribe({
     userVisibleOnly: true,
     // applicationServerKey: process.env.VAPID_PUBLIC_KEY,
     applicationServerKey:
       "BIcI67JnMKoBToBUDnlLITDlRQO3V2-alrfUFk5-cb2yhRlx5DJd2CnbOihkhf9atGAZRz0wFKdhrpji4WQpRy8",
   });
+  logToServer("got subscription from push manager");
   await sendPushSubscriptionToServer(subscription);
 }
 
@@ -45,8 +42,6 @@ export async function unregisterPushNotifications() {
 export async function sendPushSubscriptionToServer(
   subscription: PushSubscription
 ) {
-  logToServer("Sending push subscription to server" + JSON.stringify(subscription));
-
   const response = await fetch("/api/webpush/subscribe", {
     method: "POST",
     body: JSON.stringify(subscription),
@@ -60,8 +55,6 @@ export async function sendPushSubscriptionToServer(
 export async function deletePushSubscriptionFromServer(
   subscription: PushSubscription
 ) {
-  logToServer("Deleting push subscription from server" + JSON.stringify(subscription));
-
   const response = await fetch("/api/webpush/unsubscribe", {
     method: "DELETE",
     body: JSON.stringify(subscription),

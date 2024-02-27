@@ -23,20 +23,17 @@ export default function PushSubscriptionToggleButton() {
     if (loading) {
       return;
     }
-    logToServer("setPushNotificationsEnabled enabled=" + enabled);
     setLoading(true);
 
     try {
       if (enabled) {
         await registerPushNotifications();
-        logToServer("registerPushNotifications finished");
       } else {
         await unregisterPushNotifications();
       }
       setLoading(false);
       setHasActivePushSubscription(enabled);
     } catch (error) {
-      logToServer(error);
       if (enabled && Notification.permission === "denied") {
         alert("Aktiviere Benachrichtigungen für diese Seite auf deinem Gerät!");
       } else {

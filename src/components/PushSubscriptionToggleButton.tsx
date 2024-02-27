@@ -22,11 +22,13 @@ export default function PushSubscriptionToggleButton() {
     if (loading) {
       return;
     }
+    console.log("setPushNotificationsEnabled enabled=" + enabled);
     setLoading(true);
 
     try {
       if (enabled) {
         await registerPushNotifications();
+        console.log("registerPushNotifications finished");
       } else {
         await unregisterPushNotifications();
       }

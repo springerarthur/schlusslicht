@@ -7,7 +7,9 @@ export async function registerServieWorker() {
 }
 
 export async function getReadyServiceWorker() {
+  console.log("getReadyServiceWorker");
   if (!("serviceWorker" in navigator)) {
+    console.log("getReadyServiceWorker error: !serviceWorker in navigator");
     throw Error("Service workers are not supported by this browser");
   }
 

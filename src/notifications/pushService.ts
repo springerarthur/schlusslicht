@@ -2,16 +2,22 @@ import { getReadyServiceWorker } from "../utilities/serviceWorker";
 
 export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
   const serviceWorker = await getReadyServiceWorker();
+  console.log("gotServiceWorker=" + JSON.stringify(serviceWorker));
   return serviceWorker.pushManager.getSubscription();
 }
 
 export async function registerPushNotifications() {
   if (!("PushManager" in window)) {
+    console.log("!PushManager in windows");
     throw Error("Push notifications are not supported by this browser");
   }
 
-  const existingSubscription = await getCurrentPushSubscription();  
+  console.log("registerPushNotifications");
+  const existingSubscription = await getCurrentPushSubscription();
+
+  console.log("gotCurrentPushSbuscription. existingSubscription=" + JSON.stringify(existingSubscription));
   if (existingSubscription) {
+    console.log("Existing subscription found");
     throw Error("Existing push subscription found");
   }
 

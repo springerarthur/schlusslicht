@@ -18,8 +18,13 @@ export async function registerPushNotifications() {
 
   const serviceWorker = await getReadyServiceWorker();
   logToServer("get subscription from push manager");
-  logToServer("serviceWorker: " + JSON.stringify(serviceWorker));
-  logToServer("serviceWorker.pushManager: " + JSON.stringify(serviceWorker.pushManager));
+  logToServer("serviceWorker.active: " + serviceWorker.active);
+  logToServer("serviceWorker.installing: " + serviceWorker.installing);
+  logToServer(
+    "serviceWorker.navigationPreload: " + serviceWorker.navigationPreload
+  );
+  logToServer("serviceWorker.scope: " + serviceWorker.scope);
+
   try {
     const subscription = await serviceWorker.pushManager.subscribe({
       userVisibleOnly: true,

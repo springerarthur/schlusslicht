@@ -2,14 +2,14 @@ import logToServer from "../utilities/logger";
 import { getReadyServiceWorker } from "../utilities/serviceWorker";
 
 export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
+  logToServer("getReadyServiceWorker");
   const serviceWorker = await getReadyServiceWorker();
-  logToServer("gotServiceWorker=" + JSON.stringify(serviceWorker));
+  logToServer("gotReadyServiceWorker=" + JSON.stringify(serviceWorker));
   return serviceWorker.pushManager.getSubscription();
 }
 
 export async function registerPushNotifications() {
   if (!("PushManager" in window)) {
-    logToServer("!PushManager in windows");
     throw Error("Push notifications are not supported by this browser");
   }
 
@@ -18,7 +18,6 @@ export async function registerPushNotifications() {
 
   logToServer("gotCurrentPushSbuscription. existingSubscription=" + JSON.stringify(existingSubscription));
   if (existingSubscription) {
-    logToServer("Existing subscription found");
     throw Error("Existing push subscription found");
   }
 

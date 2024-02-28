@@ -78,7 +78,7 @@ export default function PushSubscriptionToggleButton() {
           🔔
         </span>
       )}
-      {/* <button
+      <button
         type="button"
         className="btn btn-link"
         onClick={() => {
@@ -86,7 +86,7 @@ export default function PushSubscriptionToggleButton() {
         }}
       >
         Test
-      </button> */}
+      </button>
     </div>
   );
 }

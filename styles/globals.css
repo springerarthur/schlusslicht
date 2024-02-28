@@ -28,3 +28,7 @@ body {
 .main-content {
   text-align: center;
 }
+
+.bg-custom {  
+  background-color: rgba(207, 244, 252, 0.4);
+}

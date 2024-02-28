@@ -12,7 +12,6 @@ import {
   getCurrentPushSubscription,
   sendPushSubscriptionToServer,
 } from "../notifications/pushService";
-import PushSubscriptionToggleButton from "../components/PushSubscriptionToggleButton";
 
 export async function getServerSideProps() {
   try {
@@ -143,8 +142,6 @@ export default function Challenge({
           endDate={new Date(2024, 8, 31)}
           filter={filter}
         ></ActivitiesFeed>
-
-        <PushSubscriptionToggleButton />
       </main>
     </div>
   );

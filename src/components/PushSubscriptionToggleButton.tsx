@@ -4,7 +4,6 @@ import {
   registerPushNotifications,
   unregisterPushNotifications,
 } from "../notifications/pushService";
-import logToServer from "../utilities/logger";
 
 export default function PushSubscriptionToggleButton() {
   const [hasActivePushSubscription, setHasActivePushSubscription] =
@@ -51,42 +50,28 @@ export default function PushSubscriptionToggleButton() {
     return null;
   }
 
-  return (
-    <div className="relative">
-      {loading && (
-        <div
-          className="spinner-border spinner-border-sm text-info me-2"
+  if (loading) {
+    return (
+      <div className="mb-3 ms-4 px-3 py-2 btn btn-primary bg-custom">
+        <span
+          className="spinner-border spinner-border-sm text-info"
           role="status"
-        ></div>
-      )}
-      {hasActivePushSubscription ? (
-        <span
-          role="button"
-          title="Benachrichtigungne deaktivieren"
-          onClick={() => setPushNotificationsEnabled(false)}
-          className="h1"
-        >
-          🔕
-        </span>
-      ) : (
-        <span
-          role="button"
-          title="Benachrichtigungne aktivieren"
-          onClick={() => setPushNotificationsEnabled(true)}
-          className="h1"
-        >
-          🔔
-        </span>
-      )}
-      {/* <button
-        type="button"
-        className="btn btn-link"
-        onClick={() => {
-          fetch("/api/webpush/test");
-        }}
-      >
-        Test
-      </button> */}
-    </div>
+        ></span>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setPushNotificationsEnabled(!hasActivePushSubscription)}
+      className={
+        hasActivePushSubscription
+          ? "mb-3 ms-4 px-3 py-2 btn btn-primary"
+          : "mb-3 ms-4 px-3 py-2 btn btn-primary bg-custom"
+      }
+    >
+      🔔
+    </button>
   );
 }

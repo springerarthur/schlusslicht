@@ -79,7 +79,7 @@ export default class GarminConnectSync {
     try {
       const activitiesFromGarmin = (
         await gcClient.get<any>(getActivitiesForUserURL + garminConnectUserId, {
-          params: { start: 0, limit: 5 },
+          params: { start: 0, limit: 8 },
         })
       ).activityList as IActivity[];
 

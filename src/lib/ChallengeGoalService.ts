@@ -1,7 +1,7 @@
 import { WeeklyGoals } from "../types/WeeklyGoals";
 
 export default class ChallengeGoalService {
-  private readonly startDate = new Date(2024, 10, 30);
+  private readonly startDate = new Date(2024, 11, 30);
   private readonly incrementFactor = 1.3; // Wöchentliche Steigerung
   private readonly baseGoals = { cycling: 100, running: 20, swimming: 1 }; // Erste Woche
   private readonly totalWeeks = 8; // Gesamtanzahl der Wochen

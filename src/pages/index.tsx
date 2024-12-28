@@ -196,8 +196,8 @@ export default function Challenge({
           leftTeam={Team1}
           rightTeam={Team2}
           activitiesChanged={activitiesChanged}
-          startDate={new Date(2024, 7, 1)}
-          endDate={new Date(2024, 11, 31)}
+          startDate={new Date(2024, 11, 30)}
+          endDate={new Date(2024, 1, 17)}
           filter={filter}
         />
       </main>

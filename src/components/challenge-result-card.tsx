@@ -49,23 +49,23 @@ export default function ChallengeResultCard({
               className="profile-img"
             />
           </div>
-          <div className="col-3 d-flex align-items-center">
+          {/* <div className="col-3 d-flex align-items-center">
             <span className="text-center fs-1">
               <span className={styles.trophyIcon}>
                 {getTrophyIcon(challengeResult.rank, challengeResult.totalScore)}
               </span>
               {challengeResult.totalScore}
             </span>
-          </div>
+          </div> */}
           <div className="col-7">
             <ul className="list-group list-group-flush">
               <li className="list-group-item">
                 <span className="row">
                   <span className="col-2">🏊</span>
-                  <span className={"col-2"}>
+                  {/* <span className={"col-2"}>
                     {getTrophyIcon(challengeResult.swimRank, challengeResult.swimScore)}
                   </span>
-                  <span className={"col-2"}>{challengeResult.swimScore}</span>
+                  <span className={"col-2"}>{challengeResult.swimScore}</span> */}
                   <span className={"col-6 text-start"}>
                     {formatDistance(challengeResult.distances.swimDistance)}
                   </span>
@@ -74,10 +74,10 @@ export default function ChallengeResultCard({
               <li className="list-group-item">
                 <span className="row">
                   <span className="col-2">🚴</span>
-                  <span className={"col-2"}>
+                  {/* <span className={"col-2"}>
                     {getTrophyIcon(challengeResult.bikeRank, challengeResult.bikeScore)}
                   </span>
-                  <span className={"col-2"}>{challengeResult.bikeScore}</span>
+                  <span className={"col-2"}>{challengeResult.bikeScore}</span> */}
                   <span className={"col-6 text-start"}>
                     {formatDistance(challengeResult.distances.bikeDistance)}
                   </span>
@@ -86,10 +86,10 @@ export default function ChallengeResultCard({
               <li className="list-group-item">
                 <span className="row">
                   <span className="col-2">🏃</span>
-                  <span className={"col-2"}>
+                  {/* <span className={"col-2"}>
                     {getTrophyIcon(challengeResult.runRank, challengeResult.runScore)}
                   </span>
-                  <span className={"col-2"}>{challengeResult.runScore}</span>
+                  <span className={"col-2"}>{challengeResult.runScore}</span> */}
                   <span className={"col-6 text-start"}>
                     {formatDistance(challengeResult.distances.runDistance)}
                   </span>

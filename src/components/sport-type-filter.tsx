@@ -12,7 +12,7 @@ export default function SportTypeFilter({
   return (
     <div>
       <div
-        className="btn-group mb-3"
+        className="btn-group mb-4 mt-2"
         role="group"
         aria-label="Filter Activities"
       >

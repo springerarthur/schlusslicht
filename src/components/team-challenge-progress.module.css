@@ -1,0 +1,10 @@
+.progressText {
+    position: absolute;
+    color: #000;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+.progress {
+    position: relative;
+}

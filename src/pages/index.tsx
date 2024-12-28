@@ -8,10 +8,13 @@ import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
 import { SportType } from "../lib/GarminConstants";
 import SportTypeFilter from "../components/sport-type-filter";
 import FlipMove from "react-flip-move";
-import {
-  getCurrentPushSubscription,
-  sendPushSubscriptionToServer,
-} from "../notifications/pushService";
+import { Team1, Team2 } from "../datastore/Teams";
+import TeamChallengeProgress from "../components/team-challenge-progress";
+import ChallengeGoalService from "../lib/ChallengeGoalService";
+import ChallengeProgressService from "../lib/ChallengeProgressService";
+
+// Ziele werden dynamisch aus ChallengeGoalService geladen
+const goalService = new ChallengeGoalService();
 
 export async function getServerSideProps() {
   try {
@@ -19,27 +22,46 @@ export async function getServerSideProps() {
     const latestChallengeResultSnapshot =
       await challengeResultSnapshotService.getLatestChallengeResultSnapshot();
 
+    // Lade wöchentliche Ziele
+    const currentWeek = goalService.getCurrentWeek();
+    const currentWeekGoals = goalService.getWeeklyGoals(currentWeek);
+
+    // Lade Fortschritt der Teams
+    const progressService = new ChallengeProgressService();
+    const teamProgress = await progressService.getAllTeamsProgress({
+      "Lazy Lions": Team1,
+      "Moody Students": Team2,
+    });
+
     return {
       props: {
         latestChallengeResultSnapshot: JSON.parse(
           JSON.stringify(latestChallengeResultSnapshot)
         ),
+        currentWeekGoals,
+        teamProgress,
       },
     };
   } catch (e) {
     console.error(e);
+    return {
+      props: {
+        latestChallengeResultSnapshot: { latestChallengeResultSnapshot: {} },
+        currentWeekGoals: null,
+        teamProgress: null,
+      },
+    };
   }
-  return {
-    props: {
-      latestChallengeResultSnapshot: { latestChallengeResultSnapshot: {} },
-    },
-  };
 }
 
 export default function Challenge({
   latestChallengeResultSnapshot,
+  currentWeekGoals,
+  teamProgress,
 }: {
   latestChallengeResultSnapshot: ChallengeResultSnapshot;
+  currentWeekGoals: { cycling: number; running: number; swimming: number };
+  teamProgress: { [key: string]: { cycling: number; running: number; swimming: number } };
 }) {
   const [results, setChallengeResults] = useState<ChallengeResult[]>(
     latestChallengeResultSnapshot.results
@@ -50,56 +72,44 @@ export default function Challenge({
 
   useEffect(() => {
     async function syncPushSubscription() {
-      try {
-        const subscription = await getCurrentPushSubscription();
-        if (subscription) {
-          await sendPushSubscriptionToServer(subscription);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+      console.warn("Push subscription sync is not implemented.");
     }
-
     syncPushSubscription();
   }, []);
 
-  useEffect(() => {
-    const updateChallengeResults = async () => {
-      if (!updateIsRequired(latestChallengeResultSnapshot.creationTime)) {
-        return;
-      }
+  const getFilteredAndSortedTeams = (results: ChallengeResult[]) => {
+    const filteredResults = results.filter((result) => {
+      if (!filter) return true;
+      return (
+        (filter === SportType.SWIMMING && result.swimRank !== undefined) ||
+        (filter === SportType.BIKE && result.bikeRank !== undefined) ||
+        (filter === SportType.RUNNING && result.runRank !== undefined)
+      );
+    });
 
-      try {
-        setIsLoading(true);
+    const teamA = filteredResults.filter((result) =>
+      Team1.some((user) => user.garminUserId === result.user.garminUserId)
+    );
+    const teamB = filteredResults.filter((result) =>
+      Team2.some((user) => user.garminUserId === result.user.garminUserId)
+    );
 
-        await fetch("/api/update/challengeResults")
-          .then((res) => res.json())
-          .then((challengeResults) => {
-            setChallengeResults(challengeResults);
-            setActivitiesChanged(true);
-          });
-      } finally {
-        setIsLoading(false);
-      }
+    const sortResults = (team: ChallengeResult[]) => {
+      return team.slice().sort((result1, result2) => {
+        if (filter === SportType.SWIMMING) return result1.swimRank - result2.swimRank;
+        if (filter === SportType.BIKE) return result1.bikeRank - result2.bikeRank;
+        if (filter === SportType.RUNNING) return result1.runRank - result2.runRank;
+        return result1.rank - result2.rank;
+      });
     };
 
-    updateChallengeResults();
-  }, [latestChallengeResultSnapshot]);
-
-  const getSortedResults = () => {
-    return results.slice().sort((result1, result2) => {
-      if (filter === SportType.SWIMMING) {
-        return result1.swimRank - result2.swimRank;
-      }
-      if (filter === SportType.BIKE) {
-        return result1.bikeRank - result2.bikeRank;
-      }
-      if (filter === SportType.RUNNING) {
-        return result1.runRank - result2.runRank;
-      }
-      return result1.rank - result2.rank;
-    });
+    return {
+      teamA: sortResults(teamA),
+      teamB: sortResults(teamB),
+    };
   };
+
+  const { teamA, teamB } = getFilteredAndSortedTeams(results);
 
   return (
     <div className="container mt-4 main-content">
@@ -118,30 +128,78 @@ export default function Challenge({
           </div>
         )}
 
-        <SportTypeFilter
-          filter={filter}
-          onFilterChange={setFilterType}
-        ></SportTypeFilter>
-        <FlipMove duration={700}>
-          {getSortedResults().map((challengeResult: ChallengeResult) => {
-            return (
-              <div key={challengeResult.user.garminUserId}>
-                <ChallengeResultCard
-                  challengeResult={challengeResult}
-                ></ChallengeResultCard>
-              </div>
-            );
-          })}
-        </FlipMove>
+        <SportTypeFilter filter={filter} onFilterChange={setFilterType} />
+
+        <div className="team-progress-container mt-5">
+          <h3>Team Fortschritt</h3>
+          <div className="row">
+            <div className="col-md-6">
+              {teamProgress && currentWeekGoals ? (
+                <TeamChallengeProgress
+                  teamName="Lazy Lions"
+                  progress={{
+                    cycling: teamProgress["Lazy Lions"]?.cycling || 0,
+                    running: teamProgress["Lazy Lions"]?.running || 0,
+                    swimming: teamProgress["Lazy Lions"]?.swimming || 0,
+                  }}
+                  goals={currentWeekGoals}
+                />
+              ) : (
+                <p>Loading Lazy Lions progress...</p>
+              )}
+            </div>
+            <div className="col-md-6">
+              {teamProgress && currentWeekGoals ? (
+                <TeamChallengeProgress
+                  teamName="Moody Students"
+                  progress={{
+                    cycling: teamProgress["Moody Students"]?.cycling || 0,
+                    running: teamProgress["Moody Students"]?.running || 0,
+                    swimming: teamProgress["Moody Students"]?.swimming || 0,
+                  }}
+                  goals={currentWeekGoals}
+                />
+              ) : (
+                <p>Loading Moody Students progress...</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="teams-container">
+          <div className="team team-a">
+            <h2>Lazy Lions</h2>
+            <FlipMove duration={700}>
+              {teamA.map((challengeResult: ChallengeResult) => (
+                <div key={challengeResult.user.garminUserId}>
+                  <ChallengeResultCard challengeResult={challengeResult} />
+                </div>
+              ))}
+            </FlipMove>
+          </div>
+
+          <div className="team team-b">
+            <h2>Moody Students</h2>
+            <FlipMove duration={700}>
+              {teamB.map((challengeResult: ChallengeResult) => (
+                <div key={challengeResult.user.garminUserId}>
+                  <ChallengeResultCard challengeResult={challengeResult} />
+                </div>
+              ))}
+            </FlipMove>
+          </div>
+        </div>
+
+
 
         <ActivitiesFeed
-          leftTeam={[]}
-          rightTeam={[]}
+          leftTeam={Team1}
+          rightTeam={Team2}
           activitiesChanged={activitiesChanged}
-          startDate={new Date(2024, 1, 1)}
-          endDate={new Date(2024, 8, 31)}
+          startDate={new Date(2024, 7, 1)}
+          endDate={new Date(2024, 11, 31)}
           filter={filter}
-        ></ActivitiesFeed>
+        />
       </main>
     </div>
   );

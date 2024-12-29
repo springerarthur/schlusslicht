@@ -1,0 +1,29 @@
+.challengeOverview {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #d1d0da;
+    border: 1px solid #b2b3bb;
+    border-radius: 8px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .tableHeader {
+    background-color: #411b99;
+    text-align: center;
+    padding: 0.75rem;
+    border-bottom: 2px solid #411b99;
+  }
+  
+  .tableCell {
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid #411b99;
+  }
+  
+  .tableRow:nth-child(even) {
+    background-color: #411b99;
+  }

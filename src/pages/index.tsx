@@ -10,6 +10,7 @@ import SportTypeFilter from "../components/sport-type-filter";
 import FlipMove from "react-flip-move";
 import { Team1, Team2 } from "../datastore/Teams";
 import TeamChallengeProgress from "../components/team-challenge-progress";
+import ChallengeOverviewTable from "../components/challenge-overview-table";
 import ChallengeGoalService from "../lib/ChallengeGoalService";
 import ChallengeProgressService from "../lib/ChallengeProgressService";
 
@@ -29,7 +30,7 @@ export async function getServerSideProps() {
     // Lade Fortschritt der Teams
     const progressService = new ChallengeProgressService();
     const teamProgress = await progressService.getAllTeamsProgress({
-      "Lazy Lions": Team1,
+      "Winning Lions": Team1,
       "Moody Students": Team2,
     });
 
@@ -136,16 +137,16 @@ export default function Challenge({
             <div className="col-md-6">
               {teamProgress && currentWeekGoals ? (
                 <TeamChallengeProgress
-                  teamName="Lazy Lions"
+                  teamName="Winning Lions"
                   progress={{
-                    cycling: teamProgress["Lazy Lions"]?.cycling || 0,
-                    running: teamProgress["Lazy Lions"]?.running || 0,
-                    swimming: teamProgress["Lazy Lions"]?.swimming || 0,
+                    cycling: teamProgress["Winning Lions"]?.cycling || 0,
+                    running: teamProgress["Winning Lions"]?.running || 0,
+                    swimming: teamProgress["Winning Lions"]?.swimming || 0,
                   }}
                   goals={currentWeekGoals}
                 />
               ) : (
-                <p>Loading Lazy Lions progress...</p>
+                <p>Loading Winning Lions progress...</p>
               )}
             </div>
             <div className="col-md-6">
@@ -168,7 +169,14 @@ export default function Challenge({
 
         <div className="teams-container">
           <div className="team team-a">
-            <h2>Lazy Lions</h2>
+            <h2>
+              <img
+                src="/WinningLions.webp"
+                alt="Winning Lions Logo"
+                style={{ height: "100px", marginRight: "10px" }}
+              />
+              Winning Lions
+            </h2>
             <FlipMove duration={700}>
               {teamA.map((challengeResult: ChallengeResult) => (
                 <div key={challengeResult.user.garminUserId}>
@@ -179,7 +187,14 @@ export default function Challenge({
           </div>
 
           <div className="team team-b">
-            <h2>Moody Students</h2>
+            <h2>
+              <img
+                src="/MoodyStudents.webp"
+                alt="Moody Students Logo"
+                style={{ height: "100px", marginRight: "10px" }}
+              />
+              Moody Students
+            </h2>
             <FlipMove duration={700}>
               {teamB.map((challengeResult: ChallengeResult) => (
                 <div key={challengeResult.user.garminUserId}>
@@ -191,6 +206,7 @@ export default function Challenge({
         </div>
 
 
+        <ChallengeOverviewTable />
 
         <ActivitiesFeed
           leftTeam={Team1}

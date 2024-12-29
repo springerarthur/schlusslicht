@@ -205,7 +205,6 @@ export default function Challenge({
           </div>
         </div>
 
-
         <ChallengeOverviewTable />
 
         <ActivitiesFeed

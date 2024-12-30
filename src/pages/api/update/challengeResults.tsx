@@ -14,8 +14,8 @@ export default async function handler(
 
   //await new Promise((f) => setTimeout(f, 5000));
 
-  const startDate = new Date(2024, 1, 1);
-  const endDate = new Date(2024, 8, 30);
+  const startDate = new Date(2024, 11, 30);
+  const endDate = new Date(2025, 1, 17);
 
   const activityService = new ActivityService();
   const activities = await activityService.findActivities({

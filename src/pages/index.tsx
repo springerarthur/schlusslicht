@@ -78,6 +78,27 @@ export default function Challenge({
     syncPushSubscription();
   }, []);
 
+  useEffect(() => {
+    const updateChallengeResults = async () => {
+      if (!updateIsRequired(latestChallengeResultSnapshot.creationTime)) {
+        return;
+      }
+      try {
+        setIsLoading(true);
+        await fetch("/api/update/challengeResults")
+          .then((res) => res.json())
+          .then((challengeResults) => {
+            setChallengeResults(challengeResults);
+            setActivitiesChanged(true);
+          });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    updateChallengeResults();
+  }, [latestChallengeResultSnapshot]);
+
   const getFilteredAndSortedTeams = (results: ChallengeResult[]) => {
     const filteredResults = results.filter((result) => {
       if (!filter) return true;
@@ -212,7 +233,7 @@ export default function Challenge({
           rightTeam={Team2}
           activitiesChanged={activitiesChanged}
           startDate={new Date(2024, 11, 30)}
-          endDate={new Date(2024, 1, 17)}
+          endDate={new Date(2025, 1, 17)}
           filter={filter}
         />
       </main>

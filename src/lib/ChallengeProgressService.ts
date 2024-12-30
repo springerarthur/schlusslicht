@@ -50,10 +50,6 @@ export default class ChallengeProgressService {
       }
     });
 
-    console.debug("[DEBUG] Team Progress for IDs:", teamIds);
-    console.debug("[DEBUG] Date Range for Progress:", dateRange);
-    console.debug("[DEBUG] Flattened Activities:", flattenedActivities);
-    console.debug("[DEBUG] Calculated Progress:", progress);
     return progress;
   }
 

@@ -11,9 +11,13 @@ export default async function handler(
 
   const activityService = new ActivityService();
 
-  const { userId } = request.query;
+  const { userId, startDate } = request.query;
   let activities = await activityService.findActivities({
     userId: userId as string | undefined,
+    date: {
+      startDate: new Date(startDate as string),
+      endDate: new Date()
+    }
   });
 
   // await new Promise((f) => setTimeout(f, 5000));

@@ -29,7 +29,7 @@ export async function getServerSideProps() {
 
     // Lade Fortschritt der Teams
     const progressService = new ChallengeProgressService();
-    const teamProgress = await progressService.getAllTeamsProgress({
+    let teamProgress = await progressService.getAllTeamsProgress({
       "Winning Lions": Team1,
       "Moody Students": Team2,
     });
@@ -79,25 +79,31 @@ export default function Challenge({
   }, []);
 
   useEffect(() => {
-    const updateChallengeResults = async () => {
-      if (!updateIsRequired(latestChallengeResultSnapshot.creationTime)) {
-        return;
-      }
-      try {
-        setIsLoading(true);
-        await fetch("/api/update/challengeResults")
-          .then((res) => res.json())
-          .then((challengeResults) => {
-            setChallengeResults(challengeResults);
-            setActivitiesChanged(true);
-          });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    updateChallengeResults();
-  }, [latestChallengeResultSnapshot]);
+      let updateCompleted = false;
+  
+      setTimeout(() => {
+        if (!updateCompleted) {
+          setIsLoading(true);
+        }
+      }, 1000);
+      //TODO: Replace Date with currentWeekFunction from chalengeGoalService
+      //TODO: Make Progress Bar Reactive -> teamProgress should change within useEffect
+      fetch(`/api/update?startDate=${new Date(2024, 11, 30)}`)
+        .then((res) => res.json())
+        .then((activities) => {
+          const teamResults = getFilteredAndSortedTeams(activities);
+          teamA = teamResults.teamA;
+          teamB = teamResults.teamB;
+          
+          setIsLoading(false);
+          updateCompleted = true;
+        })
+        .catch((error) => {
+          console.error(error);
+          setIsLoading(false);
+          updateCompleted = true;
+        });
+    }, []);
 
   const getFilteredAndSortedTeams = (results: ChallengeResult[]) => {
     const filteredResults = results.filter((result) => {
@@ -131,7 +137,7 @@ export default function Challenge({
     };
   };
 
-  const { teamA, teamB } = getFilteredAndSortedTeams(results);
+  let { teamA, teamB } = getFilteredAndSortedTeams(results);
 
   return (
     <div className="container mt-4 main-content">

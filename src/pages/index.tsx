@@ -1,35 +1,43 @@
 import Head from "next/head";
-import { ChallengeResult } from "../types/ChallengeResult";
-import ChallengeResultCard from "../components/challenge-result-card";
-import ActivitiesFeed from "../components/activities/ActivitiesFeed";
-import ChallengeResultSnapshotService from "../lib/ChallengeResultService";
 import { useEffect, useState } from "react";
+import FlipMove from "react-flip-move";
+
+import { ChallengeResult } from "../types/ChallengeResult";
 import { ChallengeResultSnapshot } from "../types/ChallengeResultSnapshot";
 import { SportType } from "../lib/GarminConstants";
+import { IActivity } from "garmin-connect/dist/garmin/types";
+
+import ChallengeResultCard from "../components/challenge-result-card";
+import ActivitiesFeed from "../components/activities/ActivitiesFeed";
 import SportTypeFilter from "../components/sport-type-filter";
-import FlipMove from "react-flip-move";
-import { Team1, Team2 } from "../datastore/Teams";
 import TeamChallengeProgress from "../components/team-challenge-progress";
 import ChallengeOverviewTable from "../components/challenge-overview-table";
+
+import ChallengeResultSnapshotService from "../lib/ChallengeResultService";
 import ChallengeGoalService from "../lib/ChallengeGoalService";
 import ChallengeProgressService from "../lib/ChallengeProgressService";
 
-// Ziele werden dynamisch aus ChallengeGoalService geladen
+import { Users } from "../datastore/Users";
+import { Team1, Team2 } from "../datastore/Teams";
+
+// Wichtig: Asynchrone Funktion, die ein Promise<ChallengeResult[]> zurückgibt
+import { calculateChallengeResults } from "../utilities/ResultsCalculator";
+
 const goalService = new ChallengeGoalService();
 
+// --------------------------------------------
+// SSR: Lädt Snapshot, Ziele und TeamFortschritt
 export async function getServerSideProps() {
   try {
     const challengeResultSnapshotService = new ChallengeResultSnapshotService();
     const latestChallengeResultSnapshot =
       await challengeResultSnapshotService.getLatestChallengeResultSnapshot();
 
-    // Lade wöchentliche Ziele
     const currentWeek = goalService.getCurrentWeek();
     const currentWeekGoals = goalService.getWeeklyGoals(currentWeek);
 
-    // Lade Fortschritt der Teams
     const progressService = new ChallengeProgressService();
-    let teamProgress = await progressService.getAllTeamsProgress({
+    const teamProgress = await progressService.getAllTeamsProgress({
       "Winning Lions": Team1,
       "Moody Students": Team2,
     });
@@ -55,6 +63,8 @@ export async function getServerSideProps() {
   }
 }
 
+// --------------------------------------------
+// HAUPT-KOMPONENTE
 export default function Challenge({
   latestChallengeResultSnapshot,
   currentWeekGoals,
@@ -64,80 +74,142 @@ export default function Challenge({
   currentWeekGoals: { cycling: number; running: number; swimming: number };
   teamProgress: { [key: string]: { cycling: number; running: number; swimming: number } };
 }) {
+  // React-States
   const [results, setChallengeResults] = useState<ChallengeResult[]>(
     latestChallengeResultSnapshot.results
   );
+
+  const [localTeamProgress, setLocalTeamProgress] = useState(teamProgress);
+
   const [isLoading, setIsLoading] = useState(false);
   const [activitiesChanged, setActivitiesChanged] = useState(false);
   const [filter, setFilterType] = useState<SportType | undefined>(undefined);
 
   useEffect(() => {
-    async function syncPushSubscription() {
-      console.warn("Push subscription sync is not implemented.");
-    }
-    syncPushSubscription();
+    console.warn("Push subscription sync is not implemented.");
   }, []);
 
+
   useEffect(() => {
-      let updateCompleted = false;
-  
-      setTimeout(() => {
-        if (!updateCompleted) {
-          setIsLoading(true);
-        }
-      }, 1000);
-      //TODO: Replace Date with currentWeekFunction from chalengeGoalService
-      //TODO: Make Progress Bar Reactive -> teamProgress should change within useEffect
-      fetch(`/api/update?startDate=${new Date(2024, 11, 30)}`)
-        .then((res) => res.json())
-        .then((activities) => {
-          const teamResults = getFilteredAndSortedTeams(activities);
-          teamA = teamResults.teamA;
-          teamB = teamResults.teamB;
-          
-          setIsLoading(false);
-          updateCompleted = true;
-        })
-        .catch((error) => {
-          console.error(error);
-          setIsLoading(false);
-          updateCompleted = true;
+    let updateCompleted = false;
+
+    const timeoutId = setTimeout(() => {
+      if (!updateCompleted) {
+        setIsLoading(true);
+      }
+    }, 1000);
+
+    async function loadAndCalculate() {
+      try {
+        const response = await fetch(
+          `/api/update?startDate=${new Date(2024, 11, 30).toISOString()}`
+        );
+        const data: IActivity[] = await response.json();
+        const currentWeek = goalService.getCurrentWeek();
+        const dateRange = goalService.getWeeklyGoalDateRange(currentWeek);
+        const relevantActivities = data.filter((act) => {
+          const start = new Date(act.startTimeLocal);
+          return start >= dateRange.startDate && start <= dateRange.endDate;
         });
-    }, []);
+
+        const newResults = await calculateChallengeResults(relevantActivities, Users);
+        setChallengeResults(newResults);
+
+        const updatedTeamProgress = calculateTeamProgressForAllActivities(
+          {
+            "Winning Lions": Team1,
+            "Moody Students": Team2,
+          },
+          relevantActivities
+        );
+        setLocalTeamProgress(updatedTeamProgress);
+
+        setActivitiesChanged(true);
+        updateCompleted = true;
+      } catch (error) {
+        console.error("Error fetching or calculating:", error);
+        updateCompleted = true;
+      } finally {
+        setIsLoading(false);
+        clearTimeout(timeoutId);
+      }
+    }
+
+    loadAndCalculate();
+
+    return () => {
+      updateCompleted = true;
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  function calculateTeamProgressForAllActivities(
+    teams: { [key: string]: { garminUserId: string }[] },
+    acts: IActivity[]
+  ): { [teamName: string]: { cycling: number; running: number; swimming: number } } {
+    const result: { [teamName: string]: { cycling: number; running: number; swimming: number } } = {};
+
+    for (const [teamName, members] of Object.entries(teams)) {
+      result[teamName] = { cycling: 0, running: 0, swimming: 0 };
+      const memberIds = members.map((u) => u.garminUserId);
+
+      const relevantActs = acts.filter((act) =>
+        memberIds.includes(act.ownerDisplayName)
+      );
+
+      relevantActs.forEach((act) => {
+        const distKm = act.distance / 1000;
+        switch (act.sportTypeId) {
+          case 1: 
+            result[teamName].running += distKm;
+            break;
+          case 2:
+            result[teamName].cycling += distKm;
+            break;
+          case 5:
+            result[teamName].swimming += distKm;
+            break;
+        }
+      });
+    }
+    return result;
+  }
+
 
   const getFilteredAndSortedTeams = (results: ChallengeResult[]) => {
     const filteredResults = results.filter((result) => {
       if (!filter) return true;
-      return (
-        (filter === SportType.SWIMMING && result.swimRank !== undefined) ||
-        (filter === SportType.BIKE && result.bikeRank !== undefined) ||
-        (filter === SportType.RUNNING && result.runRank !== undefined)
-      );
+      if (filter === SportType.SWIMMING) return result.swimRank !== undefined;
+      if (filter === SportType.BIKE) return result.bikeRank !== undefined;
+      if (filter === SportType.RUNNING) return result.runRank !== undefined;
+      return true;
     });
 
     const teamA = filteredResults.filter((result) =>
-      Team1.some((user) => user.garminUserId === result.user.garminUserId)
+      Team1.some((user) => user.garminUserId === result.user?.garminUserId)
     );
     const teamB = filteredResults.filter((result) =>
-      Team2.some((user) => user.garminUserId === result.user.garminUserId)
+      Team2.some((user) => user.garminUserId === result.user?.garminUserId)
     );
 
-    const sortResults = (team: ChallengeResult[]) => {
-      return team.slice().sort((result1, result2) => {
-        if (filter === SportType.SWIMMING) return result1.swimRank - result2.swimRank;
-        if (filter === SportType.BIKE) return result1.bikeRank - result2.bikeRank;
-        if (filter === SportType.RUNNING) return result1.runRank - result2.runRank;
-        return result1.rank - result2.rank;
-      });
-    };
+    function getRank(r: ChallengeResult) {
+      if (filter === SportType.SWIMMING) return r.swimRank ?? Number.MAX_SAFE_INTEGER;
+      if (filter === SportType.BIKE) return r.bikeRank ?? Number.MAX_SAFE_INTEGER;
+      if (filter === SportType.RUNNING) return r.runRank ?? Number.MAX_SAFE_INTEGER;
+      return r.rank ?? Number.MAX_SAFE_INTEGER;
+    }
+
+    const sortTeam = (arr: ChallengeResult[]) =>
+      arr.slice().sort((a, b) => getRank(a) - getRank(b));
 
     return {
-      teamA: sortResults(teamA),
-      teamB: sortResults(teamB),
+      teamA: sortTeam(teamA),
+      teamB: sortTeam(teamB),
     };
   };
 
-  let { teamA, teamB } = getFilteredAndSortedTeams(results);
+  const { teamA, teamB } = getFilteredAndSortedTeams(results);
+
 
   return (
     <div className="container mt-4 main-content">
@@ -151,7 +223,7 @@ export default function Challenge({
             <div
               className="spinner-border spinner-border-sm text-info me-2"
               role="status"
-            ></div>
+            />
             Garmin-Aktivitäten werden aktualisiert!
           </div>
         )}
@@ -162,13 +234,13 @@ export default function Challenge({
           <h3>Team Fortschritt</h3>
           <div className="row">
             <div className="col-md-6">
-              {teamProgress && currentWeekGoals ? (
+              {localTeamProgress && currentWeekGoals ? (
                 <TeamChallengeProgress
                   teamName="Winning Lions"
                   progress={{
-                    cycling: teamProgress["Winning Lions"]?.cycling || 0,
-                    running: teamProgress["Winning Lions"]?.running || 0,
-                    swimming: teamProgress["Winning Lions"]?.swimming || 0,
+                    cycling: localTeamProgress["Winning Lions"]?.cycling || 0,
+                    running: localTeamProgress["Winning Lions"]?.running || 0,
+                    swimming: localTeamProgress["Winning Lions"]?.swimming || 0,
                   }}
                   goals={currentWeekGoals}
                 />
@@ -177,13 +249,13 @@ export default function Challenge({
               )}
             </div>
             <div className="col-md-6">
-              {teamProgress && currentWeekGoals ? (
+              {localTeamProgress && currentWeekGoals ? (
                 <TeamChallengeProgress
                   teamName="Moody Students"
                   progress={{
-                    cycling: teamProgress["Moody Students"]?.cycling || 0,
-                    running: teamProgress["Moody Students"]?.running || 0,
-                    swimming: teamProgress["Moody Students"]?.swimming || 0,
+                    cycling: localTeamProgress["Moody Students"]?.cycling || 0,
+                    running: localTeamProgress["Moody Students"]?.running || 0,
+                    swimming: localTeamProgress["Moody Students"]?.swimming || 0,
                   }}
                   goals={currentWeekGoals}
                 />
@@ -205,7 +277,7 @@ export default function Challenge({
               Winning Lions
             </h2>
             <FlipMove duration={700}>
-              {teamA.map((challengeResult: ChallengeResult) => (
+              {teamA.map((challengeResult) => (
                 <div key={challengeResult.user.garminUserId}>
                   <ChallengeResultCard challengeResult={challengeResult} />
                 </div>
@@ -223,7 +295,7 @@ export default function Challenge({
               Moody Students
             </h2>
             <FlipMove duration={700}>
-              {teamB.map((challengeResult: ChallengeResult) => (
+              {teamB.map((challengeResult) => (
                 <div key={challengeResult.user.garminUserId}>
                   <ChallengeResultCard challengeResult={challengeResult} />
                 </div>
@@ -248,9 +320,6 @@ export default function Challenge({
 }
 
 function updateIsRequired(lastUpdate: Date): boolean {
-  const updateInterval = 30 * 60 * 1000; /* 30 minutes */
-
-  return (
-    new Date().getTime() - new Date(lastUpdate).getTime() >= updateInterval
-  );
+  const updateInterval = 30 * 60 * 1000;
+  return new Date().getTime() - new Date(lastUpdate).getTime() >= updateInterval;
 }

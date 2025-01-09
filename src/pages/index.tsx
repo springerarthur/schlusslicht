@@ -272,6 +272,16 @@ export default function Challenge({
                 // ToDo Hier könnte sinnvollerer Text stehen. Auch wenn die Challenge Vorbei ist, wird hier dieser Text angezeigt.
                 <p>Loading Winning Lions progress...</p>
               )}
+
+              <div className="team team-a mt-2">
+                <FlipMove duration={700}>
+                  {teamA.map((challengeResult) => (
+                    <div key={challengeResult.user.garminUserId}>
+                      <ChallengeResultCard challengeResult={challengeResult} />
+                    </div>
+                  ))}
+                </FlipMove>
+              </div>
             </div>
             <div className="col-md-6">
               {localTeamProgress && currentWeekGoals ? (
@@ -297,39 +307,17 @@ export default function Challenge({
               ) : (
                 <p>Loading Endorphin Junkies progress...</p>
               )}
+
+              <div className="team team-b mt-2">
+                <FlipMove duration={700}>
+                  {teamB.map((challengeResult) => (
+                    <div key={challengeResult.user.garminUserId}>
+                      <ChallengeResultCard challengeResult={challengeResult} />
+                    </div>
+                  ))}
+                </FlipMove>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="teams-container">
-          <div className="team team-a">
-            <img
-              src="/WinningLions.webp"
-              alt="Winning Lions Logo"
-              style={{ height: "100px", marginRight: "10px" }}
-            />
-            <FlipMove duration={700}>
-              {teamA.map((challengeResult) => (
-                <div key={challengeResult.user.garminUserId}>
-                  <ChallengeResultCard challengeResult={challengeResult} />
-                </div>
-              ))}
-            </FlipMove>
-          </div>
-
-          <div className="team team-b">
-            <img
-              src="/EndorphinJunkies.png"
-              alt="Endorphin Junkies Logo"
-              style={{ height: "100px", marginRight: "10px" }}
-            />
-            <FlipMove duration={700}>
-              {teamB.map((challengeResult) => (
-                <div key={challengeResult.user.garminUserId}>
-                  <ChallengeResultCard challengeResult={challengeResult} />
-                </div>
-              ))}
-            </FlipMove>
           </div>
         </div>
 

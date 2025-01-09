@@ -39,7 +39,7 @@ export async function getServerSideProps() {
     const progressService = new ChallengeProgressService();
     const teamProgress = await progressService.getAllTeamsProgress({
       "Winning Lions": Team1,
-      "Moody Students": Team2,
+      "Endorphin Junkies": Team2,
     });
 
     return {
@@ -72,23 +72,18 @@ export default function Challenge({
 }: {
   latestChallengeResultSnapshot: ChallengeResultSnapshot;
   currentWeekGoals: { cycling: number; running: number; swimming: number };
-  teamProgress: { [key: string]: { cycling: number; running: number; swimming: number } };
+  teamProgress: {
+    [key: string]: { cycling: number; running: number; swimming: number };
+  };
 }) {
   // React-States
-  const [results, setChallengeResults] = useState<ChallengeResult[]>(
-    latestChallengeResultSnapshot.results
-  );
+  const [results, setChallengeResults] = useState<ChallengeResult[]>([]);
 
   const [localTeamProgress, setLocalTeamProgress] = useState(teamProgress);
 
   const [isLoading, setIsLoading] = useState(false);
   const [activitiesChanged, setActivitiesChanged] = useState(false);
   const [filter, setFilterType] = useState<SportType | undefined>(undefined);
-
-  useEffect(() => {
-    console.warn("Push subscription sync is not implemented.");
-  }, []);
-
 
   useEffect(() => {
     let updateCompleted = false;
@@ -104,21 +99,24 @@ export default function Challenge({
         const response = await fetch(
           `/api/update?startDate=${new Date(2024, 11, 30).toISOString()}`
         );
-        const data: IActivity[] = await response.json();
+        const activities: IActivity[] = await response.json();
         const currentWeek = goalService.getCurrentWeek();
         const dateRange = goalService.getWeeklyGoalDateRange(currentWeek);
-        const relevantActivities = data.filter((act) => {
-          const start = new Date(act.startTimeLocal);
+        const relevantActivities = activities.filter((activity) => {
+          const start = new Date(activity.startTimeLocal);
           return start >= dateRange.startDate && start <= dateRange.endDate;
         });
 
-        const newResults = await calculateChallengeResults(relevantActivities, Users);
+        const newResults = await calculateChallengeResults(
+          relevantActivities,
+          Users
+        );
         setChallengeResults(newResults);
 
         const updatedTeamProgress = calculateTeamProgressForAllActivities(
           {
             "Winning Lions": Team1,
-            "Moody Students": Team2,
+            "Endorphin Junkies": Team2,
           },
           relevantActivities
         );
@@ -145,22 +143,30 @@ export default function Challenge({
 
   function calculateTeamProgressForAllActivities(
     teams: { [key: string]: { garminUserId: string }[] },
-    acts: IActivity[]
-  ): { [teamName: string]: { cycling: number; running: number; swimming: number } } {
-    const result: { [teamName: string]: { cycling: number; running: number; swimming: number } } = {};
+    activities: IActivity[]
+  ): {
+    [teamName: string]: { cycling: number; running: number; swimming: number };
+  } {
+    const result: {
+      [teamName: string]: {
+        cycling: number;
+        running: number;
+        swimming: number;
+      };
+    } = {};
 
     for (const [teamName, members] of Object.entries(teams)) {
       result[teamName] = { cycling: 0, running: 0, swimming: 0 };
       const memberIds = members.map((u) => u.garminUserId);
 
-      const relevantActs = acts.filter((act) =>
+      const relevantActs = activities.filter((act) =>
         memberIds.includes(act.ownerDisplayName)
       );
 
       relevantActs.forEach((act) => {
         const distKm = act.distance / 1000;
         switch (act.sportTypeId) {
-          case 1: 
+          case 1:
             result[teamName].running += distKm;
             break;
           case 2:
@@ -174,7 +180,6 @@ export default function Challenge({
     }
     return result;
   }
-
 
   const getFilteredAndSortedTeams = (results: ChallengeResult[]) => {
     const filteredResults = results.filter((result) => {
@@ -193,9 +198,12 @@ export default function Challenge({
     );
 
     function getRank(r: ChallengeResult) {
-      if (filter === SportType.SWIMMING) return r.swimRank ?? Number.MAX_SAFE_INTEGER;
-      if (filter === SportType.BIKE) return r.bikeRank ?? Number.MAX_SAFE_INTEGER;
-      if (filter === SportType.RUNNING) return r.runRank ?? Number.MAX_SAFE_INTEGER;
+      if (filter === SportType.SWIMMING)
+        return r.swimRank ?? Number.MAX_SAFE_INTEGER;
+      if (filter === SportType.BIKE)
+        return r.bikeRank ?? Number.MAX_SAFE_INTEGER;
+      if (filter === SportType.RUNNING)
+        return r.runRank ?? Number.MAX_SAFE_INTEGER;
       return r.rank ?? Number.MAX_SAFE_INTEGER;
     }
 
@@ -208,8 +216,9 @@ export default function Challenge({
     };
   };
 
+  // TeamA als State, TeamB als State
+  // Die Function getFilteredAndSortedTeams kann im UseEffect aufgerufen werden
   const { teamA, teamB } = getFilteredAndSortedTeams(results);
-
 
   return (
     <div className="container mt-4 main-content">
@@ -230,37 +239,55 @@ export default function Challenge({
 
         <SportTypeFilter filter={filter} onFilterChange={setFilterType} />
 
-        <div className="team-progress-container mt-5">
-          <h3>Team Fortschritt</h3>
+        <div className="team-progress-container mt-1">
           <div className="row">
             <div className="col-md-6">
               {localTeamProgress && currentWeekGoals ? (
-                <TeamChallengeProgress
-                  teamName="Winning Lions"
-                  progress={{
-                    cycling: localTeamProgress["Winning Lions"]?.cycling || 0,
-                    running: localTeamProgress["Winning Lions"]?.running || 0,
-                    swimming: localTeamProgress["Winning Lions"]?.swimming || 0,
-                  }}
-                  goals={currentWeekGoals}
-                />
+                <div>
+                  <img
+                    src="/WinningLions.webp"
+                    alt="Winning Lions Logo"
+                    style={{ height: "100px", marginRight: "10px" }}
+                  />
+
+                  <TeamChallengeProgress
+                    teamName="Winning Lions"
+                    progress={{
+                      cycling: localTeamProgress["Winning Lions"]?.cycling || 0,
+                      running: localTeamProgress["Winning Lions"]?.running || 0,
+                      swimming:
+                        localTeamProgress["Winning Lions"]?.swimming || 0,
+                    }}
+                    goals={currentWeekGoals}
+                  />
+                </div>
               ) : (
                 <p>Loading Winning Lions progress...</p>
               )}
             </div>
             <div className="col-md-6">
               {localTeamProgress && currentWeekGoals ? (
-                <TeamChallengeProgress
-                  teamName="Moody Students"
-                  progress={{
-                    cycling: localTeamProgress["Moody Students"]?.cycling || 0,
-                    running: localTeamProgress["Moody Students"]?.running || 0,
-                    swimming: localTeamProgress["Moody Students"]?.swimming || 0,
-                  }}
-                  goals={currentWeekGoals}
-                />
+                <div>
+                  <img
+                    src="/EndorphinJunkies.png"
+                    alt="Endorphin Junkies Logo"
+                    style={{ height: "100px", marginRight: "10px" }}
+                  />
+                  <TeamChallengeProgress
+                    teamName="Endorphin Junkies"
+                    progress={{
+                      cycling:
+                        localTeamProgress["Endorphin Junkies"]?.cycling || 0,
+                      running:
+                        localTeamProgress["Endorphin Junkies"]?.running || 0,
+                      swimming:
+                        localTeamProgress["Endorphin Junkies"]?.swimming || 0,
+                    }}
+                    goals={currentWeekGoals}
+                  />
+                </div>
               ) : (
-                <p>Loading Moody Students progress...</p>
+                <p>Loading Endorphin Junkies progress...</p>
               )}
             </div>
           </div>
@@ -268,14 +295,11 @@ export default function Challenge({
 
         <div className="teams-container">
           <div className="team team-a">
-            <h2>
-              <img
-                src="/WinningLions.webp"
-                alt="Winning Lions Logo"
-                style={{ height: "100px", marginRight: "10px" }}
-              />
-              Winning Lions
-            </h2>
+            <img
+              src="/WinningLions.webp"
+              alt="Winning Lions Logo"
+              style={{ height: "100px", marginRight: "10px" }}
+            />
             <FlipMove duration={700}>
               {teamA.map((challengeResult) => (
                 <div key={challengeResult.user.garminUserId}>
@@ -286,14 +310,11 @@ export default function Challenge({
           </div>
 
           <div className="team team-b">
-            <h2>
-              <img
-                src="/MoodyStudents.webp"
-                alt="Moody Students Logo"
-                style={{ height: "100px", marginRight: "10px" }}
-              />
-              Moody Students
-            </h2>
+            <img
+              src="/EndorphinJunkies.png"
+              alt="Endorphin Junkies Logo"
+              style={{ height: "100px", marginRight: "10px" }}
+            />
             <FlipMove duration={700}>
               {teamB.map((challengeResult) => (
                 <div key={challengeResult.user.garminUserId}>
@@ -321,5 +342,7 @@ export default function Challenge({
 
 function updateIsRequired(lastUpdate: Date): boolean {
   const updateInterval = 30 * 60 * 1000;
-  return new Date().getTime() - new Date(lastUpdate).getTime() >= updateInterval;
+  return (
+    new Date().getTime() - new Date(lastUpdate).getTime() >= updateInterval
+  );
 }

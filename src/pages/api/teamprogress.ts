@@ -10,7 +10,7 @@ export default async function handler(
     const progressService = new ChallengeProgressService();
     const teamProgress = await progressService.getAllTeamsProgress({
       "Winning Lions": Team1,
-      "Moody Students": Team2,
+      "Endorphin Junkies": Team2,
     });
 
     return res.status(200).json(teamProgress);

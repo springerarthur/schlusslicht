@@ -30,6 +30,7 @@ const goalService = new ChallengeGoalService();
 export async function getServerSideProps() {
   try {
     const challengeResultSnapshotService = new ChallengeResultSnapshotService();
+    // ToDo  Das Snapshot kann überall raus.
     const latestChallengeResultSnapshot =
       await challengeResultSnapshotService.getLatestChallengeResultSnapshot();
 
@@ -77,8 +78,11 @@ export default function Challenge({
   };
 }) {
   // React-States
+  // ToDo Results sollten keine ChallengeResults sein. ChallengeResults waren für die alte Challenge bei der jeder ein Rang und Punkte hatte. Das brauchen wir hier nicht mehr.
   const [results, setChallengeResults] = useState<ChallengeResult[]>([]);
 
+  // ToDo Ich würde hier ein teamAProgress und ein teamBProgress daraus machen,
+  // ToDo Dann must du hier nicht immer mit dem Teamnamen drauf zugreiifen.
   const [localTeamProgress, setLocalTeamProgress] = useState(teamProgress);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -182,6 +186,7 @@ export default function Challenge({
   }
 
   const getFilteredAndSortedTeams = (results: ChallengeResult[]) => {
+    // ToDo kann entfernt werden, da wir kein Rank haben.
     const filteredResults = results.filter((result) => {
       if (!filter) return true;
       if (filter === SportType.SWIMMING) return result.swimRank !== undefined;
@@ -197,6 +202,7 @@ export default function Challenge({
       Team2.some((user) => user.garminUserId === result.user?.garminUserId)
     );
 
+    // ToDo Kann raus, da wir kein Rank haben
     function getRank(r: ChallengeResult) {
       if (filter === SportType.SWIMMING)
         return r.swimRank ?? Number.MAX_SAFE_INTEGER;
@@ -207,6 +213,7 @@ export default function Challenge({
       return r.rank ?? Number.MAX_SAFE_INTEGER;
     }
 
+    // ToDo Kann raus, da wir kein Rank haben
     const sortTeam = (arr: ChallengeResult[]) =>
       arr.slice().sort((a, b) => getRank(a) - getRank(b));
 
@@ -262,6 +269,7 @@ export default function Challenge({
                   />
                 </div>
               ) : (
+                // ToDo Hier könnte sinnvollerer Text stehen. Auch wenn die Challenge Vorbei ist, wird hier dieser Text angezeigt.
                 <p>Loading Winning Lions progress...</p>
               )}
             </div>
@@ -337,12 +345,5 @@ export default function Challenge({
         />
       </main>
     </div>
-  );
-}
-
-function updateIsRequired(lastUpdate: Date): boolean {
-  const updateInterval = 30 * 60 * 1000;
-  return (
-    new Date().getTime() - new Date(lastUpdate).getTime() >= updateInterval
   );
 }

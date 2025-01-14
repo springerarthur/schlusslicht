@@ -1,4 +1,4 @@
-import { ChallengeResult } from "../types/ChallengeResult";
+import { TeamChallengeResult } from "../types/TeamChallengeResult";
 import ProfileImage from "./profile-image";
 import styles from "./challenge-result-card.module.css";
 import { formatDistance } from "../utilities/UiHelper";
@@ -6,20 +6,20 @@ import { formatDistance } from "../utilities/UiHelper";
 export default function ChallengeResultCard({
   challengeResult,
 }: {
-  challengeResult: ChallengeResult;
+  challengeResult: TeamChallengeResult;
 }) {
-  function getRankClassName(rank: number): string {
-    switch (rank) {
-      case 1:
-        return styles.rank1;
-      case 2:
-        return styles.rank2;
-      case 3:
-        return styles.rank3;
-      default:
-        return "";
-    }
-  }
+  // function getRankClassName(rank: number): string {
+  //   switch (rank) {
+  //     case 1:
+  //       return styles.rank1;
+  //     case 2:
+  //       return styles.rank2;
+  //     case 3:
+  //       return styles.rank3;
+  //     default:
+  //       return "";
+  //   }
+  // }
 
   function getTrophyIcon(rank: number, score: number): string {
     if(score == 0) {
@@ -39,7 +39,7 @@ export default function ChallengeResultCard({
   }
 
   return (
-    <div className={"card mb-3 " + getRankClassName(challengeResult.rank)}>
+    <div className={"card mb-3"}>
       <div className="card-body py-0">
         <div className="row g-0">
           <div className="col-2 d-flex align-items-center justify-content-center">
